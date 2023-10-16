@@ -1,0 +1,2 @@
+-ajouter une marque&modele
+-voir si ca vaut la peine de re scrape les données en incluant "prix neuf"
