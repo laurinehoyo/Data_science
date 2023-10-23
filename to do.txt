@@ -1,2 +1,5 @@
--ajouter une marque&modele
--voir si ca vaut la peine de re scrape les données en incluant "prix neuf"
+-changer le titre
+reformuler objectifs
+-find historical data
+-rescrape regularly
+-fix dates
