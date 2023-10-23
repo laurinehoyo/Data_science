@@ -92,3 +92,13 @@ install.packages("parsedate")
 library(parsedate)
 parse_date(test)
 as.Date(parse_date(test))
+
+
+###assistant
+test <- format(data$date, format = "%m.%Y")
+test
+as.Date(test)
+class(test)
+typeof(test)
+test <- paste0("01.", test)
+parse_date(test)
