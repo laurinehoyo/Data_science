@@ -68,37 +68,38 @@ data$new.price[data$new.price < 5000] <- NA
 
 data <- data[-c(1:4)]
 
-### Now we want to set the "date" column to type date. To do this we need to first format the values as dd.mm.yyyy, they are currently at mm.yyyy.
+### Now we want to set the "date" column to class "Date" to simplify plotting. To do this we need to format the values as yyyy.mm.dd, they are currently at mm.yyyy.
 
-#Let's look at the data first
+# Let's look at the data first
 
 unique(data$date[order(data$date)])
 
-#We remove one outlier (error)
+# We remove one visible error
 
 data$date[2802] <- NA
 
-#We will add the string "01." to the beginning of every value.
+# Now we set the format to mm.yyyy (the vector needs to be a character vector for the parse_date function to work) then parse date. The final format is yyyy-mm-dd.
 
-rm(test) 
-test <- data$date
-test <- as.character(data$date)
-test <- dmy(paste0("01.", data$date))
-test
-rm(test)
-test <- c("01.2.1999", "01.7.2004", "01.11.2019")
-as.Date(test)
-install.packages("parsedate")
-library(parsedate)
-parse_date(test)
-as.Date(parse_date(test))
+data$date <- data$date |>
+  format(format = "%m.%Y") |>
+  parse_date(format = "%m.%Y")
 
+### We set expertise.date and created.date to date classes as well
 
-###assistant
-test <- format(data$date, format = "%m.%Y")
-test
-as.Date(test)
-class(test)
-typeof(test)
-test <- paste0("01.", test)
-parse_date(test)
+data$created.date <- parse_date(data$created.date)
+
+data$expertise.date <- data$expertise.date |>
+  format(format = "%d.%m.%Y") |>
+  parse_date(format = "%d.%m.%Y")
+
+### We will now add a column to the data where values will be TRUE where the vehicle is potentially defective or in need of repairs, and FALSE if not. 
+### We will need to remove these defective vehicles when creating our model because they could bias it, making it underestimate prices for functioning vehicles.
+### We plan to identify defective vehicles in two ways. The first way being the "accident" column, which is TRUE if the seller has flagged the vehicle as having been in an accident in the past, and FALSE if not.
+### The second way will be to look for keywords in columns "title", "subtitle" and "description.text" which are common in listings with defective vehicles, such as "defekt", "motor startet nicht" etc.
+### We will create a column where values will be TRUE if one of these keywords or key phrases is detected, and FALSE if not.
+### If either of these two identifiers are TRUE, the vehicle will be deemed defective and not eligible to serve as data for creating our model.
+
+# First we create a vector of characters which are the defective keywords.
+
+defective_keywords <- c("defekt", "startet nicht", "motorlampe leuchtet", "motor lampe leuchtet", "airbaglampe leuchtet", "für export")
+defective_keywords_2 <- c("schäden", "problem")
