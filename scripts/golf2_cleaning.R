@@ -101,5 +101,7 @@ data$expertise.date <- data$expertise.date |>
 
 # First we create a vector of characters which are the defective keywords.
 
-defective_keywords <- c("defekt", "startet nicht", "motorlampe leuchtet", "motor lampe leuchtet", "airbaglampe leuchtet", "für export")
-defective_keywords_2 <- c("schäden", "problem")
+defective_keywords_de <- c("defekt", "defect", "startet nicht", "starttet nicht", "gebrochen", "lampe leuchtet", "für export", "gerausche", "geräusche", "gerräusche", "angebrochen", "angeschlagen", "beschädigt", "fehlerhaft", "lädiert", "nicht in Ordnung", "nicht mehr funktionierend", "schadhaft", "zerbrochen", "zerrissen", "kaputt" )
+defective_keywords_2_de <- c("schäden", "problem", "probleme", "schaden", "beule", "beulen", "kratzen", "kratzer", "dellen")
+ok_keywords_de <- c("ausbeulen")
+defective_keywords_fr <- c("témoin de moteur allumé")
