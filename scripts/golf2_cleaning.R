@@ -111,6 +111,19 @@ ok_keywords_de <- c(paste("ohne", defective_keywords_de_2, sep = " "), paste("ke
 
 #We repeat these steps for other languages that listings could be in (French, Italian and English).
 
-defective_keywords_fr <- c("témoin", "bruit", "défaut", "ne démarre pas", "cassé", "pour export", "bruit", "endommagé", "endommager", "endommage", "défectueux", "defectueux", "pas en bon état", "ne fonctionne plus", "cassé")
+defective_keywords_fr <- c("témoin", "bruit", "défaut", "ne démarre pas", "cassé", "pour export", "endommagé", "endommager", "endommage", "défectueux", "defectueux", "pas en bon état", "ne fonctionne plus", "cassé")
 defective_keywords_fr_2 <- c("dégâts", "dégats", "degâts", "degats", "problème", "probleme", "dommages")
-ok_keywords_fr <- c(paste("sans", defective_keywords_fr_2, sep = " "), paste("pas de", defective_keywords_fr_2, sep = " "))
+ok_keywords_fr <- c(paste("sans", defective_keywords_fr_2, sep = " "), paste("pas de", defective_keywords_fr_2, sep = " "), paste("aucun", defective_keywords_fr_2, sep = " "))
+
+defective_keywords_it <- c("spia", "rumore", "difetto", "non parte", "non si avvia", "rotto", "per l'esportazione", "per export", "danneggiato", "danneggiare", "danneggia", "difettoso", "non in buone condizioni", "non funziona più")
+defective_keywords_fr_2 <- c("danni", "problemi", "problema")
+ok_keywords_fr <- c(paste("nessun", defective_keywords_it_2, sep = " "), paste("senza", defective_keywords_it_2, sep = " "))
+
+defective_keywords_en <- c("defective", "does not start", "won't start", "broken", "light on", "for export", "noise", "faulty", "not working", "no longer working")
+defective_keywords_2_en <- c("damage", "damaged", "problem", "problems")
+ok_keywords_en <- c(paste("no", defective_keywords_en_2, sep = " "), paste("without", defective_keywords_en_2, sep = " "), paste("not", defective_keywords_en_2, sep = " "))
+
+
+
+
+
