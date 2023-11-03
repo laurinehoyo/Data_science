@@ -102,6 +102,15 @@ data$expertise.date <- data$expertise.date |>
 # First we create a vector of characters which are the defective keywords.
 
 defective_keywords_de <- c("defekt", "defect", "startet nicht", "starttet nicht", "gebrochen", "lampe leuchtet", "für export", "gerausche", "geräusche", "gerräusche", "angebrochen", "angeschlagen", "beschädigt", "fehlerhaft", "lädiert", "nicht in Ordnung", "nicht mehr funktionierend", "schadhaft", "zerbrochen", "zerrissen", "kaputt" )
-defective_keywords_2_de <- c("schäden", "problem", "probleme", "schaden", "beule", "beulen", "kratzen", "kratzer", "dellen")
-ok_keywords_de <- c("ausbeulen")
-defective_keywords_fr <- c("témoin de moteur allumé")
+
+# We create a second list where the keywords are likely to have negation before them, so as to not falsely flag vehicles as defective. 
+# We will then create an "ok" keywords vector that overpower the second defective keywords vector.
+
+defective_keywords_2_de <- c("schäden", "problem", "schade", "probleme", "schaden")
+ok_keywords_de <- c(paste("ohne", defective_keywords_de_2, sep = " "), paste("kein", defective_keywords_fr_2, sep = " "), paste("keine", defective_keywords_fr_2, sep = " "))
+
+#We repeat these steps for other languages that listings could be in (French, Italian and English).
+
+defective_keywords_fr <- c("témoin", "bruit", "défaut", "ne démarre pas", "cassé", "pour export", "bruit", "endommagé", "endommager", "endommage", "défectueux", "defectueux", "pas en bon état", "ne fonctionne plus", "cassé")
+defective_keywords_fr_2 <- c("dégâts", "dégats", "degâts", "degats", "problème", "probleme", "dommages")
+ok_keywords_fr <- c(paste("sans", defective_keywords_fr_2, sep = " "), paste("pas de", defective_keywords_fr_2, sep = " "))
