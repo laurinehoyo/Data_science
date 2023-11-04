@@ -67,7 +67,7 @@ data$new.price[data$new.price < 5000] <- NA
 
 ### Let's drop some columns that have meaningless information, and that are a result of scraping the data. We will drop columns "web.scraper.order", "web.scraper.start.url", "page" and "annonce.link".
 
-data[-c(1:4)]
+data <- data %>% select(-web.scraper.order, -web.scraper.start.url, -page, -annonce.link)
 
 ### Now we want to set the "date" column to class "Date" to simplify plotting. To do this we need to format the values as yyyy.mm.dd, they are currently at mm.yyyy.
 
@@ -129,7 +129,7 @@ data$defective <- reduce(
   ),
   `|`
 )
+clean_data_audi <- data 
 
 # Finally, we can remove the defective vehicles from our dataset
 #clean_data <- data %>% filter(!defective)
-
