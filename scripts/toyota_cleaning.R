@@ -3,11 +3,11 @@
 library(tidyverse)
 library(lubridate)
 
-### We set our working directory to the data folder and load our dataset golf2
+### We set our working directory to the data folder and load our dataset toyota
 
-setwd("~/GitHub/Data_science/data")
-data <- read.csv("golf2.csv")
-golf2 <- read.csv("golf2.csv")
+setwd("~/Documents/GitHub/Data_science/data")
+data <- read.csv("toyota.csv")
+toyota <- read.csv("toyota.csv")
 
 ### We will start by keeping only the numbers in the columns "price", "kilometers" and "listing.id"
 
@@ -19,18 +19,6 @@ data$listing.id <- parse_number(data$listing.id)
 
 data$consumption <- na_if(data$consumption, "-")
 data$consumption <- parse_number(data$consumption)
-
-### We see that there are some outliers that shouldn't be here. The values jump from 11.6 l/100km to 160 l/100km. These are probably errors when scraping the data, the scraping software has maybe taken another field's value when the consumption field was blank.
-
-unique(data$consumption[order(data$consumption)])
-data$consumption[data$consumption > 12] <- NA
-
-# We can easily see all the unique values and the duplicate count with this code:
-
-#as.tibble(data$consumption) |>
-#  group_by_all() |>
-#  count() |>
-#  print(n = 77)
 
 ### Now let's do the same for column "power". We will keep the unit of measurement horsepower instead of kW.
 
@@ -76,7 +64,7 @@ unique(data$date[order(data$date)])
 
 # We remove one visible error
 
-data$date[2802] <- NA
+#data$date[2802] <- NA
 
 # Now we set the format to mm.yyyy (the vector needs to be a character vector for the parse_date function to work) then parse date. The final format is yyyy-mm-dd.
 
