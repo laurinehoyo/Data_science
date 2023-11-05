@@ -166,3 +166,7 @@ for (keyword in defective_keywords) {
 # We set to defective to TRUE where the column accident is TRUE.
 
 data$defective[data$accident] <- TRUE
+
+### Finally we export the data to our cleaned-data folder
+
+write.csv(data, file = "~/GitHub/Data_science/cleaned-data/golf2_cleaned.csv", row.names = FALSE)

@@ -5,7 +5,7 @@ library(lubridate)
 
 ### We set our working directory to the data folder and load our dataset toyota
 
-setwd("~/Documents/GitHub/Data_science/data")
+setwd("~/GitHub/Data_science/data")
 data <- read.csv("toyota.csv")
 toyota <- read.csv("toyota.csv")
 
@@ -154,3 +154,7 @@ for (keyword in defective_keywords) {
 # We set to defective to TRUE where the column accident is TRUE.
 
 data$defective[data$accident] <- TRUE
+
+### Finally we export the data to our cleaned-data folder
+
+write.csv(data, file = "~/GitHub/Data_science/cleaned-data/toyota_cleaned.csv", row.names = FALSE)

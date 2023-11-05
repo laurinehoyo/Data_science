@@ -1,7 +1,9 @@
+### We load the necessary libraries to clean our data
+
 library(tidyverse)
 library(lubridate)
 
-setwd("~/Documents/GitHub/Data_science/data")
+setwd("~/GitHub/Data_science/data")
 data <- read.csv("volvo2.csv")
 volvo2 <- read.csv("volvo2.csv")
 
@@ -86,26 +88,72 @@ data$expertise.date <- data$expertise.date |>
 
 # First we create a vector of characters which are the defective keywords.
 
-defective_keywords_de <- c("defekt", "defect", "startet nicht", "starttet nicht", "gebrochen", "lampe leuchtet", "für export", "gerausche", "geräusche", "gerräusche", "angebrochen", "angeschlagen", "beschädigt", "fehlerhaft", "lädiert", "nicht in Ordnung", "nicht mehr funktionierend", "schadhaft", "zerbrochen", "zerrissen", "kaputt" )
+defective_keywords_de <- c("defekt", "defect", "defeckt", "startet nicht", "starttet nicht", "gebrochen", "lampe leuchtet", "für export", "fur export", "gerausche", "geräusche", "gerräusche", "angebrochen", "angeschlagen", "beschädigt", "fehlerhaft", "lädiert", "nicht in Ordnung", "nicht mehr funktionierend", "nicht mehr gut", "schadhaft", "zerbrochen", "zerrissen", "kaputt" )
 
 # We create a second list where the keywords are likely to have negation before them, so as to not falsely flag vehicles as defective. 
 # We will then create an "ok" keywords vector that overpower the second defective keywords vector.
 
-defective_keywords_de_2 <- c("schäden", "problem", "schade", "probleme", "schaden")
-ok_keywords_de <- c(paste("ohne", defective_keywords_de_2, sep = " "), paste("kein", defective_keywords_de_2, sep = " "), paste("keine", defective_keywords_de_2, sep = " "))
+defective_keywords_2_de <- c("schäden", "problem", "schade", "probleme", "schaden")
+ok_keywords_de <- c(paste("ohne", defective_keywords_2_de, sep = " "), paste("kein", defective_keywords_2_de, sep = " "), paste("keine", defective_keywords_2_de, sep = " "))
 
 #We repeat these steps for other languages that listings could be in (French, Italian and English).
 
-defective_keywords_fr <- c("témoin", "bruit", "défaut", "ne démarre pas", "cassé", "pour export", "endommagé", "endommager", "endommage", "défectueux", "defectueux", "pas en bon état", "ne fonctionne plus", "cassé")
-defective_keywords_fr_2 <- c("dégâts", "dégats", "degâts", "degats", "problème", "probleme", "dommages")
-ok_keywords_fr <- c(paste("sans", defective_keywords_fr_2, sep = " "), paste("pas de", defective_keywords_fr_2, sep = " "), paste("aucun", defective_keywords_fr_2, sep = " "))
+defective_keywords_fr <- c("témoin", "bruit", "défaut", "ne démarre pas", "cassé", "pour export", "pour l'export", "endommagé", "endommager", "endommage", "défectueux", "defectueux", "pas en bon état", "ne fonctionne plus", "cassé")
+defective_keywords_2_fr <- c("dégâts", "dégats", "degâts", "degats", "problème", "probleme", "dommages")
+ok_keywords_fr <- c(paste("sans", defective_keywords_2_fr, sep = " "), paste("pas de", defective_keywords_2_fr, sep = " "), paste("aucun", defective_keywords_2_fr, sep = " "))
 
 defective_keywords_it <- c("spia", "rumore", "difetto", "non parte", "non si avvia", "rotto", "per l'esportazione", "per export", "danneggiato", "danneggiare", "danneggia", "difettoso", "non in buone condizioni", "non funziona più")
-defective_keywords_it_2 <- c("danni", "problemi", "problema")
-ok_keywords_it <- c(paste("nessun", defective_keywords_it_2, sep = " "), paste("senza", defective_keywords_it_2, sep = " "))
+defective_keywords_2_it <- c("danni", "problemi", "problema")
+ok_keywords_it <- c(paste("nessun", defective_keywords_2_it, sep = " "), paste("senza", defective_keywords_2_it, sep = " "))
 
 defective_keywords_en <- c("defective", "does not start", "won't start", "broken", "light on", "for export", "noise", "faulty", "not working", "no longer working")
-defective_keywords_en_2 <- c("damage", "damaged", "problem", "problems")
-ok_keywords_en <- c(paste("no", defective_keywords_en_2, sep = " "), paste("without", defective_keywords_en_2, sep = " "), paste("not", defective_keywords_en_2, sep = " "))
+defective_keywords_2_en <- c("damage", "damaged", "problem", "problems")
+ok_keywords_en <- c(paste("no", defective_keywords_2_en, sep = " "), paste("without", defective_keywords_2_en, sep = " "), paste("not", defective_keywords_2_en, sep = " "))
 
+# We create vectors for the keywords
 
+defective_keywords <- c(defective_keywords_de, defective_keywords_fr, defective_keywords_it, defective_keywords_en)
+defective_keywords_2 <- c(defective_keywords_2_de, defective_keywords_2_fr, defective_keywords_2_it, defective_keywords_2_en)
+ok_keywords <- c(ok_keywords_de, ok_keywords_fr, ok_keywords_it, ok_keywords_en)
+
+# We add the column "defective".
+
+data$defective <- logical(nrow(data))
+
+# We set to true if any keyword from defective_keywords_2 (susceptible to be a false positive) is in the subtitle column or description.text column.
+
+for (keyword in defective_keywords_2) {
+  data$defective <- data$defective | grepl(keyword, data$description.text, ignore.case = TRUE)
+}
+
+for (keyword in defective_keywords_2) {
+  data$defective <- data$defective | grepl(keyword, data$subtitle, ignore.case = TRUE)
+}
+
+# We set to FALSE all the TRUE values that contain a keyword in ok_keywords.
+
+for (keyword in ok_keywords) {
+  data$defective <- data$defective & !grepl(keyword, data$description.text, ignore.case = TRUE)
+}
+
+for (keyword in ok_keywords) {
+  data$defective <- data$defective & !grepl(keyword, data$subtitle, ignore.case = TRUE)
+}
+
+# We set to TRUE if any keyword from defective_keywords are in the subtitle or description.text columns.
+
+for (keyword in defective_keywords) {
+  data$defective <- data$defective | grepl(keyword, data$description.text, ignore.case = TRUE)
+}
+
+for (keyword in defective_keywords) {
+  data$defective <- data$defective | grepl(keyword, data$subtitle, ignore.case = TRUE)
+}
+
+# We set to defective to TRUE where the column accident is TRUE.
+
+data$defective[data$accident] <- TRUE
+
+### Finally we export the data to our cleaned-data folder
+
+write.csv(data, file = "~/GitHub/Data_science/cleaned-data/volvo2_cleaned.csv", row.names = FALSE)

@@ -5,7 +5,7 @@ library(lubridate)
 
 ### We set our working directory to the data folder and load our dataset golf2
 
-setwd("~/Downloads/Data_science-main/data")
+setwd("~/GitHub/Data_science/data")
 data <- read.csv("audi2.csv")
 audi2 <- read.csv("audi2.csv")
 
@@ -167,3 +167,7 @@ for (keyword in defective_keywords) {
 # We set to defective to TRUE where the column accident is TRUE.
 
 data$defective[data$accident] <- TRUE
+
+### Finally we export the data to our cleaned-data folder
+
+write.csv(data, file = "~/GitHub/Data_science/cleaned-data/audi2_cleaned.csv", row.names = FALSE)
