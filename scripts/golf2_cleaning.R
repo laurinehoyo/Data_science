@@ -167,6 +167,21 @@ for (keyword in defective_keywords) {
 
 data$defective[data$accident] <- TRUE
 
+### We set to NA if values are "-" in columns fuel.type, transmission and drivetrain.
+
+data$fuel.type <- na_if(data$fuel.type, "-")
+data$transmission <- na_if(data$transmission, "-")
+data$drivetrain <- na_if(data$drivetrain, "-")
+
+### We will create the columns vehicle.age and listing.age to be able to model without using dates. The unit of measurement will be days.
+
+# We define scraping_date which is the date of the most recently created listing (we assume this corresponds to the scraping date since there are many listings posted each day for our data sets).
+
+scraping_date <- data$created.date[order(data$created.date, decreasing = TRUE)[1]]
+
+data$vehicle.age <- scraping_date - data$date
+data$listing.age <- scraping_date - data$created.date
+
 ### Finally we export the data to our cleaned-data folder
 
 write.csv(data, file = "~/GitHub/Data_science/cleaned-data/golf2_cleaned.csv", row.names = FALSE)
