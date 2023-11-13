@@ -1,5 +1,5 @@
 -changer le titre
 reformuler objectifs
--find historical data
--rescrape regularly
--fix dates
+
+Victor
+- modele regression prix (question de recherche 1), faire des graphes pertinants qui accompagnent
