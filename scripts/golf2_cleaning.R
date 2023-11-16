@@ -182,6 +182,10 @@ scraping_date <- data$created.date[order(data$created.date, decreasing = TRUE)[1
 data$vehicle.age <- scraping_date - data$date
 data$listing.age <- scraping_date - data$created.date
 
+# One duplicate was found randomly when browsing the data (listing.id are different, the author might have created a second listing for the same vehicle), we remove it.
+
+data <- data[-2703,]
+
 ### Finally we export the data to our cleaned-data folder
 
 write.csv(data, file = "~/GitHub/Data_science/cleaned-data/golf2_cleaned.csv", row.names = FALSE)

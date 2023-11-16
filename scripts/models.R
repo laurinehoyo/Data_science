@@ -115,7 +115,6 @@ ggplot(data, aes(power, price)) +
 
 model1 <- lm(price ~ vehicle.age + vehicle.age.squared + kilometers + kilometers.squared + power)
 summary(model1)
-plot(model1)
 
 # We observe that every variable is statistically significant if we use them together in model1
 # Let's check the residuals vs fitted plot
@@ -125,10 +124,114 @@ ggplot(model1, aes(x = .fitted, y = .resid)) +
   geom_hline(yintercept = 0, color = "red", linewidth = 1) +
   geom_smooth()
 
-### We will now make simple linear models to test our logical variables (logit regression)
-# We first need to transform some columns into logicals
+# We will now remove defective vehicles and run the model again, this will hopefully stop the model from undervaluing cars.
+# Listings flagged as defective account for under 5% of our observations, so removing them won't have a significant impact on our data.
 
+table(data$defective)[2]/table(data$defective)[1]
+data_no_def <- filter(data, !defective)
+model2 <- lm(data_no_def$price ~ data_no_def$vehicle.age + data_no_def$vehicle.age.squared + data_no_def$kilometers + data_no_def$kilometers.squared + data_no_def$power)
+
+# Significance test
+
+summary(model2)
+
+# Residuals vs fitted plot
+
+ggplot(model2, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+# We don't notice much difference in the statistical tests or plots between the 2 models. The standard deviation of the residuals has decreased a small amount (~ 0.5%), but we can't consider this to be significant.
+
+sqrt(anova(model1)$"Mean Sq")[6] # Sd model1
+sqrt(anova(model2)$"Mean Sq")[6] # Sd model2
+
+### We will now run simple linear regressions for our logical variables. We first need to transform some of our columns into logical values.
+
+# For body.type, we can see that the majority of cars are either "Limousine", "Break" or "Cabriolet".
+# We will then create a logical column "wagon" which will be set to TRUE where body.type == "Break" is TRUE (Note: "break" is a reserved word). We do the same for columns "cabriolet", "small.car" and "coupe". When all 4 are FALSE, the body.type will be Limousine.
+
+table(body.type)
+data_logical <- data |>
+  filter(body.type != "Petite voiture") |>
+  filter(body.type != "Coupé")
+
+data$wagon <- body.type == "Break"
+data$cabriolet <- body.type == "Cabriolet"
+data$small.car <- body.type == "Petite voiture"
+data$coupe <- body.type == "Coupé"
+
+data_logical <- data |>
+  filter(body.type != "Petite voiture") |>
+  filter(body.type != "Coupé")
+
+# We will repeat the process for fuel.type. Columns will be "diesel", "hybrid", "natural.gas" and "electric"
+
+data$diesel <- fuel.type == "Diesel"
+data$hybrid <- ifelse(fuel.type == "Hybride léger essence/électrique" | 
+                      fuel.type == "Hybride rechargeable essence/électrique", 
+                    TRUE, FALSE)
+data$natural.gas <- fuel.type == "Gaz naturel (CNG) / Essence"
+data$electric <- fuel.type == "Électrique"
+
+# We repeat the process for transmission. We will only have one variable "manual". We consider "Boîte manuelle automatisée" to be automatic because it is very similar to an automatic transmission.
+
+data$manual <- ifelse(transmission == "Automatique" |
+                        transmission == "Boîte manuelle automatisée" |
+                        transmission == "Boîte automatique variable", 
+                      TRUE, FALSE)
+
+# We repeat the process for drivetrain. We will create one column "awd". We will neglect "Propulsion" and leave it as false, the same as for "Traction avant" because there are only 2 observations.
+
+data$awd <- drivetrain == "4 roues motrices"
+
+# Now we run the simple linear regressions for expertise, warranty, wagon, cabriolet, diesel, hybrid, natural.gas, electric, manual and awd. We note which ones are statistically significant at α = 0.01.
+
+attach(data)
+summary(lm(price ~ expertise)) # Significant
+summary(lm(price ~ warranty)) # Significant
+summary(lm(price ~ wagon)) # Significant
+summary(lm(price ~ cabriolet)) # Significant
+summary(lm(price ~ small.car)) # NOT Significant
+summary(lm(price ~ coupe)) # NOT Significant
+summary(lm(price ~ diesel)) # Significant
+summary(lm(price ~ hybrid)) # Significant
+summary(lm(price ~ natural.gas)) # NOT Significant
+summary(lm(price ~ electric)) # NOT Significant
+summary(lm(price ~ manual)) # Significant
+summary(lm(price ~ awd)) # Significant
+
+# Let's add all the significant variables to a model and see if they are still significant.
+
+model3 <- lm(price ~ expertise + warranty + wagon + cabriolet + diesel + hybrid + manual + awd)
+summary(model3)
+anova(model3)
+
+# They are all significant. Let's add them to our original model.
+
+model4 <- lm(price ~ vehicle.age + vehicle.age.squared + kilometers + kilometers.squared + power + expertise + warranty + wagon + cabriolet + diesel + hybrid + manual + awd)
+summary(model4)
+
+# We remove cabriolet as it is no longer significant.
+
+model4 <- lm(price ~ vehicle.age + vehicle.age.squared + kilometers + kilometers.squared + power + expertise + warranty + wagon + diesel + hybrid + manual + awd)
+summary(model4)
+
+# Let's check the residuals vs fitted plot and the standard deviation
+
+ggplot(model4, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+sqrt(anova(model4)$"Mean Sq")[13]
+sqrt(anova(model2)$"Mean Sq")[6]
+anova(model4)
+anova(model3)
 
 #############NOTES:
 # - check multicollinearity
-# - make model without defective cars
+# - make model4 without defective cars
+# - anova(model4) some variables are not significant, should we remove?
+# - try remove outliers/  try remove cars before year 2000
