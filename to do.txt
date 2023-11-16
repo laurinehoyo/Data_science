@@ -3,3 +3,4 @@ reformuler objectifs
 
 Victor
 - modele regression prix (question de recherche 1), faire des graphes pertinants qui accompagnent
+- try linear models with cars before 2000 removed
