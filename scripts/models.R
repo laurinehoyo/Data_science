@@ -131,3 +131,4 @@ ggplot(model1, aes(x = .fitted, y = .resid)) +
 
 #############NOTES:
 # - check multicollinearity
+# - make model without defective cars
