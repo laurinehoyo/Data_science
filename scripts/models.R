@@ -218,7 +218,7 @@ summary(model4)
 model4 <- lm(price ~ vehicle.age + vehicle.age.squared + kilometers + kilometers.squared + power + expertise + warranty + wagon + diesel + hybrid + manual + awd)
 summary(model4)
 
-# Let's check the residuals vs fitted plot and the standard deviation
+# All our variables are now significant. Our adjusted R-squared is 0.9015, which is the proportion of the variance of the price that is explained by our model. We consider this to be a good score. Let's check the residuals vs fitted plot and the standard deviation of the residuals.
 
 ggplot(model4, aes(x = .fitted, y = .resid)) +
   geom_point() +
@@ -226,9 +226,17 @@ ggplot(model4, aes(x = .fitted, y = .resid)) +
   geom_smooth()
 
 sqrt(anova(model4)$"Mean Sq")[13]
-sqrt(anova(model2)$"Mean Sq")[6]
+
+# The plot seems very similar to model2 and the standard deviation has decreased a small amount, which is an improvement. 
+
 anova(model4)
-anova(model3)
+model4_data <- select(data, c("price", "vehicle.age", "vehicle.age.squared", "kilometers", "kilometers.squared", "power", "expertise", "warranty", "wagon", "diesel", "hybrid", "manual", "awd"))
+cor_matrix_2 <- cor(model4_data, use = "complete.obs")
+cor_matrix_2
+corrplot(cor_matrix_2)
+
+#model test
+24530 + 1600*(-4.87) + 1600^2*(0.0003431) + 43900*(-0.1192) + 43900^2*(0.0000002383) + 301*65.09 + 1482 + 1034 + 0 + 0 + 0 + 1*1996
 
 #############NOTES:
 # - check multicollinearity
