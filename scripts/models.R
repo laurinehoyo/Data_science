@@ -238,6 +238,27 @@ corrplot(cor_matrix_2)
 #model test
 24530 + 1600*(-4.87) + 1600^2*(0.0003431) + 43900*(-0.1192) + 43900^2*(0.0000002383) + 301*65.09 + 1482 + 1034 + 0 + 0 + 0 + 1*1996
 
+# Model with cars older than 9000 days removed (before March 1999)
+
+data_no_vintage <- filter(data, vehicle.age < 9000)
+ggplot(data_no_vintage, aes(vehicle.age, price)) + 
+  geom_point() +
+  geom_smooth(method = lm) +
+  ylim(0, max(data$price))
+model5 <- lm(data_no_vintage$price ~ data_no_vintage$vehicle.age + data_no_vintage$vehicle.age.squared + data_no_vintage$kilometers + data_no_vintage$kilometers.squared + data_no_vintage$power + data_no_vintage$expertise + data_no_vintage$warranty + data_no_vintage$wagon + data_no_vintage$diesel + data_no_vintage$manual + data_no_vintage$awd)
+# We remove hybrid since it is no longer significant
+summary(model5)
+anova(model5)
+sqrt(anova(model5)$"Mean Sq")[12] # Standard deviation of residuals has decreased significantly
+
+# Model4 without defectives
+
+data_no_def <- filter(data, !defective)
+model6 <- lm(data_no_def$price ~ data_no_def$vehicle.age + data_no_def$vehicle.age.squared + data_no_def$kilometers + data_no_def$kilometers.squared + data_no_def$power + data_no_def$expertise + data_no_def$warranty + data_no_def$wagon + data_no_def$diesel + data_no_def$hybrid + data_no_def$manual + data_no_def$awd)
+summary(model6)
+anova(model6)
+sqrt(anova(model6)$"Mean Sq")[13]
+
 #############NOTES:
 # - check multicollinearity
 # - make model4 without defective cars
