@@ -180,7 +180,7 @@ data$electric <- fuel.type == "Électrique"
 data$manual <- ifelse(transmission == "Automatique" |
                         transmission == "Boîte manuelle automatisée" |
                         transmission == "Boîte automatique variable", 
-                      TRUE, FALSE)
+                      FALSE, TRUE)
 
 # We repeat the process for drivetrain. We will create one column "awd". We will neglect "Propulsion" and leave it as false, the same as for "Traction avant" because there are only 2 observations.
 
@@ -235,8 +235,8 @@ cor_matrix_2 <- cor(model4_data, use = "complete.obs")
 cor_matrix_2
 corrplot(cor_matrix_2)
 
-#model test
-24530 + 1600*(-4.87) + 1600^2*(0.0003431) + 43900*(-0.1192) + 43900^2*(0.0000002383) + 301*65.09 + 1482 + 1034 + 0 + 0 + 0 + 1*1996
+#model6 test
+25510 + (-4.861)*2147 + (0.0003431)*(2147^2) + (-0.1207)*83100 + (0.0000002382)*(83100^2) + 64.82*150 + 1364*1 + 851.8*1 + (-594.3)*1 + 1036*1 + 982.2*0 + (-560.8)*0 + 2056*1
 
 # Model with cars older than 9000 days removed (before March 1999)
 
@@ -246,7 +246,9 @@ ggplot(data_no_vintage, aes(vehicle.age, price)) +
   geom_smooth(method = lm) +
   ylim(0, max(data$price))
 model5 <- lm(data_no_vintage$price ~ data_no_vintage$vehicle.age + data_no_vintage$vehicle.age.squared + data_no_vintage$kilometers + data_no_vintage$kilometers.squared + data_no_vintage$power + data_no_vintage$expertise + data_no_vintage$warranty + data_no_vintage$wagon + data_no_vintage$diesel + data_no_vintage$manual + data_no_vintage$awd)
+
 # We remove hybrid since it is no longer significant
+
 summary(model5)
 anova(model5)
 sqrt(anova(model5)$"Mean Sq")[12] # Standard deviation of residuals has decreased significantly
