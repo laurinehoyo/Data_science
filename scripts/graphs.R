@@ -1,7 +1,7 @@
 ### Graphs
 
 library(tidyverse)
-setwd("~/GitHub/Data_science/cleaned-data")
+setwd("Downloads/Data_science-main-2/cleaned-data")
 
 data <- read.csv("golf2_cleaned.csv")
 attach(data)
@@ -10,7 +10,10 @@ attach(data)
 
 ggplot(data = data) +
   geom_point(mapping = aes(x = vehicle.age, y = price, color = warranty)) +
-  geom_smooth(method = loess, mapping = aes(vehicle.age, price), color = "red")
+  scale_color_manual(values = c("red", "darkgreen", "darkgrey")) +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "gainsboro"))+
+  geom_smooth(method = loess, mapping = aes(vehicle.age, price), color = "black")
 
 # In the graph above, thanks to the conditional means smoothing curve, we can see that the average price goes up after a vehicle age of approx. 9000 days (= 24 years, 7 months, 21 days) which is counter intuitive.
 # One hypothesis would be that these cars could be considered as vintage or collector cars, and therefore won't appeal to the average buyer, who is a daily driver. These types of cars have usually been very well maintained and have low mileage, which could also explain this overvaluation.
@@ -20,13 +23,31 @@ ggplot(data = data) +
 ggplot(data = data) +
   geom_point(mapping = aes(x = vehicle.age, y = price, size = power, color = consumption), alpha = 0.5)
 
+ggplot(data = data) +
+  geom_point(mapping = aes(x = vehicle.age, y = price, size = power, color = consumption), alpha = 0.5) +
+  scale_color_gradient(low = "yellow", high = "red") +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "gainsboro"))
+
 ### kilometers - price plots
+ggplot(data = data) +
+  geom_point(mapping = aes(x = kilometers, y = price), color = "steelblue") +
+  geom_smooth(mapping = aes(kilometers, price), color = "orange") +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "gainsboro"))
 
 ggplot(data = data) +
   geom_point(mapping = aes(x = kilometers, y = price)) +
   geom_smooth(mapping = aes(kilometers, price))
 
 ### kilometers - vehicle age plots
+
+ggplot(data = data) +
+  geom_point(mapping = aes(kilometers, vehicle.age), color = "lightblue") +  # Changer la couleur des points ici
+ 
+  geom_smooth(method = lm, mapping = aes(kilometers, vehicle.age), color = "darkred") +
+  theme_minimal() +
+  theme(panel.background = element_rect(fill = "gainsboro"))
 
 ggplot(data = data) +
   geom_point(mapping = aes(kilometers, vehicle.age)) +
@@ -36,3 +57,4 @@ ggplot(data = data) +
   geom_point(mapping = aes(kilometers, vehicle.age)) +
   geom_quantile(mapping = aes(x = kilometers, y = vehicle.age)) +
   geom_smooth(method = lm, mapping = aes(kilometers, vehicle.age), color = "green")
+
