@@ -3,6 +3,7 @@
 library(tidyverse)
 library(corrplot)
 library(Hmisc)
+library(car)
 setwd("~/GitHub/Data_science/cleaned-data")
 data <- read.csv("golf2_cleaned.csv")
 golf2_cleaned <- read.csv("golf2_cleaned.csv")
@@ -235,9 +236,6 @@ cor_matrix_2 <- cor(model4_data, use = "complete.obs")
 cor_matrix_2
 corrplot(cor_matrix_2)
 
-#model6 test
-25510 + (-4.861)*2147 + (0.0003431)*(2147^2) + (-0.1207)*83100 + (0.0000002382)*(83100^2) + 64.82*150 + 1364*1 + 851.8*1 + (-594.3)*1 + 1036*1 + 982.2*0 + (-560.8)*0 + 2056*1
-
 # Model with cars older than 9000 days removed (before March 1999)
 
 data_no_vintage <- filter(data, vehicle.age < 9000)
@@ -253,7 +251,7 @@ summary(model5)
 anova(model5)
 sqrt(anova(model5)$"Mean Sq")[12] # Standard deviation of residuals has decreased significantly
 
-# Model4 without defectives
+# Model4 without defectives (model6)
 
 data_no_def <- filter(data, !defective)
 model6 <- lm(data_no_def$price ~ data_no_def$vehicle.age + data_no_def$vehicle.age.squared + data_no_def$kilometers + data_no_def$kilometers.squared + data_no_def$power + data_no_def$expertise + data_no_def$warranty + data_no_def$wagon + data_no_def$diesel + data_no_def$hybrid + data_no_def$manual + data_no_def$awd)
@@ -261,8 +259,43 @@ summary(model6)
 anova(model6)
 sqrt(anova(model6)$"Mean Sq")[13]
 
+ggplot(model6, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+# We will test model6 for multicollinearity
+
+model6_data <- select(data_no_def, c("price", "vehicle.age", "vehicle.age.squared", "kilometers", "kilometers.squared", "power", "expertise", "warranty", "wagon", "diesel", "hybrid", "manual", "awd"))
+cor_matrix_3 <- cor(model6_data, use = "complete.obs")
+cor_matrix_3
+corrplot(cor_matrix_3)
+
+# The highest absolute value of a correlation coefficient in the matrix (except for the diagonal and the correlations between kilometers and vehicle.age and their respective squared values) is price/kilometers at 0.755. We will check our VIF values.
+
+vif(model6)
+model7 <- lm(data_no_def$price ~ data_no_def$kilometers + data_no_def$kilometers.squared + data_no_def$power + data_no_def$expertise + data_no_def$warranty + data_no_def$wagon + data_no_def$diesel + data_no_def$hybrid + data_no_def$manual + data_no_def$awd)
+vif(model7)
+summary(model7)
+model8 <- lm(data_no_def$price ~ data_no_def$vehicle.age + data_no_def$vehicle.age.squared + data_no_def$power + data_no_def$expertise + data_no_def$warranty + data_no_def$wagon + data_no_def$diesel + data_no_def$hybrid + data_no_def$manual + data_no_def$awd)
+vif(model8)
+summary(model8)
+
+#Our VIF values are much smaller when we remove either kilometers or vehicle.age, but the VIFs for those variables remain at around 10.
+
+# Model 6 formula
+25510 + (-4.861)*2147 + (0.0003431)*(2147^2) + (-0.1207)*83100 + (0.0000002382)*(83100^2) + 64.82*150 + 1364*1 + 851.8*1 + (-594.3)*1 + 1036*1 + 982.2*0 + (-560.8)*0 + 2056*1
+
+# Let's add a residuals column to the data, which will be the residuals calculated by model6. We remove all rows with missing values in data_no_def first.
+
+data_no_def <- data_no_def[complete.cases(data_no_def[,c("price", "vehicle.age", "vehicle.age.squared", "kilometers", "kilometers.squared", "power", "expertise", "warranty", "wagon", "diesel", "hybrid", "manual", "awd")]),]
+data_no_def$residuals <- model6$residuals
+
+data_no_def <- data_no_def |>
+  mutate(count = row_number()) |>
+  select(count, everything())
+
 #############NOTES:
 # - check multicollinearity
-# - make model4 without defective cars
 # - anova(model4) some variables are not significant, should we remove?
 # - try remove outliers/  try remove cars before year 2000
