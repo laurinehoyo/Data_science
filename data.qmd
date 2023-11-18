@@ -1,0 +1,101 @@
+# Data
+
+```{r, echo = FALSE, message = FALSE}
+source(here::here("scripts/setup.R"))
+```
+
+-   Sources
+
+    We obtained the five datasets corresponding to distinct car models from various brands and groups by extracting data from the used car market website *Autoscout24.ch*. The data extraction was carried out using the Chrome extension *webscaper.io*. Each table represents the total listings of used cars for a particular make and model at one given point in time. The data for the different tables were scraped between 07.10.2023 and 11.10.2023.
+
+-   Description
+
+    The datasets comprise five distinct car models originating from various brands. The models are the following : Audi A3, Skoda Octavia, Toyota Yaris, Volkswagen Golf, and Volvo XC60. While each table shares identical variables, the number of observations varies. Each observation represents a car sold on the website Autoscout24.ch.
+
+    Below are the variables that we kept :
+
+    +--------------------------+------------------------------------------------------+
+    | Title                    | The title of the listing                             |
+    +--------------------------+------------------------------------------------------+
+    | Subtitle                 | The subtitle of the listing                          |
+    +--------------------------+------------------------------------------------------+
+    | Price                    | the price of the car                                 |
+    +--------------------------+------------------------------------------------------+
+    | Date                     | the age of the car                                   |
+    +--------------------------+------------------------------------------------------+
+    | Body.type                | the body type of the car                             |
+    +--------------------------+------------------------------------------------------+
+    | Kilometers               | the kilometers traveled                              |
+    +--------------------------+------------------------------------------------------+
+    | Fuel.type                | the type of fuel used by the car                     |
+    +--------------------------+------------------------------------------------------+
+    | Transmission             | the transmission of the car                          |
+    +--------------------------+------------------------------------------------------+
+    | Power                    | the power of the car, in horsepower                  |
+    +--------------------------+------------------------------------------------------+
+    | Drivetrain               | the drivetrain of the car                            |
+    +--------------------------+------------------------------------------------------+
+    | Consumption              | the consumption of the car                           |
+    +--------------------------+------------------------------------------------------+
+    | Expertise                | whether the car has been expertised or not           |
+    +--------------------------+------------------------------------------------------+
+    | Expertise.date           | the date of expertise if the car has been expertised |
+    +--------------------------+------------------------------------------------------+
+    | Accident                 | whether the car had an accident or not               |
+    +--------------------------+------------------------------------------------------+
+    | Warranty                 | whether the car has a warranty or not                |
+    +--------------------------+------------------------------------------------------+
+    | Warranty.details         | the details of the warranty, if there is one         |
+    +--------------------------+------------------------------------------------------+
+    | Location                 | the location of the car                              |
+    +--------------------------+------------------------------------------------------+
+    | Listing.id               | the listing ID                                       |
+    +--------------------------+------------------------------------------------------+
+    | Created.date             | the publication date of the car listing              |
+    +--------------------------+------------------------------------------------------+
+    | New.price                | the new price of the car                             |
+    +--------------------------+------------------------------------------------------+
+    | Description.text         | the description of the car                           |
+    +--------------------------+------------------------------------------------------+
+    | Defective                | whether the car is defective or not                  |
+    +--------------------------+------------------------------------------------------+
+    | Vehicle.age              | the age of the car, in days                          |
+    +--------------------------+------------------------------------------------------+
+    | Listing.age              | the age of the listing, in days                      |
+    +--------------------------+------------------------------------------------------+
+
+-   Wrangling/cleaning
+
+The cleaning process of our data was quite tedious. We used the same process for each of the five datasets, as they come from the same website and contain the same variables. 
+
+The necessary libraries to clean our data were the packages "tidyverse", and "lubridate", which helped us format our dates. 
+
+We started by only keeping the numbers in the columns price, kilometers, and listing.id by using the parse_number function. We do this because some observations may include characters such as "CHF", "km/h", and so on. 
+
+We then took care of the column consumption and got rid of "l/100km" so as to only keep the number, and we set every "-" to "NA". When doing this, we saw that there were some outliers that should not have been in our dataset. Indeed, values jumped from 11.6 l/100km to 160 l/100km. This probably occurred when we scraped the data, there were probably some errors. Maybe the scraping software took another field's value when the consumption field was blank. We then do the same process for the column power. We kept the unit of measurement horsepower instead of kW.
+
+Now taking care of the column expertise, we changed the "oui/non" values to logical values TRUE/FALSE. We did the same for the accident and warranty columns.
+
+We then fixed the column new.price by setting values "Oui/Non" to "NA", because it was probably an error while scraping the data. We then parsed numbers from the remaining rows. While doing this, we saw in unique values some unrealistic new car prices, notably 1, 54, and 4309. We assumed these were errors and removed them. 
+
+Afterwards, we dropped columns that contained meaningless information, and that are a result of scraping the data, such as webscraper.order, web.scraper.start.url, page and annonce.link. 
+
+After this, we proceeded to use the package lubridate. We wanted to set the date column to class "Date" to simplify plotting. To do this we needed to format the values as YYYY.MM.DD, as they were originally at MM.YYYY. We looked at the data first and we removed the visible errors. We set the format to MM.YYYY, as the vector needs to be a character vector for the parse_date function to work, and we then parsed date. The final format is YYYY-MM-DD. 
+
+We did the same for the expertise.date and created.date columns. 
+
+We added a column to the datasets where values will be TRUE if the vehicle is potentially defective or in need of repairs, and FALSE if not. We removed these defective vehicles when creating our model because they could bias it, making it underestimate prices for functioning vehicles. We identified defective vehicles in two ways. The first way was using the accident column, which is TRUE if the seller has flagged the vehicle as having been in an accident in the past, and FALSE if not. The second way was to look for keywords in columns title, subtitle, and description.text which are common in listings with defective vehicles. We created a column where values are TRUE if one of the defective phrases is detected, and FALSE if not. If either of these two identifiers were TRUE, the vehicle would be deemed defective and not eligible to serve as data for creating our model.
+
+We first created a vector of characters which are the defective keywords. We then created a second list where the keywords were likely to have negation before them, so as to not falsely flag vehicles as defective. We then created an "ok" keywords vector that overpowered the second defective keywords vector. We did the same for other languages that listings could be in, such as French, Italian, or English. We then created vectors for the keywords and added the column defective. 
+
+We set to TRUE if any keyword from the vector is in the subtitle or description.text column, using the "for" function. We set to FALSE all the TRUE values that contain a keyword in the vector ok_keywords. We set to defective to TRUE where the column accident is TRUE. 
+
+We set to NA if values are "-" in the fuel.type, transmission and drivetrain columns.
+
+We created the columns *vehicle.age* and *listing.age* to be able to model without using dates. The unit of measurement is in days.
+
+We defined scraping_date which is the date of the most recently created listing, we assumed this corresponds to the scraping date since there are many listings posted each day for our data sets.
+
+-   Spotting mistakes and missing data (could be part of EDA too)
+
+-   Listing anomalies and outliers (could be part of EDA too)
