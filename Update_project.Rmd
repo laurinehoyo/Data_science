@@ -80,7 +80,68 @@ We defined scraping_date which is the date of the most recently created listing,
 
 
 __2. EXPLORATORY DATA ANALYSIS__
+
+Audi A3
+Relationships between numerical variables 
+Firstly, we made a model with our numerical variables (vehicle.age, kilometers, power and consumption). We started by creating a correlation matrix with the numeric columns, using the corrplot function. By looking at the numbers and the plot, we see that kilometers and vehicle.age are negatively correlated with price, and power is positively correlated. Consumption seems to have no effect on price, so we will probably not include this variable. 
+
+```{r, results='hide', include=FALSE}
+library(tidyverse)
+library(corrplot)
+library(Hmisc)
+library(car)
+setwd("~/GitHub/Data_science/cleaned-data")
+data <- read.csv("audi2_cleaned.csv")
+audi2_cleaned <- read.csv("audi2_cleaned.csv")
+attach(data)
+
+data_numeric <- select(data, c("price", "vehicle.age", "kilometers", "power", "consumption"))
+data_numeric
+```
+
 ```{r}
+
+cor_matrix <- cor(data_numeric, use = "complete.obs")
+cor_matrix
+corrplot(cor_matrix)
+
+```
+ 
+Simple linear models (and residuals vs fitted plots)
+We made simple linear models for these four variables and looked at their respective plots, by setting a significance level of α = 0.01.
+ 
+Consumption is not statistically significant at α = 0.01. We did not include this variable in our model.
+The relationship between price and vehicle.age is obviously not linear. We checked this with a residuals vs fitted plot, which should show us a horizontal line if the data is linear. We tried to use the LOESS method instead of a linear model. We tried to fix this using a second-degree variable (vehicle.age.squared). By checking the residuals vs fitted plot with the squared variable, we prefer to use this model, but unfortunately, we can observe heteroskedasticity in the errors.
+We notice the same problem to a lesser extent with kilometers. We added a second-degree variable (kilometers.squared). By adding it, we found that this is a better solution. 
+Power is more or less linear so there is no need to add a second degree variable.
+ 
+Multiple linear models
+We then made a linear model with these last 5 variables together, and we observe that every variable is statistically significant. 
+We then removed defective vehicles and ran the model again, hoping the model would stop undervaluing cars. Listings flagged as defective account for less than 5% of our observations, so removing them does not have a significant impact on our data, as we can see in our regression summary and the residuals vs fitted plot. We also don’t notice much difference in the statistical tests or plots between the 2 models when looking at the ANOVA.
+ 
+Relationships between logical variables
+We then ran simple linear regressions for our logical variables. In order to do that, we needed to transform some of our columns into logical values.
+ 
+-       For body.type, we saw that the majority of cars were either “"Limousine", "Break" or "Cabriolet". We then created a logical column "wagon" which will be set to TRUE where body.type == "Break" is TRUE ("break" is a reserved word). We do the same for columns "cabriolet", "small.car" and "coupe". When all 4 are FALSE, the body.type will be Limousine.  
+-       We repeated the process for fuel.type. Columns will be "diesel", "hybrid", "natural.gas" and "electric".
+-       We repeated the process for transmission. We only have one variable "manual". We considered "Boîte manuelle automatisée" to be automatic because it is very similar to an automatic transmission.
+-       We repeated the process for drivetrain. We created one column "awd". which stands for all wheel drive.
+ 
+Simple linear models 
+We then ran the simple linear regression for expertise, warranty, wagon, cabriolet, diesel, hybrid, natural.gas, electric, manual and awd. At α = 0.01, we can see that expertise, warranty, diesel, hybrid, manual, and awd are significant, while the remaining variables are not. Wagon (which is break), cabriolet, coupé and small cars are probably not significant because there are not enough observations to actually have a significance. Same for natural gas and electric cars, as there are few observations.
+ 
+Multiple linear models  
+We kept the significant variables and added them to a model to see if they would remain significant, and we see that diesel is no longer significant. We then added our logical variables into our original model with the numeric variables, and we now see that diesel is significant, but not hybrid. By running our model without hybrid, we see that all of our variables are now significant. Our adjusted R-squared is 0.9154, which is the proportion of the variance of the price that is explained by our model. We consider this to be a good score. 
+ 
+By checking the residuals vs fitted plot and the standard deviation of the residuals, we see that the plot seems similar to model 2 and the standard deviation has decreased a small amount, which is an improvement. We however still have a problem with heteroskedasticity in the errors. 
+For the Audi A3, we made a model by removing cars more expensive than 40’000 CHF, because the heteroskedasticity observed was mainly when fitted values exceeded 40000. By removing expertise because it is no longer significant, we observe that the standard deviation of the errors has improved significantly. 
+
+Residuals vs fitted plot
+When we look at the residuals vs fitted plot, we see that it looks much better than model 4’s plot.
+
+```{r}
+
+
 
 ```
 
