@@ -1,0 +1,25 @@
+---
+title: "Introduction"
+format: html
+editor: visual
+---
+
+## Introduction
+
+***1.1 Overview and Motivation***
+
+The origin of this project stems from the desire to purchase a second-hand moped by a member of our group. The idea was to use linear regression to easily find the best possible available offer for a used moped of a specific make and model, given its mileage and age. A model was then built to find the most undervalued moped for sale online. We thought the same approach could be applied for valuing second-hand cars, and there would also be a lot more data available since they are more prevalent than motorcycles. We could also consider other relevant variables for a more in-depth comparison of prices and characteristics of the vehicles. Autoscout24.ch was found to be the perfect candidate for this because it is the largest online market for used cars in Switzerland, and the listings include a lot of additional information about the car that other websites do not, such as horsepower, fuel consumption, etc.
+
+The objective of this project is to make an easy to use tool that helps buyers find the best offers on the market for a specific make and model, given its characteristics. Autoscout24 does not display the estimated value of vehicles on the listings, and places paid listings at the top of the search results. Our model could potentially help buyers find the best deals on this marketplace more easily. We also aim to predict vehicle depreciation over time, and help buyers choose a car that retains more of its value by identifying the observable characteristics of these cars. Another possible use for our models would be to help a dealership or car buying service such as webuyanycar.com set prices at which they can buy customers' cars and stay profitable. We will also try to find a relationship between the car's characteristics and the listing duration time, in order to determine which cars will sell the fastest.
+
+***1.2 Research question***
+
+The main objective of our project is to identify and understand the physical factors that most influence used car prices. Specifically, we aim to determine how characteristics such as vehicle age, mileage, engine power and fuel consumption, as well as categorical characteristics such as fuel type, transmission and traction, affect the market value of used cars. By understanding these relationships, we aim to provide valuable insights for used car buyers, enabling them to more accurately assess the fair value of vehicles on the market. Ultimately, the aim is to achieve a clearer, more quantitative understanding of what drives used car prices, which can help make the used car market more transparent and efficient for all concerned.
+
+To achieve these objectives, our study is structured around three pivotal questions:
+
+Which physical factors have the biggest impact on used car prices?
+
+What are the factors that influence the duration of a listing for a used car?
+
+How do different car features affect value depreciation over time?
