@@ -288,6 +288,8 @@ data_no_def <- data_no_def |>
   mutate(count = row_number()) |>
   select(count, everything())
 
+write.csv(data, "golf_models_data.csv")
+
 #############NOTES:
 # - check multicollinearity
 # - anova(model4) some variables are not significant, should we remove?
