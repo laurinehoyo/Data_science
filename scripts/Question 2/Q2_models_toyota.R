@@ -19,7 +19,7 @@ attach(data2)
 # First we want to build a model with our numerical variables (vehicle.age, kilometers, power, consumption, price), to try to explain the impact on the listing age. 
 # We start by creating a correlation matrix with the numeric columns
 
-data_numeric <- select(created.data_clean, c("price", "vehicle.age", "kilometers", "power", "consumption", "listing.age"))
+data_numeric <- select(data2, c("price", "vehicle.age", "kilometers", "power", "consumption", "listing.age"))
 data_numeric
 cor_matrix <- cor(data_numeric, use = "complete.obs")
 
@@ -121,16 +121,16 @@ data2$coupe <- body.type == "Coupé"
 
 data2$diesel <- fuel.type == "Diesel"
 data2$hybrid <- ifelse(fuel.type == "Hybride léger essence/électrique" | 
-                        fuel.type == "Hybride rechargeable essence/électrique" |
-                        fuel.type == "Hybride léger diesel/électrique", 
-                      TRUE, FALSE)
+                         fuel.type == "Hybride rechargeable essence/électrique" |
+                         fuel.type == "Hybride léger diesel/électrique", 
+                       TRUE, FALSE)
 
 # We repeat the process for transmission. We will only have one variable "manual". We consider "Boîte manuelle automatisée" to be automatic because it is very similar to an automatic transmission.
 
 data2$manual <- ifelse(transmission == "Automatique" |
-                        transmission == "Boîte manuelle automatisée" |
-                        transmission == "Boîte automatique variable", 
-                      FALSE, TRUE)
+                         transmission == "Boîte manuelle automatisée" |
+                         transmission == "Boîte automatique variable", 
+                       FALSE, TRUE)
 
 # We repeat the process for drivetrain. We will create one column "awd".
 
@@ -140,20 +140,51 @@ data2$awd <- drivetrain == "4 roues motrices"
 attach(data2)
 summary(lm(listing.age ~ expertise)) # not Significant
 summary(lm(listing.age ~ warranty)) # not Significant
-summary(lm(listing.age ~ coupe)) # NOT Significant
+#summary(lm(listing.age ~ coupe)) # NOT Significant
 summary(lm(listing.age ~ sedan)) # not Significant
 summary(lm(listing.age ~ diesel)) # not Significant
 summary(lm(listing.age ~ hybrid)) # NOT Significant
 summary(lm(listing.age ~ manual)) # NOT Significant
 summary(lm(listing.age ~ awd)) # not Significant
 
+
+
+
+
 # ajouter une colonne avec les residuals du model 4 
 
-model4 <- lm(listing.age ~ price + vehicle.age + kilometers + power + consumption + warranty + awd)
+model4 <- lm(listing.age ~ price + vehicle.age + kilometers + power + consumption + expertise  + sedan + diesel + hybrid + manual + awd)
 summary(model4)
-model4 <- lm(listing.age ~ price + vehicle.age + kilometers + power + consumption + warranty + awd, data = data2, na.action = na.exclude)
+
+# Residual 
+model4 <- lm(listing.age ~ price + vehicle.age + kilometers + power + consumption + expertise+ warranty +sedan +diesel+hybrid+ manual + awd, data = data2, na.action = na.exclude)
 data2$residuals_model4 <- resid(model4)
 summary(data2$residuals_model4)
 residuals_model4 <- resid(model4)
 data2$residuals_model4 <- residuals_model4
 
+# difference netre ce que le model a prédit et le prix de la voiture, donc le plus i est négatif, plus l'annonce sera une bone offre et si le résiduel est positif ou tres grand, c'est donc une mauvaise offre 
+# est ce que les voitures qui on un prix beaucoup plus bas se vendent plus lentement ? 
+
+correlation <- cor(data2$residuals_model4, data2$listing.age, use = "complete.obs")
+print(correlation)
+
+#la corrélation est positive et significative, cela suggère que les voitures dont le prix est plus élevé que prévu tendent à rester plus longtemps dans les annonces. 
+ggplot(data2, aes(x = residuals_model4, y = listing.age)) + 
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ylim(0, max(data2$listing.age, na.rm = TRUE)) +
+  xlab("Residuals (Difference between Predicted and Actual Price)") +
+  ylab("Listing Age") +
+  ggtitle("Scatterplot of Residuals vs Listing Age with Regression Line")
+
+
+#ce graphique suggère que les voitures dont le prix est plus élevé que ce qui est prédit par le modèle tendent à être sur les annonces plus longtemps, ce qui pourrait indiquer que les voitures surévaluées prennent plus de temps à se vendre
+
+# etudions la correlation des body type avec le listing age 
+# problème avec la coupé, affichage NA ?? 
+model4_data <- select(data2, c("price", "vehicle.age", "kilometers", "power", "consumption", "listing.age", "expertise","sedan", "diesel", "hybrid","manual", "awd"))
+cor_matrix_2 <- cor(model4_data, use = "complete.obs")
+cor_matrix_2
+corrplot(cor_matrix_2)
+cor_matrix
