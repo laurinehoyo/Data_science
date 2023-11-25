@@ -121,7 +121,7 @@ ggplot(lm(listing.age ~ power), aes(x = .fitted, y = .resid)) +
 # For body.type, we can see that the majority of cars are either "Limousine" or "Petite voiture".
 # We will create a logical column "sedan" which will be set to TRUE where body.type == "Limousine" is TRUE. We do the same for column "coupe". When both are FALSE, the body.type will be "Petite voiture".
 
-table(drivetrain)
+table(fuel.type)
 
 data2$sedan <- body.type == "Limousine"
 data2$coupe <- body.type == "Coupé"
@@ -149,7 +149,7 @@ data2$awd <- drivetrain == "4 roues motrices"
 attach(data2)
 summary(lm(listing.age ~ expertise)) # not Significant
 summary(lm(listing.age ~ warranty)) # not Significant
-#summary(lm(listing.age ~ coupe)) # NOT Significant
+summary(lm(listing.age ~ coupe)) # NOT Significant
 summary(lm(listing.age ~ sedan)) # not Significant
 summary(lm(listing.age ~ diesel)) # not Significant
 summary(lm(listing.age ~ hybrid)) # NOT Significant
@@ -158,12 +158,14 @@ summary(lm(listing.age ~ awd)) # not Significant
 
 
 
-
+## la partie en dessous est fausse. Il faut que tu fasse la régression avec price comme variable dépendante (exactement comme celle de la première question de recherche). Tu peux nommer le modèle model1 car il n'y a pas d'autres modèles dans ton code et ça prête à confusion.
 
 # ajouter une colonne avec les residuals du model 4 
 
 model4 <- lm(listing.age ~ price + vehicle.age + kilometers + power + consumption + expertise  + sedan + diesel + hybrid + manual + awd)
 summary(model4)
+
+
 
 # Residual 
 model4 <- lm(listing.age ~ price + vehicle.age + kilometers + power + consumption + expertise+ warranty +sedan +diesel+hybrid+ manual + awd, data = data2, na.action = na.exclude)
@@ -177,6 +179,11 @@ data2$residuals_model4 <- residuals_model4
 
 correlation <- cor(data2$residuals_model4, data2$listing.age, use = "complete.obs")
 print(correlation)
+
+ggplot(data2, mapping = aes(residuals_model4, listing.age)) +
+  geom_point()
+plot(data2$residuals_model4)
+plot(data2$listing.age)
 
 #la corrélation est positive et significative, cela suggère que les voitures dont le prix est plus élevé que prévu tendent à rester plus longtemps dans les annonces. 
 ggplot(data2, aes(x = residuals_model4, y = listing.age)) + 
