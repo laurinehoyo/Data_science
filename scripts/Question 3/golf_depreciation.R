@@ -110,6 +110,30 @@ summary(lm(depreciation ~ awd))
 ggplot(data, mapping = aes(depreciation, awd)) +
   geom_point() 
 
+# We will test all variables together
+
+model1 <- lm(depreciation ~ price + new.price + kilometers + vehicle.age + power + consumption + expertise + warranty + wagon + cabriolet + diesel + hybrid + electric + manual + awd)
+summary(model1)
+
+# We test only variables that don't change over a vehicle's life. We will also create a variable rel_dep which is relative depreciation, and regress on this variable as well.
+
+model2 <- lm(depreciation ~ power + consumption + wagon + cabriolet + diesel + hybrid + electric + manual + awd)
+summary(model2)
+
+data$rel_dep <- 1 - price/new.price
+attach(data)
+
+model3 <- lm(rel_dep ~ power + consumption + wagon + cabriolet + diesel + hybrid + electric + manual + awd)
+summary(model3)
+
+# We make some plots with rel_dep
+
+
+
 ###### NOTES. 
 # do all variables together
 #for some variables like wagon, maybe a lot of golfs used to be wagons before and now not so much, which is why the depreciation is greater for wagons (they are older and vehicle age is correlated to depreciation)
+# should we only check for depreciation with factors that don't change during a vehicle's life (power, fuel.type, body.type, transmission, ) 
+# maybe we should control for variables that change over a car's lifespan and that directly affect how much it has depreciated (kilometers, vehicle.age, expertise, warranty, defective) (or remove defective)
+# we should model relative depreciation instead of depreciation
+
