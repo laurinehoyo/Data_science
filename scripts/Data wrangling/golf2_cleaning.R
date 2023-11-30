@@ -186,6 +186,10 @@ data$listing.age <- scraping_date - data$created.date
 
 data <- data[-2703,]
 
+# We remove the defective vehicles from our cleaned data
+
+data <- data[data$defective == FALSE,]
+
 ### Finally we export the data to our cleaned-data folder
 
 write.csv(data, file = "~/GitHub/Data_science/cleaned-data/golf2_cleaned.csv", row.names = FALSE)

@@ -270,3 +270,6 @@ sd(rel_dep)
 # we should model relative depreciation instead of depreciation
 
 # how can we control for vehicle age and kilometers ? can we take data from the population where age and kilometers are the same as the average hybrid?
+
+# control variable : hybrid*vehicle.age
+# prioriser multiple regression > simple regression, faire tests vif

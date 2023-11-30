@@ -169,6 +169,10 @@ scraping_date <- data$created.date[order(data$created.date, decreasing = TRUE)[1
 data$vehicle.age <- scraping_date - data$date
 data$listing.age <- scraping_date - data$created.date
 
+# We remove the defective vehicles from our cleaned data
+
+data <- data[data$defective == FALSE,]
+
 ### Finally we export the data to our cleaned-data folder
 
 write.csv(data, file = "~/GitHub/Data_science/cleaned-data/volvo2_cleaned.csv", row.names = FALSE)

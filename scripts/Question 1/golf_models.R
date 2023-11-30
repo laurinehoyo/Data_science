@@ -288,6 +288,7 @@ data_no_def <- data_no_def |>
   mutate(count = row_number()) |>
   select(count, everything())
 
+#Save file
 write.csv(data, "golf_models_data.csv")
 
 #############NOTES:
