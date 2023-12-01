@@ -39,6 +39,7 @@ a1 <- ggplot(golf[order(golf$new.price),]) +
   ggtitle("Comparison of listing prices and new prices") +
   theme_light() +
   theme(plot.subtitle = element_markdown())
+a1
 
 # New prices vs depreciation
 
@@ -52,6 +53,7 @@ b1 <- ggplot(golf[order(golf$new.price),]) +
   scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
+b1
 
 # Prices vs depreciation
 
@@ -65,6 +67,7 @@ c1 <- ggplot(golf[order(golf$price),]) +
   scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
+c1
 
 # Vehicle age vs depreciation
 
@@ -78,6 +81,7 @@ d1 <- ggplot(golf[order(golf$vehicle.age),]) +
   scale_y_continuous(sec.axis = sec_axis(~./(max(golf$vehicle.age)/365), name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
+d1
 
 # Kilometers vs depreciation
 
@@ -91,6 +95,7 @@ e1 <- ggplot(golf[order(golf$kilometers),]) +
   scale_y_continuous(sec.axis = sec_axis(~./max(golf$kilometers), name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
+e1
 
 # Correlation matrices
 
