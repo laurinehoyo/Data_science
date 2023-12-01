@@ -93,13 +93,10 @@ e1 <- ggplot(golf[order(golf$kilometers),]) +
   theme(plot.subtitle = element_markdown())
 
 # Correlation matrices
-test <- test |> filter(!is.na(new.price))
 
-test$depreciation = test$new.price - test$price
-test$rel_dep = test$depreciation / test$new.price
-cor_matrix_test <- cor(select(test, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "wagon", "diesel", "hybrid", "manual", "awd")), use = "complete.obs")
-cor_matrix_test
-corrplot(cor_matrix_test)
+cor_matrix_golf <- cor(select(golf, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "wagon", "diesel", "hybrid", "manual", "awd")), use = "complete.obs")
+cor_matrix_golf
+corrplot(cor_matrix_golf)
 
 # Test these plots for the other makes and models
 
@@ -425,3 +422,8 @@ ggplot(toyota[order(toyota$kilometers),]) +
   scale_y_continuous(sec.axis = sec_axis(~./max(toyota$kilometers), name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
+# Correlation matrices ----
+
+# Audi
+
+cor_matrix_audi <- 
