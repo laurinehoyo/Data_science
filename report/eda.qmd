@@ -6,7 +6,11 @@ editor: visual
 
 #Question 1 : Which physical factors have the biggest impact on used car prices?
 
-2.1 Explanatory Variable Analysis: Impact of Physical Factors on Used Car Prices 2.1.1 Histograms of Price Distributions
+2.1 Impact of Physical Factors on Used Car Prices
+
+2.1.1 Histograms of prices distributions
+
+As part of our exploratory data analysis, we opted for visualizations focusing on the price distribution of the different vehicles (Volvo, Toyota, Skoda, Golf, Audi) present in our datasets. To do this, we used the ggplot2 library to create price distribution histograms, enriched with density curves for a better appreciation of the distribution. For greater interactivity, we then integrated the plotly library, making it easier to observe the concentration of cars at similar prices. These histograms, enriched with density curves, provide a clear perspective on price distribution, highlighting the most frequent price ranges and anomalies.
 
 ```{r graph-buttons, collapse=TRUE, warning=FALSE}
 # Chargement des bibliothèques nécessaires
@@ -83,31 +87,25 @@ tags$script(HTML("
 
 ```
 
-The price distribution charts for each brand show a variety of price ranges, reflecting the diversity of models and conditions for each vehicle. Here are the conclusions based on descriptive statistics:
+Through our visualizations, we have identified striking price differentials between brands, revealing the influence of multiple factors on the used car market, which we will analyze in detail later. These data raise interesting questions about the perceived value of brands and their market positioning:
 
-Volvo: Average price CHF 39,811, with a wide range from CHF 5,500 to CHF 94,900.
-The price distribution for Volvo shows a relatively wide spread, indicating a diverse range of prices. This suggests that Volvo offers models catering to various market segments.
+# METTRE TEXTE CORRESPONDANT AVEC GRAPHE
 
+-Volvo has an average price of CHF 39,811, with a range from CHF 5,500 to CHF 94,900. This wide price range suggests a diversified Volvo offering, covering different market segments.
 
-Toyota: Average price CHF 14,872, ranging from CHF 400 to CHF 80,000.
-Toyota's price distribution appears to be slightly skewed towards the lower end, suggesting a larger number of more affordable models. This is consistent with Toyota's reputation for offering budget-friendly and reliable vehicles.
+-Toyota is positioned at an average price of CHF 14,872, ranging from CHF 400 to CHF 80,000. Its down-market price distribution reflects Toyota's reputation for affordable, reliable vehicles.
 
+-Skoda has an average price of CHF 18,961, ranging from CHF 300 to CHF 59,900. This distribution, close to that of Toyota, indicates that Skoda targets mainly the economy and mid-range segments.
 
-Skoda : Average price CHF 18,961, ranging from CHF 300 to CHF 59,900.
-Skoda's price distribution is somewhat similar to Toyota, with a concentration in the lower to mid-price range. This indicates that Skoda also targets the budget and mid-range market.
+-The Golf has an average price of CHF 19,398, ranging from CHF 350 to CHF 59,990. Its extensive distribution shows a diversity of models, targeting a wide spectrum of customers, from the most frugal to the most demanding.
 
+-Audi, with an average price of CHF 20,928 and a range from CHF 600 to CHF 66,500, shows an extensive distribution, with a notable presence in the high-end segment, in line with its positioning as a premium brand.
 
-Golf : Average price CHF 19,398, ranging from CHF 350 to CHF 59,990.
-The Golf's price distribution is quite broad, reflecting a diverse range of models with varying prices. This indicates that the Golf lineup caters to a wide range of customers, from budget-conscious to more premium buyers.
-
-
-Audi: average price CHF 20.928, ranging from CHF 600 to CHF 66.500.
-Audi's price distribution is more spread out, with a significant presence in the higher price range. This is in line with Audi's position as a manufacturer of premium vehicles.
-
-
-These data show significant differences between brands in terms of average price and price range.
+This approach not only allowed us to observe the price distribution for each type of car but also to understand the price variations by brand in the used car market. Furthermore, this visualization guided our analysis towards a detailed exploration of the factors that may influence these price fluctuations.
 
 2.1.2 Brands comparisons
+
+The bar chart below illustrates the average price of cars by brand, depending on the date of manufacture. To create this visualization, we used the ggplot2 library, then transformed it into an interactive graph using ggplotly. By merging all the data sets into one, we obtained a global view for different brands. This approach enables us to compare directly how the year of manufacture influences the market price of used cars of different makes.
 
 ```{r}
 library(ggplot2)
@@ -124,14 +122,20 @@ combined_df <- rbind(
 # Graphique en barres pour le prix moyen en fonction de l'année
 graph <- ggplot(combined_df, aes(x = date, y = price, fill = Brand)) +
   geom_bar(stat = "summary", fun = mean) +
-  labs(title = "Prix moyen par marque et année", x = "Année", y = "Prix moyen") +
+  labs(title = "Prix moyen par marque et année", x = "Année de fabrication", y = "Prix moyen") +
   theme_minimal()
 
 p1 <- ggplotly(graph)
 p1
 ```
 
+As can be seen from the bar chart, the more recent the car, the higher the price, regardless of brand. However, it is interesting to note that Audi and Golf are generally more expensive than Skoda, Toyota or Volvo.
+
+Understanding this graph has enabled us to visualize the impact of a car's date of manufacture on its selling price on the second-hand market. This variation could also be explained by other factors, such as technological developments in fuel or wear and tear on older cars.
+
 2.1.3 Body type and price
+
+This box plot enabled us to understand the different prices according to body type for the different makes of car. To do this, we used the ggplot2 library, complemented by the interactivity of plotly. The choice of visualition was motivated by its ability to effectively show the price distribution, including median, quartiles and outliers. In addition, the colors of the plot boxes assigned to a car brand highlight the type of bodywork offered by the different brands.
 
 ```{r}
 # Load the ggplot2 library
@@ -156,8 +160,8 @@ all_cars$body.type <- as.factor(all_cars$body.type)
 # Create the scatter plot
 graph0 <- ggplot(all_cars, aes(x = body.type, y = price, fill = brand)) +
   geom_boxplot() +
-  labs(title = "Distribution des prix par type de carrosserie et marque",
-       x = "Type de carrosserie", y = "Prix") +
+  labs(title = "Price distribution by body type and brand",
+       x = "body type", y = "Price") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotation des étiquettes de l'axe X pour une meilleure lisibilité
 
@@ -173,7 +177,13 @@ p1
 
 ```
 
+other: This category, encompassing various vehicle types, shows a wide price range. Audi and Volvo stand out with higher median prices, probably reflecting a range of high-end or specialist models.Station wagon: Station wagons of all makes show a fairly uniform price distribution, suggesting a degree of price stability in this body segment.Cabriolet: Cabriolets, particularly from Audi and Volvo, are characterized by higher median prices, suggesting upmarket positioning or luxury features.Coup%C3%A9: The coup%C3%A9 category displays a wide range of prices, with Volvo leading the way in terms of median, which could indicate superior quality or specialization.Limousine: Limousines show a diversity of prices, with less dispersion at Skoda and Toyota, which could reflect a more standardized offering or competitive pricing.MPV / Minibus: In this category, Skoda and Toyota stand out with lower median prices, suggesting more affordable options.Small car: Skoda and Toyota's small cars have lower median prices, in keeping with their image as brands offering economical vehicles.SUV / Off-road: SUVs and off-road vehicles present a wide price range, with Audi and Volvo having higher medians, consistent with their status as luxury brands.
+
+The box chart revealed more nuanced insights, such as the existence of significant price variability within the same brands according to body type. The box plot has also given us a better understanding of brand trends, and can once again highlight their positioning.
+
 2.1.4 summary tables for prices
+
+We have chosen to summarize vehicle price data through basic descriptive statistics: mean, median and standard deviation. These measures were calculated for each vehicle brand in our dataset. To visualize these statistics, we created a summary table using the formattable library in R, which offers an attractive and intuitive visual representation of numerical data.
 
 ```{r}
 # Chargement des librairies nécessaires
@@ -222,13 +232,14 @@ Volvo shows the highest average and median prices, suggesting a more premium pri
 
 2.1.5 Mileage (Kilometers) and Its Impact on Price
 
-The relationship between a car's mileage and its selling price is a classic indicator of value in the used car market. The following scatter plots illustrate this relationship for each brand
+For this relationship, we chose to use a scatterplot, which we generated using the ggplot2 library and ggplotly for interactivity. The decision to use scatterplots was based on the need to understand the nature of the relationship between mileage and price. The choice of distinct colors for each car facilitates visualization and comparison between brands.
 
 ```{r}
 
 library(ggplot2)
 library(gridExtra)
 library(plotly)
+library(htmltools)
 
 # Enhancing the scatter plots
 
@@ -317,11 +328,11 @@ htmltools::tagList(html_output, js_code)
 
 ```
 
-From the plots, it's evident that as mileage increases, the price of the car tends to decrease. This trend is consistent across all brands, underlining the fundamental role of mileage in determining a car's market value.
+By analyzing the graphs, we have observed that, for some brands, price decreases significantly with increasing mileage, while for others, the impact of mileage on price is less pronounced. This reflects the fact that, while mileage can have an impact on price, other factors can also explain consumer choices.
 
 2.1.6 Engine Power (Power) and Price Correlation
 
-The engine power of a car, a significant performance metric, also plays a crucial role in pricing. Scatter plots were created for each brand to observe this correlation
+The use of scatter graphs aims to visualize the impact of engine power on sales prices, and whether this trend varies from one brand to another on the used car market.
 
 ```{r}
 library(ggplot2)
@@ -415,11 +426,11 @@ htmltools::tagList(html_output, js_code)
 
 ```
 
-The data suggests a positive correlation between engine power and car price. Higher-powered cars, often offering better performance, command higher prices. This trend is particularly pronounced in brands known for their performance-oriented models.
+The data suggests a positive correlation between engine power and car price. Higher-powered cars, often offering better performance, command higher prices. This trend is particularly pronounced in brands known for their performance-oriented models like Audi, Golf and toyota.
 
-2.1.7 Influence of Fuel Type on Car Pricing 
+2.1.7 Influence of Fuel Type on Car Pricing
 
-Different fuel types cater to various market segments and preferences. To understand how fuel type influences car prices, average prices for different fuel types were plotted in bar charts for each brand
+Different fuel types cater to various market segments and preferences. To visualize how fuel type influences car prices, average prices for different fuel types were plotted in bar charts for each brand
 
 ```{r}
 library(dplyr)
@@ -447,11 +458,11 @@ create_bar_plot <- function(data, title) {
 }
 
 # Création des graphiques pour chaque marque
-plot_audi <- create_bar_plot(audi, "AUDI - Type de Carburant vs Prix Moyen")
-plot_golf <- create_bar_plot(golf, "GOLF - Type de Carburant vs Prix Moyen")
-plot_toyota <- create_bar_plot(toyota, "TOYOTA - Type de Carburant vs Prix Moyen")
-plot_skoda <- create_bar_plot(skoda, "SKODA - Type de Carburant vs Prix Moyen")
-plot_volvo <- create_bar_plot(volvo, "VOLVO - Type de Carburant vs Prix Moyen")
+plot_audi <- create_bar_plot(audi, "AUDI - Fuel type vs Average price ")
+plot_golf <- create_bar_plot(golf, "GOLF - Fuel type vs Average price ")
+plot_toyota <- create_bar_plot(toyota, "TOYOTA - Fuel type vs Average price ")
+plot_skoda <- create_bar_plot(skoda, "SKODA - Fuel type vs Average price ")
+plot_volvo <- create_bar_plot(volvo, "VOLVO - Fuel type vs Average price ")
 
 # Conversion des graphiques ggplot en graphiques interactifs Plotly
 p1 <- ggplotly(plot_audi)
