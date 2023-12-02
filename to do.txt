@@ -2,5 +2,4 @@
 reformuler objectifs
 
 Victor
-- ask assistant about anova test. 2 variables in model 6 are not significant
-- ask assistant if multicollinearity is a problem in our case
+- correlation matrices for all variables ? including questions 1&2

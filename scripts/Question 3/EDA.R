@@ -6,6 +6,8 @@ library(ggtext)
 library(plotly)
 library(tidyverse)
 library(corrplot)
+library(ggplotify)
+library(gridExtra)
 setwd("~/GitHub/Data_science/cleaned-data")
 
 golf <- read.csv("golf_models_data.csv")
@@ -17,93 +19,10 @@ toyota <- read.csv("toyota_models_data.csv")
 # Depreciation variables
 # We filter to remove NAs from new price for this part
 
+# golf
 golf <- golf |> filter(!is.na(new.price))
-
 golf$depreciation = golf$new.price - golf$price
 golf$rel_dep = golf$depreciation / golf$new.price
-
-# Depreciation plots
-
-# New prices vs listing prices
-
-a1 <- ggplot(golf[order(golf$new.price),]) +
-  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue") +
-  ylim(0, max(golf$new.price)) +
-  xlim(0, nrow(golf)) +
-  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = price), color = "orangered", se = FALSE) +
-  geom_ribbon(aes(x = seq(new.price),
-                  ymin = predict(loess(price ~ seq(price), span = 0.1)),
-                  ymax = predict(loess(new.price ~ seq(price), span = 0.1))),
-              fill = "grey", alpha = 0.5) +
-  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of listing prices and new prices", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Actual prices</span>") +
-  ggtitle("Comparison of listing prices and new prices") +
-  theme_light() +
-  theme(plot.subtitle = element_markdown())
-a1
-
-# New prices vs depreciation
-
-b1 <- ggplot(golf[order(golf$new.price),]) +
-  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue", se = FALSE) +
-  ylim(0, 100000) +
-  xlim(0, nrow(golf)) +
-  geom_point(mapping = aes(x = seq(new.price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
-  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = rel_dep*100000), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by new price", y = "Price") +
-  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
-  theme_light() +
-  theme(plot.subtitle = element_markdown())
-b1
-
-# Prices vs depreciation
-
-c1 <- ggplot(golf[order(golf$price),]) +
-  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = price), color = "royalblue", se = FALSE) +
-  ylim(0, 100000) +
-  xlim(0, nrow(golf)) +
-  geom_point(mapping = aes(x = seq(price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
-  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*100000), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by price", y = "Price", title = "Comparison of prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
-  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
-  theme_light() +
-  theme(plot.subtitle = element_markdown())
-c1
-
-# Vehicle age vs depreciation
-
-d1 <- ggplot(golf[order(golf$vehicle.age),]) +
-  geom_smooth(span = 0.1, mapping = aes(x = seq(vehicle.age), y = vehicle.age/365), color = "royalblue", se = FALSE) +
-  ylim(0, max(golf$vehicle.age)/365) +
-  xlim(0, nrow(golf)) +
-  geom_point(mapping = aes(x = seq(vehicle.age), y = rel_dep*(max(golf$vehicle.age)/365)), size = 1, alpha = 0.5, stroke = 0) +
-  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*(max(golf$vehicle.age)/365)), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", subtitle = "VW Golf") +
-  scale_y_continuous(sec.axis = sec_axis(~./(max(golf$vehicle.age)/365), name = "Relative depreciation")) +
-  theme_light() +
-  theme(plot.subtitle = element_markdown())
-d1
-
-# Kilometers vs depreciation
-
-e1 <- ggplot(golf[order(golf$kilometers),]) +
-  geom_smooth(span = 0.1, mapping = aes(x = seq(kilometers), y = kilometers), color = "royalblue", se = FALSE) +
-  ylim(0, max(golf$kilometers)) +
-  xlim(0, nrow(golf)) +
-  geom_point(mapping = aes(x = seq(kilometers), y = rel_dep*max(golf$kilometers)), size = 1, alpha = 0.5, stroke = 0) +
-  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*max(golf$kilometers)), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by kilometers", y = "Kilometers", title = "Comparison of kilometers and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Kilometers</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
-  scale_y_continuous(sec.axis = sec_axis(~./max(golf$kilometers), name = "Relative depreciation")) +
-  theme_light() +
-  theme(plot.subtitle = element_markdown())
-e1
-
-# Correlation matrices
-
-cor_matrix_golf <- cor(select(golf, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "wagon", "diesel", "hybrid", "manual", "awd")), use = "complete.obs")
-cor_matrix_golf
-corrplot(cor_matrix_golf)
-
-# Test these plots for the other makes and models
 
 # audi
 audi <- audi |> filter(!is.na(new.price))
@@ -128,7 +47,26 @@ toyota <- toyota |> filter(!is.na(new.price))
 toyota$depreciation = toyota$new.price - toyota$price
 toyota$rel_dep = toyota$depreciation / toyota$new.price
 
+# Depreciation plots
 # New prices vs listing prices ----
+
+# New prices vs listing prices golf
+
+a1 <- ggplot(golf[order(golf$new.price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue") +
+  ylim(0, max(golf$new.price)) +
+  xlim(0, nrow(golf)) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = price), color = "orangered", se = FALSE) +
+  geom_ribbon(aes(x = seq(new.price),
+                  ymin = predict(loess(price ~ seq(price), span = 0.1)),
+                  ymax = predict(loess(new.price ~ seq(price), span = 0.1))),
+              fill = "grey", alpha = 0.5) +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of listing prices and new prices", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Actual prices</span>") +
+  ggtitle("Comparison of listing prices and new prices") +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+a1
+
 # New prices vs listing prices audi
 
 a2 <- ggplot(audi[order(audi$new.price),]) +
@@ -199,6 +137,21 @@ a5 <- ggplot(toyota[order(toyota$new.price),]) +
   (a3 | a4)
 
 # New prices vs depreciation ----
+
+# New prices vs depreciation golf
+
+b1 <- ggplot(golf[order(golf$new.price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue", se = FALSE) +
+  ylim(0, 100000) +
+  xlim(0, nrow(golf)) +
+  geom_point(mapping = aes(x = seq(new.price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = rel_dep*100000), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by new price", y = "Price") +
+  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+b1
+
 # New prices vs depreciation audi
 
 b2 <- ggplot(audi[order(audi$new.price),]) +
@@ -261,6 +214,21 @@ b5 <- ggplot(toyota[order(toyota$new.price),]) +
   )
 
 # Prices vs depreciation ----
+
+# Prices vs depreciation golf
+
+c1 <- ggplot(golf[order(golf$price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = price), color = "royalblue", se = FALSE) +
+  ylim(0, 100000) +
+  xlim(0, nrow(golf)) +
+  geom_point(mapping = aes(x = seq(price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*100000), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by price", y = "Price", title = "Comparison of prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+c1
+
 # Prices vs depreciation audi
 
 ggplot(audi[order(audi$price),]) +
@@ -315,6 +283,21 @@ ggplot(toyota[order(toyota$price),]) +
 
 
 # Vehicle age vs depreciation ----
+
+# Vehicle age vs depreciation golf
+
+d1 <- ggplot(golf[order(golf$vehicle.age),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(vehicle.age), y = vehicle.age/365), color = "royalblue", se = FALSE) +
+  ylim(0, max(golf$vehicle.age)/365) +
+  xlim(0, nrow(golf)) +
+  geom_point(mapping = aes(x = seq(vehicle.age), y = rel_dep*(max(golf$vehicle.age)/365)), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*(max(golf$vehicle.age)/365)), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", subtitle = "VW Golf") +
+  scale_y_continuous(sec.axis = sec_axis(~./(max(golf$vehicle.age)/365), name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+d1
+
 # Vehicle age vs depreciation audi
 
 d2 <- ggplot(audi[order(audi$vehicle.age),]) +
@@ -376,6 +359,21 @@ d5 <- ggplot(toyota[order(toyota$vehicle.age),]) +
   )
 
 # Kilometers vs depreciation ----
+
+# Kilometers vs depreciation golf
+
+e1 <- ggplot(golf[order(golf$kilometers),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(kilometers), y = kilometers), color = "royalblue", se = FALSE) +
+  ylim(0, max(golf$kilometers)) +
+  xlim(0, nrow(golf)) +
+  geom_point(mapping = aes(x = seq(kilometers), y = rel_dep*max(golf$kilometers)), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*max(golf$kilometers)), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by kilometers", y = "Kilometers", title = "Comparison of kilometers and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Kilometers</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./max(golf$kilometers), name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+e1
+
 # Kilometers vs depreciation audi
 
 ggplot(audi[order(audi$kilometers),]) +
@@ -427,8 +425,48 @@ ggplot(toyota[order(toyota$kilometers),]) +
   scale_y_continuous(sec.axis = sec_axis(~./max(toyota$kilometers), name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
+
+# Correlation matrices
+
+cor_matrix_golf <- cor(select(golf, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "wagon", "diesel", "hybrid", "manual", "awd")), use = "complete.obs")
+cor_matrix_golf
+corrplot(cor_matrix_golf)
+
+
 # Correlation matrices ----
 
-# Audi
+# golf
+cor_matrix_golf <- cor(select(golf, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "wagon", "diesel", "hybrid", "electric", "natural.gas", "manual", "awd")), use = "complete.obs")
+# We don't include natural gas vehicles because there are only 2 observations, and such a small sample size may lead to unreliable estimates of correlations.
+cor_matrix_golf
+corrplot(cor_matrix_golf)
+# When we run the correlation matrix with variable electric included, we get NAs for correlations between electric and every other variable. We explicitly remove all rows where there is a NA (use = "complete.obs"), so this may be the reason. Upon further inspection, we notice that consumption is NA for all electric vehicles.
+# We still want to check the correlations between electric and all other variables, so we will set consumption for electric vehicles to an arbitrary value, say -999, for our matrix to function correctly. We make a copy of the dataframe for this.
+# For the other vehicles, we will simply omit electric because the counts are too low.
+golf2 <- golf
+golf2$consumption[golf2$electric == TRUE] <- -999
+cor_matrix_golf2 <- cor(select(golf2, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "wagon", "diesel", "hybrid", "electric", "natural.gas", "manual", "awd")), use = "complete.obs")
+cor_matrix_golf2
+corrplot(cor_matrix_golf2)
 
-cor_matrix_audi <- 
+# audi
+cor_matrix_audi <- cor(select(audi, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "cabriolet", "diesel", "hybrid", "manual", "awd")), use = "complete.obs")
+# We omit natural gas vehicles (2 observations) and coupe (1 observation)
+cor_matrix_audi
+corrplot(cor_matrix_audi)
+
+# skoda
+cor_matrix_skoda <- cor(select(skoda, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "sedan", "diesel", "hybrid", "natural.gas", "manual", "awd")), use = "complete.obs")
+cor_matrix_skoda
+corrplot(cor_matrix_skoda)
+
+# volvo
+cor_matrix_volvo <- cor(select(volvo, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "diesel", "hybrid", "manual")), use = "complete.obs")
+cor_matrix_volvo
+corrplot(cor_matrix_volvo)
+
+# toyota
+cor_matrix_toyota <- cor(select(toyota, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "sedan", "hybrid", "manual", "awd")), use = "complete.obs")
+cor_matrix_toyota
+corrplot(cor_matrix_toyota)
+

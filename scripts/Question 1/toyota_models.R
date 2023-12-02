@@ -152,7 +152,8 @@ data$coupe <- body.type == "Coupé"
 data$diesel <- fuel.type == "Diesel"
 data$hybrid <- ifelse(fuel.type == "Hybride léger essence/électrique" | 
                         fuel.type == "Hybride rechargeable essence/électrique" |
-                        fuel.type == "Hybride léger diesel/électrique", 
+                        fuel.type == "Hybride léger diesel/électrique" |
+                        fuel.type == "Hybride intégral essence/électrique",
                       TRUE, FALSE)
 
 # We repeat the process for transmission. We will only have one variable "manual". We consider "Boîte manuelle automatisée" to be automatic because it is very similar to an automatic transmission.
