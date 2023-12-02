@@ -726,8 +726,6 @@ htmltools::tagList(html_output, js_code)
 
 ```
 
-
-
 ```{r}
 ## proposition 2 : en fonction de l'année de fabrication 
 graph.1 <- ggplot(audi, aes(x = year, y = price)) +
@@ -817,7 +815,5 @@ js_code <- HTML("
 htmltools::tagList(html_output, js_code)
 
 ```
-
-
 
 Newer models generally have higher average prices, likely due to more advanced technology, better features, and lower mileage. The rate of depreciation over the years varies among brands, with some luxury brands retaining their value longer.
