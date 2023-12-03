@@ -18,12 +18,13 @@ library(ggplot2)
 library(dplyr)
 library(plotly)
 library(htmltools)
+setwd("~/Downloads/Data_science-main-2/cleaned-data")
 
-golf <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/golf2_cleaned.csv")
-skoda <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/skoda2_cleaned.csv")
-audi <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/audi2_cleaned.csv")
-toyota <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/toyota_cleaned.csv")
-volvo <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/volvo2_cleaned.csv")
+golf <- read.csv("golf2_cleaned.csv")
+skoda <- read.csv("skoda2_cleaned.csv")
+audi <- read.csv("audi2_cleaned.csv")
+toyota <- read.csv("toyota_cleaned.csv")
+volvo <- read.csv("volvo2_cleaned.csv")
 
 # Combiner tous les datasets en un seul dataframe
 data <- rbind(golf, skoda, audi, toyota, volvo)
