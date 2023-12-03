@@ -3,7 +3,6 @@ title: "EDA Q3"
 format: 
   html:
     code-fold: true
-    code-summary: "Show the code"
 editor: visual
 ---
 

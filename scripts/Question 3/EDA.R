@@ -6,6 +6,7 @@ library(ggtext)
 library(tidyverse)
 library(corrplot)
 library(kableExtra)
+library(shiny)
 setwd("~/GitHub/Data_science/cleaned-data")
 
 golf <- read.csv("golf_models_data.csv")
@@ -165,6 +166,43 @@ a5 <- ggplot(toyota[order(toyota$new.price),]) +
 a1
 (a2 | a3) /
 (a4 | a5)
+
+# shiny interactive plots
+
+ui <- fluidPage(
+  fluidRow(
+    column(3, actionButton("btn_a1", "Plot A1")),
+    column(3, actionButton("btn_a2", "Plot A2")),
+    column(3, actionButton("btn_a3", "Plot A3")),
+    column(3, actionButton("btn_a4", "Plot A4")),
+    column(3, actionButton("btn_a5", "Plot A5")),
+  ),
+  plotOutput("plot")
+)
+
+server <- function(input, output, session) {
+  observeEvent(input$btn_a1, {
+    output$plot <- renderPlot({ a1 })
+  })
+  
+  observeEvent(input$btn_a2, {
+    output$plot <- renderPlot({ a2 })
+  })
+  
+  observeEvent(input$btn_a3, {
+    output$plot <- renderPlot({ a3 })
+  })
+  
+  observeEvent(input$btn_a4, {
+    output$plot <- renderPlot({ a4 })
+  })
+  
+  observeEvent(input$btn_a5, {
+    output$plot <- renderPlot({ a5 })
+  })
+}
+
+shinyApp(ui, server)
 
 # New prices vs depreciation ----
 

@@ -5,18 +5,37 @@ library(corrplot)
 library(Hmisc)
 library(car)
 
-setwd("~/Downloads/Data_science-main/cleaned-data")
-data <- read.csv("golf2_cleaned.csv")
-toyota_cleaned <- read.csv("golf2_cleaned.csv")
-data <- read.csv("golf2_cleaned.csv")
+setwd("~/GitHub/Data_science/cleaned-data")
+data <- read.csv("golf_models_data.csv")
 
-data2 <- subset(data, created.date != "2022-11-14")
-# nous avons supprimé les lignes avec cette date car elle rendait les listing.date irealiste. 
+#If we first look at the data, we will see an enormous amount of listings on 2022-11-14, which is unrealistic, and most likely an error.
+table(data$created.date)
+# We can see this clearly with this graph
+ggplot(data, aes(x = listing.age)) +
+  geom_histogram(binwidth = 3, fill = "skyblue", color = "black") +
+  labs(
+    title = "Histogram of Listing Duration",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+# When inspecting the listings one by one, we saw that this is not a scraping error, and this is really the data found on AutoScout24.ch. A possible explanation would be that all listings before this date have taken this date.
+# Regardless of the reason, we can safely assume that this doesn't represent reality, so to prevent this from biasing our models, we will remove all observations with created.date set at 2022-11-14.
+data <- subset(data, created.date != "2022-11-14")
 
-attach(data2)
+
+attach(data)
 
 # Our independant variable will be listing age
 #Le terme "listing age" se réfère généralement à la durée depuis laquelle un article, une annonce ou une inscription est actif ou a été posté.
+# We will make a model
+
+
+
+
+
+
+
+
 # First we want to build a model with our numerical variables (vehicle.age, kilometers, power, consumption, price), to try to explain the impact on the listing age. 
 # We start by creating a correlation matrix with the numeric columns
 

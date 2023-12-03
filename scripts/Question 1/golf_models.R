@@ -4,6 +4,7 @@ library(tidyverse)
 library(corrplot)
 library(Hmisc)
 library(car)
+library(MASS)
 setwd("~/GitHub/Data_science/cleaned-data")
 data <- read.csv("golf2_cleaned.csv")
 golf2_cleaned <- read.csv("golf2_cleaned.csv")
@@ -195,6 +196,26 @@ summary(lm(price ~ natural.gas)) # NOT Significant
 summary(lm(price ~ electric)) # NOT Significant
 summary(lm(price ~ manual)) # Significant
 summary(lm(price ~ awd)) # Significant
+
+############################################################################# Updated regression (stepwise)
+# Notes: in car_cleaning files we have kept only non defective vehicles. there is no difference between data and data_no_def, we can delete models made with data_no_def that are a copy of models made with data
+
+model1 <- lm(price ~ kilometers + kilometers.squared + vehicle.age + vehicle.age.squared + power + consumption + expertise + warranty + wagon + cabriolet + small.car + coupe + diesel + hybrid + natural.gas + electric + manual + awd)
+summary(model1)
+model2 <- stepAIC(model1, direction = "backward")
+summary(model2)
+# cabriolet and consumption are still not significant at an alpha of 0.01, we remove them
+# we subset the data first to exclude observations that contain NA
+data <- data[complete.cases(data[, c("kilometers", "kilometers.squared", "vehicle.age", "vehicle.age.squared", "power", "expertise", "warranty", "wagon", "diesel", "manual", "awd")]), ]
+model3 <- lm(formula = price ~ kilometers + kilometers.squared + vehicle.age + vehicle.age.squared + power + expertise + warranty + wagon + diesel + manual + awd)
+summary(model3)
+# All of our variables are now significant. This will be our final model
+
+data$residuals <- model3$residuals
+data$pred.price <- model3$fitted.values
+
+#####################################################################
+
 
 # Let's add all the significant variables to a model and see if they are still significant.
 
