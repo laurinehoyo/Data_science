@@ -96,6 +96,7 @@ sample_sizes |>
 ```
 
 #### 2.3.2 New prices vs listing prices
+
 These plots show the new prices of cars compared with their actual prices, sorted by the new price.
 
 ```{r}
@@ -184,9 +185,11 @@ a1
 (a4 | a5)
 
 ```
+
 It seems the new and actual prices are strongly related.
 
 #### 2.3.3 New prices vs depreciation
+
 We now look at the new prices of vehicles compared to their relative depreciation. The relative depreciation is defined as (new price - actual price) / new price
 
 ```{r}
@@ -265,9 +268,11 @@ b3
 b4
 b5
 ```
+
 We can see that these are weakly negatively correlated, but it does not stand out in the graphs.
 
 #### 2.3.4 Current prices vs depreciation
+
 We will now compare current vehicle prices and their relative depreciation
 
 ```{r}
@@ -349,6 +354,7 @@ c5
 Current vehicle prices are obviously negatively correlated with relative depreciation, which makes sense.
 
 #### 2.3.5 Vehicle age vs depreciation
+
 Vehicle age is probably the biggest influencing factor that defines the definition of depreciation, so we can see in the graphs that it is strongly related to relative depreciation.
 
 ```{r}
@@ -428,6 +434,7 @@ d5 <- ggplot(toyota[order(toyota$vehicle.age),]) +
 ```
 
 #### 2.3.6 Kilometers vs depreciation
+
 Kilometers is most likely the second biggest determinant of depreciation. Here are some graphs that put this into perspective.
 
 ```{r}
@@ -505,3 +512,13 @@ e5 <- ggplot(toyota[order(toyota$kilometers),]) +
     title = "Comparison of kilometers and relative depreciation"
   )
 ```
+
+######notes
+
+:::{.panel-tabset}
+
+### graph1
+
+### graph2
+
+:::

@@ -313,6 +313,4 @@ data_no_def <- data_no_def |>
 write.csv(data, "golf_models_data.csv")
 
 #############NOTES:
-# - check multicollinearity
-# - anova(model4) some variables are not significant, should we remove?
-# - try remove outliers/  try remove cars before year 2000
+# - check multicollinearity , make VIF
