@@ -198,6 +198,7 @@ summary(lm(price ~ manual)) # Significant
 summary(lm(price ~ awd)) # Significant
 
 ############################################################################# Updated regression (stepwise)
+# We will make a regression model that includes all of our variables then do a stepwise regression (backward) to remove non significant variables.
 # Notes: in car_cleaning files we have kept only non defective vehicles. there is no difference between data and data_no_def, we can delete models made with data_no_def that are a copy of models made with data
 
 model1 <- lm(price ~ kilometers + kilometers.squared + vehicle.age + vehicle.age.squared + power + consumption + expertise + warranty + wagon + cabriolet + small.car + coupe + diesel + hybrid + natural.gas + electric + manual + awd)
@@ -211,7 +212,7 @@ model3 <- lm(formula = price ~ kilometers + kilometers.squared + vehicle.age + v
 summary(model3)
 # All of our variables are now significant. This will be our final model
 
-data$residuals <- model3$residuals
+data$price.residuals <- model3$residuals
 data$pred.price <- model3$fitted.values
 
 #####################################################################

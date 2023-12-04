@@ -515,10 +515,8 @@ e5 <- ggplot(toyota[order(toyota$kilometers),]) +
 
 ######notes
 
-:::{.panel-tabset}
-
+::: panel-tabset
 ### graph1
 
 ### graph2
-
 :::

@@ -1,0 +1,472 @@
+---
+title: "Q1 models"
+format:
+  html: 
+    code-fold: true
+editor: visual
+---
+
+## Analysis
+
+In this part we will attempt to answer our research questions by analysing our graphs, and making regression models.
+
+### Q1. Which physical factors have the biggest impact on used car prices?
+
+Our dependant variable will be price. We will make a regression model that includes all of our variables then do a stepwise regression (backward) to remove non significant variables, in order to find the optimal model.
+```{r}
+# Libraries + datasets
+
+library(tidyverse)
+library(corrplot)
+library(Hmisc)
+library(car)
+library(MASS)
+setwd("~/GitHub/Data_science/cleaned-data")
+golf <- read.csv("golf2_cleaned.csv")
+audi <- read.csv("audi2_cleaned.csv")
+skoda <- read.csv("skoda2_cleaned.csv")
+volvo <- read.csv("volvo2_cleaned.csv")
+toyota <- read.csv("toyota_cleaned.csv")
+```
+
+We will first have a look at the variables vehicle.age and kilometers, which we think will have the greatest impact on prices, to make sure the errors are linear. Below are the residuals vs fitted values plots of our 5 car models, for a simple linear regression of vehicle.age on price.
+
+::: panel-tabset
+### VW Golf
+```{r}
+# golf
+ggplot(lm(golf$price ~ golf$vehicle.age), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+```
+### Audi A3
+```{r}
+# audi
+ggplot(lm(audi$price ~ audi$vehicle.age), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+```
+### Skoda Octavia
+```{r}
+# skoda
+ggplot(lm(skoda$price ~ skoda$vehicle.age), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+```
+### Volvo XC60
+```{r}
+# volvo
+ggplot(lm(volvo$price ~ volvo$vehicle.age), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+```
+### Toyota Yaris
+```{r}
+# toyota
+ggplot(lm(toyota$price ~ toyota$vehicle.age), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+```
+:::
+
+The relationship between price and vehicle age is obviously not linear. The blue line that represents the residuals should be more horizontal to ressemble the red fitted values line.
+
+We repeat the process but replace vehicle.age by kilometers and notice similar results.
+
+::: panel-tabset
+### VW Golf
+```{r}
+# golf
+ggplot(lm(golf$price ~ golf$kilometers), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+```
+### Audi A3
+```{r}
+# audi
+ggplot(lm(audi$price ~ audi$kilometers), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+```
+### Skoda Octavia
+```{r}
+# skoda
+ggplot(lm(skoda$price ~ skoda$kilometers), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+```
+### Volvo XC60
+```{r}
+# volvo
+ggplot(lm(volvo$price ~ volvo$kilometers), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+```
+### Toyota Yaris
+```{r}
+# toyota
+ggplot(lm(toyota$price ~ toyota$kilometers), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+```
+:::
+
+We can try to fix this using second degree variables. We add vehicle.age squared and kilometers squared as variables to our datasets and run the plots again. Below are the residuals vs fitted value plots of regressions lm(price ~ vehicle.age + vehicle.aged.squared + kilometers + kilometers.squared). 
+
+```{r}
+# golf
+golf$vehicle.age.squared <- (golf$vehicle.age ^ 2)
+golf$kilometers.squared <- (golf$kilometers ^ 2)
+
+# audi
+audi$vehicle.age.squared <- (audi$vehicle.age ^ 2)
+audi$kilometers.squared <- (audi$kilometers ^ 2)
+
+# skoda
+skoda$vehicle.age.squared <- (skoda$vehicle.age ^ 2)
+skoda$kilometers.squared <- (skoda$kilometers ^ 2)
+
+# volvo
+volvo$vehicle.age.squared <- (volvo$vehicle.age ^ 2)
+volvo$kilometers.squared <- (volvo$kilometers ^ 2)
+
+# toyota
+toyota$vehicle.age.squared <- (toyota$vehicle.age ^ 2)
+toyota$kilometers.squared <- (toyota$kilometers ^ 2)
+```
+::: panel-tabset
+### VW Golf
+```{r}
+# golf
+ggplot(lm(golf$price ~ golf$kilometers + golf$kilometers.squared + golf$vehicle.age + golf$vehicle.age.squared), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+```
+### Audi A3
+```{r}
+# audi
+ggplot(lm(audi$price ~ audi$kilometers + audi$kilometers.squared + audi$vehicle.age + audi$vehicle.age.squared), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+```
+### Skoda Octavia
+```{r}
+# skoda
+ggplot(lm(skoda$price ~ skoda$kilometers + skoda$kilometers.squared + skoda$vehicle.age + skoda$vehicle.age.squared), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+```
+### Volvo XC60
+```{r}
+# volvo
+ggplot(lm(volvo$price ~ volvo$kilometers + volvo$kilometers.squared + volvo$vehicle.age + volvo$vehicle.age.squared), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+```
+### Toyota Yaris
+```{r}
+# toyota
+ggplot(lm(toyota$price ~ toyota$kilometers + toyota$kilometers.squared + toyota$vehicle.age + toyota$vehicle.age.squared), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+```
+:::
+
+These plots look much better than the ones before. These variables are the only ones that seem to be affected by this type of heteroskedasticity, so we don't need to make squared versions for all our other variables.
+
+We need to do a little bit more data wrangling for this question. We need to transform our columns body.type, fuel.type, transmission and drivetrain into logical variables.
+
+```{r}
+### golf
+
+# For body.type, we can see that the majority of cars are either "Limousine", "Break" or "Cabriolet".
+# We will then create a logical column "wagon" which will be set to TRUE where body.type == "Break" is TRUE (Note: "break" is a reserved word). We do the same for columns "cabriolet", "small.car" and "coupe". When all 4 are FALSE, the body.type will be Limousine.
+
+table(golf$body.type)
+
+golf$wagon <- golf$body.type == "Break"
+golf$cabriolet <- golf$body.type == "Cabriolet"
+golf$small.car <- golf$body.type == "Petite voiture"
+golf$coupe <- golf$body.type == "Coupé"
+
+# We will repeat the process for fuel.type. Columns will be "diesel", "hybrid", "natural.gas" and "electric"
+
+golf$diesel <- golf$fuel.type == "Diesel"
+golf$hybrid <- ifelse(golf$fuel.type == "Hybride léger essence/électrique" | 
+                      golf$fuel.type == "Hybride rechargeable essence/électrique", 
+                    TRUE, FALSE)
+golf$natural.gas <- golf$fuel.type == "Gaz naturel (CNG) / Essence"
+golf$electric <- golf$fuel.type == "Électrique"
+
+# We repeat the process for transmission. We will only have one variable "manual". We consider "Boîte manuelle automatisée" to be automatic because it is very similar to an automatic transmission.
+
+golf$manual <- ifelse(golf$transmission == "Automatique" |
+                        golf$transmission == "Boîte manuelle automatisée" |
+                        golf$transmission == "Boîte automatique variable", 
+                      FALSE, TRUE)
+
+# We repeat the process for drivetrain. We will create one column "awd". We will neglect "Propulsion" and leave it as false, the same as for "Traction avant" because there are only 2 observations.
+
+golf$awd <- golf$drivetrain == "4 roues motrices"
+
+### audi
+
+# For body.type, we can see that the majority of cars are either "Limousine", "Break" or "Cabriolet".
+# We will then create a logical column "wagon" which will be set to TRUE where body.type == "Break" is TRUE (Note: "break" is a reserved word). We do the same for columns "cabriolet", "small.car" and "coupe". When all 4 are FALSE, the body.type will be Limousine.
+
+table(audi$fuel.type)
+
+audi$wagon <- audi$body.type == "Break"
+audi$cabriolet <- audi$body.type == "Cabriolet"
+audi$small.car <- audi$body.type == "Petite voiture"
+audi$coupe <- audi$body.type == "Coupé"
+
+# We will repeat the process for fuel.type. Columns will be "diesel", "hybrid", "natural.gas" and "electric"
+
+audi$diesel <- audi$fuel.type == "Diesel"
+audi$hybrid <- ifelse(audi$fuel.type == "Hybride léger essence/électrique" | 
+                        audi$fuel.type == "Hybride rechargeable essence/électrique" |
+                        audi$fuel.type == "Hybride léger diesel/électrique", 
+                      TRUE, FALSE)
+audi$natural.gas <- audi$fuel.type == "Gaz naturel (CNG) / Essence"
+audi$electric <- audi$fuel.type == "Électrique"
+
+# We repeat the process for transmission. We will only have one variable "manual". We consider "Boîte manuelle automatisée" to be automatic because it is very similar to an automatic transmission.
+
+audi$manual <- ifelse(audi$transmission == "Automatique" |
+                        audi$transmission == "Boîte manuelle automatisée" |
+                        audi$transmission == "Boîte automatique variable", 
+                      FALSE, TRUE)
+
+# We repeat the process for drivetrain. We will create one column "awd".
+
+audi$awd <- audi$drivetrain == "4 roues motrices"
+
+### skoda
+
+# For body.type, we can see that the majority of cars are "Break".
+# We will then create a logical column "cabriolet" which will be set to TRUE where body.type == "cabriolet" is TRUE. We do the same for column "suv" and "sedan". When the 3 are FALSE, the body.type will be Break.
+
+table(skoda$body.type)
+
+skoda$cabriolet <- skoda$body.type == "Cabriolet"
+skoda$suv <- skoda$body.type == "SUV / Tout-terrain"
+skoda$sedan <- skoda$body.type == "Limousine"
+
+# We will repeat the process for fuel.type. Columns will be "diesel", "hybrid", and "natural.gas".
+
+skoda$diesel <- skoda$fuel.type == "Diesel"
+skoda$hybrid <- ifelse(skoda$fuel.type == "Hybride léger essence/électrique" | 
+                        skoda$fuel.type == "Hybride rechargeable essence/électrique" |
+                        skoda$fuel.type == "Hybride léger diesel/électrique", 
+                      TRUE, FALSE)
+skoda$natural.gas <- skoda$fuel.type == "Gaz naturel (CNG) / Essence"
+
+# We repeat the process for transmission. We will only have one variable "manual". We consider "Boîte manuelle automatisée" to be automatic because it is very similar to an automatic transmission.
+
+skoda$manual <- ifelse(skoda$transmission == "Automatique" |
+                        skoda$transmission == "Boîte manuelle automatisée" |
+                        skoda$transmission == "Boîte automatique variable", 
+                      FALSE, TRUE)
+
+# We repeat the process for drivetrain. We will create one column "awd".
+
+skoda$awd <- skoda$drivetrain == "4 roues motrices"
+
+### volvo
+
+# For body.type, we can see that the majority of cars are "SUV / Tout-terrain", we have a very small amount that are other body types. These are errors, the XC60 only comes as an SUV.
+
+table(volvo$drivetrain)
+
+# We will create a logical column "diesel" which will be set to TRUE where fuel.type == "Diesel" is TRUE. We do the same for column "hybrid". When both are FALSE, the fuel.type will be petrol.
+
+volvo$diesel <- volvo$fuel.type == "Diesel"
+volvo$hybrid <- ifelse(volvo$fuel.type == "Hybride léger essence/électrique" | 
+                        volvo$fuel.type == "Hybride rechargeable essence/électrique" |
+                        volvo$fuel.type == "Hybride léger diesel/électrique", 
+                      TRUE, FALSE)
+
+# We repeat the process for transmission. We will only have one variable "manual". We consider "Boîte manuelle automatisée" to be automatic because it is very similar to an automatic transmission.
+
+volvo$manual <- ifelse(volvo$transmission == "Automatique" |
+                        volvo$transmission == "Boîte manuelle automatisée" |
+                        volvo$transmission == "Boîte automatique variable", 
+                      FALSE, TRUE)
+
+# We repeat the process for drivetrain. We will create one column "fwd".
+
+volvo$fwd <- volvo$drivetrain == "Traction avant"
+
+### toyota
+
+# For body.type, we can see that the majority of cars are either "Limousine" or "Petite voiture".
+# We will create a logical column "sedan" which will be set to TRUE where body.type == "Limousine" is TRUE. We do the same for column "coupe". When both are FALSE, the body.type will be "Petite voiture".
+
+table(toyota$drivetrain)
+
+toyota$sedan <- toyota$body.type == "Limousine"
+toyota$coupe <- toyota$body.type == "Coupé"
+
+# We will repeat the process for fuel.type. Columns will be "diesel" and "hybrid".
+
+toyota$diesel <- toyota$fuel.type == "Diesel"
+toyota$hybrid <- ifelse(toyota$fuel.type == "Hybride léger essence/électrique" | 
+                        toyota$fuel.type == "Hybride rechargeable essence/électrique" |
+                        toyota$fuel.type == "Hybride léger diesel/électrique" |
+                        toyota$fuel.type == "Hybride intégral essence/électrique",
+                      TRUE, FALSE)
+
+# We repeat the process for transmission. We will only have one variable "manual". We consider "Boîte manuelle automatisée" to be automatic because it is very similar to an automatic transmission.
+
+toyota$manual <- ifelse(toyota$transmission == "Automatique" |
+                        toyota$transmission == "Boîte manuelle automatisée" |
+                        toyota$transmission == "Boîte automatique variable", 
+                      FALSE, TRUE)
+
+# We repeat the process for drivetrain. We will create one column "awd".
+
+toyota$awd <- toyota$drivetrain == "4 roues motrices"
+
+```
+
+Now we will make a regression model that includes all of our variables then do a stepwise regression (backward) to remove non significant variables.
+
+```{r}
+# golf
+
+golf_model1 <- lm(golf$price ~ golf$kilometers + golf$kilometers.squared + golf$vehicle.age + golf$vehicle.age.squared + golf$power + golf$consumption + golf$expertise + golf$warranty + golf$wagon + golf$cabriolet + golf$small.car + golf$coupe + golf$diesel + golf$hybrid + golf$natural.gas + golf$electric + golf$manual + golf$awd)
+summary(golf_model1)
+golf_model2 <- stepAIC(golf_model1, direction = "backward")
+summary(golf_model2)
+# cabriolet and consumption are still not significant at an alpha of 0.01, we remove them
+# we subset the data first to exclude observations that contain NA
+golf <- golf[complete.cases(golf[, c("kilometers", "kilometers.squared", "vehicle.age", "vehicle.age.squared", "power", "expertise", "warranty", "wagon", "diesel", "manual", "awd")]), ]
+golf_model3 <- lm(golf$price ~ golf$kilometers + golf$kilometers.squared + golf$vehicle.age + golf$vehicle.age.squared + golf$power + golf$expertise + golf$warranty + golf$wagon + golf$diesel + golf$manual + golf$awd)
+summary(golf_model3)
+# All of our variables are now significant. This will be our final model
+
+golf$price.residuals <- golf_model3$residuals
+golf$pred.price <- golf_model3$fitted.values
+
+# audi
+
+audi_model1 <- lm(audi$price ~ audi$kilometers + audi$kilometers.squared + audi$vehicle.age + audi$vehicle.age.squared + audi$power + audi$consumption + audi$expertise + audi$warranty + audi$wagon + audi$cabriolet + audi$small.car + audi$coupe + audi$diesel + audi$hybrid + audi$natural.gas + audi$electric + audi$manual + audi$awd)
+summary(audi_model1)
+# we subset the data first to exclude observations that contain NA
+audi <- audi[complete.cases(audi[, c('kilometers', 'kilometers.squared', 'vehicle.age', 'vehicle.age.squared', 'power', 'consumption', 'expertise', 'warranty', 'wagon', 'cabriolet', 'small.car', 'coupe', 'diesel', 'hybrid', 'natural.gas', 'electric', 'manual', 'awd')]), ]
+audi_model2 <- stepAIC(audi_model1, direction = "backward")
+summary(audi_model2)
+# All of our variables are now significant. This will be our final model
+
+audi$price.residuals <- audi_model2$residuals
+audi$pred.price <- audi_model2$fitted.values
+
+# skoda
+
+skoda_model1 <- lm(skoda$price ~ skoda$kilometers + skoda$kilometers.squared + skoda$vehicle.age + skoda$vehicle.age.squared + skoda$power + skoda$consumption + skoda$expertise + skoda$warranty + skoda$sedan + skoda$cabriolet + skoda$suv + skoda$diesel + skoda$hybrid + skoda$natural.gas + skoda$manual + skoda$awd)
+summary(skoda_model1)
+skoda_model2 <- stepAIC(skoda_model1, direction = "backward")
+summary(skoda_model2)
+# cabriolet and consumption are still not significant at an alpha of 0.01, we remove them
+# we subset the data first to exclude observations that contain NA
+skoda <- skoda[complete.cases(skoda[, c("kilometers", "kilometers.squared", "vehicle.age", "vehicle.age.squared", "power", "consumption", "expertise", "warranty", "diesel", "manual", "awd")]), ]
+skoda_model3 <- lm(skoda$price ~ skoda$kilometers + skoda$kilometers.squared + skoda$vehicle.age + skoda$vehicle.age.squared + skoda$power + skoda$expertise + skoda$warranty + skoda$consumption + skoda$diesel + skoda$manual + skoda$awd)
+summary(skoda_model3)
+# we remove consumption as it is no longer significant
+skoda_model3 <- lm(skoda$price ~ skoda$kilometers + skoda$kilometers.squared + skoda$vehicle.age + skoda$vehicle.age.squared + skoda$power + skoda$expertise + skoda$warranty + skoda$diesel + skoda$manual + skoda$awd)
+summary(skoda_model3)
+# All of our variables are now significant. This will be our final model
+
+skoda$price.residuals <- skoda_model3$residuals
+skoda$pred.price <- skoda_model3$fitted.values
+
+# volvo
+
+volvo_model1 <- lm(volvo$price ~ volvo$kilometers + volvo$kilometers.squared + volvo$vehicle.age + volvo$vehicle.age.squared + volvo$power + volvo$consumption + volvo$expertise + volvo$warranty + volvo$diesel + volvo$hybrid + volvo$manual + volvo$fwd)
+summary(volvo_model1)
+# we subset the data first to exclude observations that contain NA
+volvo <- volvo[complete.cases(volvo[, c('price', 'kilometers', 'kilometers.squared', 'vehicle.age', 'vehicle.age.squared', 'power', 'consumption', 'expertise', 'warranty', 'diesel', 'hybrid', 'manual', 'fwd')]), ]
+volvo_model2 <- stepAIC(volvo_model1, direction = "backward")
+summary(volvo_model2)
+# manual is still not significant at an alpha of 0.01, we remove it
+volvo_model3 <- lm(volvo$price ~ volvo$kilometers + volvo$kilometers.squared + volvo$vehicle.age + volvo$vehicle.age.squared + volvo$power + volvo$consumption + volvo$hybrid)
+summary(volvo_model3)
+# All of our variables are now significant. This will be our final model
+volvo$price.residuals <- volvo_model3$residuals
+volvo$pred.price <- volvo_model3$fitted.values
+
+# toyota
+
+toyota_model1 <- lm(toyota$price ~ toyota$kilometers + toyota$kilometers.squared + toyota$vehicle.age + toyota$vehicle.age.squared + toyota$power + toyota$consumption + toyota$expertise + toyota$warranty + toyota$sedan + toyota$coupe + toyota$diesel + toyota$hybrid + toyota$manual + toyota$awd)
+summary(toyota_model1)
+toyota_model2 <- stepAIC(toyota_model1, direction = "backward")
+summary(toyota_model2)
+# warranty, hybrid, and consumption are still not significant at an alpha of 0.01, we remove them
+# we subset the data first to exclude observations that contain NA
+toyota <- toyota[complete.cases(toyota[, c("kilometers", "kilometers.squared", "vehicle.age", "vehicle.age.squared", "power", "sedan", "manual", "awd")]), ]
+toyota_model3 <- lm(toyota$price ~ toyota$kilometers + toyota$kilometers.squared + toyota$vehicle.age + toyota$vehicle.age.squared + toyota$power + toyota$sedan + toyota$manual + toyota$awd)
+summary(toyota_model3)
+#we remove sedan
+toyota_model3 <- lm(toyota$price ~ toyota$kilometers + toyota$kilometers.squared + toyota$vehicle.age + toyota$vehicle.age.squared + toyota$power + toyota$manual + toyota$awd)
+summary(toyota_model3)
+# All of our variables are now significant. This will be our final model
+toyota$price.residuals <- toyota_model3$residuals
+toyota$pred.price <- toyota_model3$fitted.values
+
+
+```
+```{r}
+
+```
+```{r}
+
+```
+```{r}
+
+```
+```{r}
+
+```
+```{r}
+
+```
+```{r}
+
+```
+```{r}
+
+```
+```{r}
+
+```
+
