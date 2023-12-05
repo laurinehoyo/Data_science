@@ -1,0 +1,366 @@
+---
+title: "EDA"
+format: html
+editor: visual
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+### Question 2 : What are the factors that influence the duration of a listing for a used car?
+
+2.2 Factors influencing the listing duration
+
+2.2.1 Histograms of listing duration
+
+The comparison of histograms allows us to observe the distribution of how long each car model remains listed for sale.
+It helps identify the typical durations or patterns for listings of these specific car models.
+It might indicate which models tend to have shorter or longer listing durations compared to others.
+
+Understanding these durations can offer insights into potentially the efficiency of selling particular car models.
+
+```{r, echo = FALSE, message = FALSE}
+library(ggplot2)
+library(tidyverse)
+library(patchwork)
+library(dplyr)
+library(plotly)
+library(shiny)
+
+setwd("~/Desktop/DSIBA/Project/cleaned data")
+
+golf <- read.csv("golf2_cleaned.csv")
+audi <- read.csv("audi2_cleaned.csv")
+skoda <- read.csv("skoda2_cleaned.csv")
+volvo <- read.csv("volvo2_cleaned.csv")
+toyota <- read.csv("toyota_cleaned.csv")
+```
+
+::: panel-tabset
+
+## Audi
+```{r}
+filtered_audi <- audi %>%
+  filter(created.date != as.Date("2022-11-14"))
+graph1 <- ggplot(filtered_audi, aes(x = listing.age)) +
+  geom_histogram(binwidth = 10, fill = "skyblue", color = "black") +
+  labs(
+    title = "Histogram of Listing Duration : Audi A3",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+p1 <- ggplotly(graph1)
+p1
+```
+
+## VW
+```{r}
+filtered_golf <- golf %>%
+  filter(created.date != as.Date("2022-11-14"))
+graph2 <- ggplot(filtered_golf, aes(x = listing.age)) +
+  geom_histogram(binwidth = 10, fill = "skyblue", color = "black") +
+  labs(
+    title = "Histogram of Listing Duration : VW Golf",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+p2 <- ggplotly(graph2)
+p2
+```
+
+## Toyota
+```{r}
+filtered_toyota <- toyota %>%
+  filter(created.date != as.Date("2022-11-14"))
+graph3 <- ggplot(filtered_toyota, aes(x = listing.age)) +
+  geom_histogram(binwidth = 10, fill = "skyblue", color = "black") +
+  labs(
+    title = "Histogram of Listing Duration : Toyota Yaris",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+p3 <- ggplotly(graph3)
+p3
+```
+
+## Skoda
+```{r}
+filtered_skoda <- skoda %>%
+  filter(created.date != as.Date("2022-11-14"))
+graph4 <- ggplot(filtered_skoda, aes(x = listing.age)) +
+  geom_histogram(binwidth = 10, fill = "skyblue", color = "black") +
+  labs(
+    title = "Histogram of Listing Duration : Skoda Octavia",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+p4 <- ggplotly(graph4)
+p4
+```
+
+## Volvo
+```{r}
+filtered_volvo <- volvo %>%
+  filter(created.date != as.Date("2022-11-14"))
+graph5 <- ggplot(filtered_volvo, aes(x = listing.age)) +
+  geom_histogram(binwidth = 10, fill = "skyblue", color = "black") +
+  labs(
+    title = "Histogram of Listing Duration : Volvo XC60",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+p5 <- ggplotly(graph5)
+p5
+```
+:::
+
+We can observe that for all makes, even though the number of observations differ, the most frequent listings available on the used car website are recent.
+As the listing age increases, the frequency decreases.
+
+2.2.2 Price vs listing duration
+
+The following scatterplots may help us understand the sensitivity of the used car market to pricing and the potential impact of price variations on how long a car remains listed for sale.
+
+```{r}
+library(patchwork)
+
+create_scatter_plot <- function(golf, model_name) {
+  ggplot(golf, aes(x = price, y = listing.age)) +
+    geom_point(color = "blue", alpha = 0.6) +
+    labs(
+      title = paste("Price vs. Listing Duration for", model_name),
+      x = "Price",
+      y = "Listing Duration (Days)"
+    )
+}
+
+list_of_datasets <- list(golf, audi, toyota, volvo, skoda)
+car_model_names <- c("VW Golf", "Audi A3", "Toyota Yaris", "Volvo XC60", "Skoda Octavia")
+
+plots <- lapply(seq_along(list_of_datasets), function(i) {
+  create_scatter_plot(list_of_datasets[[i]], car_model_names[i])
+})
+
+# Combine plots
+plot_arrangement <- wrap_plots(plots, ncol = 2)  # Adjust ncol for layout
+plot_arrangement
+```
+
+We unfortunately do not see any pattern or any structure when taking into account the price.
+
+2.2.3 Fuel type vs average listing duration
+
+The following interactive barplots aim to reveal any observable patterns or trends associated with the fuel type concerning the listing duration for each make.
+It is important to note that the length of the barplots depends on the average listing duration of each category, the number of observations has no effect on the length, but we found it important to include it in the bar plot to show that even if a category does not have many observations, the category might stand out compared to others.
+The darker the colour of the barplot, the higher the number of observations in the category.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(shiny)
+
+setwd("~/Desktop/DSIBA/Project/cleaned data")
+golf2 <- read.csv("golf_models_data.csv")
+audi2 <- read.csv("audi_models_data.csv")
+skoda2 <- read.csv("skoda_models_data.csv")
+volvo2 <- read.csv("volvo_models_data.csv")
+toyota2 <- read.csv("toyota_models_data.csv")
+```
+
+::: panel-tabset
+
+### Audi
+
+```{r}
+create_bar_plot <- function(data, title) {
+  data %>%
+    mutate(fuel.type = ifelse(grepl("Hybrid", fuel.type, ignore.case = TRUE), "Hybrid", fuel.type)) %>% 
+    filter(!is.na(fuel.type)) %>%
+    group_by(fuel.type) %>%
+    summarize(avg_duration = mean(listing.age, na.rm = TRUE),
+              count = n()) %>%
+    ggplot(aes(x = fuel.type, y = avg_duration, fill = count)) +  
+    geom_col() +
+    geom_text(aes(label = count), position = position_stack(vjust = 0.5), size = 3, color = "darkgrey") +
+    scale_fill_gradient(low = "lightblue", high = "darkblue") +
+    labs(title = title, x = "Fuel type", y = "Average listing duration") +
+    theme_minimal()
+}
+
+# Graphs for each make
+plot_audi <- create_bar_plot(audi2, "Fuel type vs Average listing duration : Audi A3")
+
+# Interactive Plotly graphs
+p1 <- ggplotly(plot_audi)
+```
+
+### VW
+
+```{r}
+plot_golf <- create_bar_plot(golf2, "Fuel type vs Average listing duration : VW Golf")
+p2 <- ggplotly(plot_golf)
+```
+
+### Toyota
+
+```{r}
+plot_toyota <- create_bar_plot(toyota2, "Fuel type vs Average listing duration : Toyota Yaris")
+p3 <- ggplotly(plot_toyota)
+```
+
+### Skoda
+
+```{r}
+plot_skoda <- create_bar_plot(skoda2, "Fuel type vs Average listing duration : Skoda Octavia")
+p4 <- ggplotly(plot_skoda)
+```
+
+### Volvo
+
+```{r}
+plot_volvo <- create_bar_plot(volvo2, "Fuel type vs Average listing duration : Volvo XC60")
+p5 <- ggplotly(plot_volvo)
+```
+:::
+
+Audi : While the category with the most observations is composed of petrol cars, the category with the highest average listing duration is "Diesel".
+Petrol cars have an average listing duration of 91 days.
+Volkswagen : This model has the largest panel of categories.
+Hybrid cars tend to stay on the website longer, with an average of 166 days.
+The category with the most observations, "Diesel", has an average listing duration of 119 days, which remains higher than that of Audi, but remains lower than other categories.
+Toyota : For this model, the highest average listing duration goes to the category with the most observations, i.e. petrol cars.
+The average listing duration does not vary much between categories, as there is a 23-day gap between the highest and lowest average listing duration.
+Skoda : Like Toyota, there is not much variation in average listing duration, with a 20-day gap between the highest and lowest average listing duration.
+Volvo : Like Skoda and Toyota, there is not much variation in average listing duration, with a 16-day gap between the highest and lowest average listing duration.
+
+We notice that 3 out of 5 models (Toyota, Skoda and Volvo) have a maximum variation of less than a month between categories, which indicates that for these models, the fuel type does not really influence the average listing duration.
+For the 2 remaining models (VW and Audi), fuel type may influence the average listing duration, as the variation exceeds 30 days.
+
+2.2.4 Transmission vs average listing duration
+
+The following barplots will help us determine if the transmission of the car affects the average listing duration.
+It will help us determine if people have a preference for manual or automatic cars in general.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(plotly)
+
+create_bar_plot <- function(data, title) {
+  data %>%
+    mutate(transmission = ifelse(grepl("Boîte manuelle automatisée", transmission, ignore.case = TRUE), "Automatique", transmission)) %>% 
+    filter(!is.na(transmission)) %>%
+    group_by(transmission) %>%
+    summarize(average_transmission_duration = mean(listing.age, na.rm = TRUE),
+              count=n()) %>%
+    ggplot(aes(x = transmission, y = average_transmission_duration, fill = count)) +
+    geom_col() +
+    geom_text(aes(label = count), position = position_stack(vjust = 0.5), size = 3, color = "darkgrey") +
+    scale_fill_gradient(low = "lightblue", high = "darkblue") +
+    labs(title = title, x = "Transmission", y = "Average listing duration") +
+    theme_minimal()
+}
+
+
+# Graphs for each make
+plot_audi <- create_bar_plot(audi2, "Transmission vs Average listing duration : Audi A3")
+plot_golf <- create_bar_plot(golf2, "Transmission vs Average listing duration : VW Golf")
+plot_toyota <- create_bar_plot(toyota2, "Transmission vs Average listing duration : Toyota Yaris")
+plot_skoda <- create_bar_plot(skoda2, "Transmission vs Average listing duration : Skoda Octavia")
+plot_volvo <- create_bar_plot(volvo2, "Transmission vs Average listing duration : Volvo XC60")
+
+# Interactive Plotly graphs
+p1 <- ggplotly(plot_audi)
+p2 <- ggplotly(plot_golf)
+p3 <- ggplotly(plot_toyota)
+p4 <- ggplotly(plot_skoda)
+p5 <- ggplotly(plot_volvo)
+
+```
+
+On average, for Audi, Volkswagen, and Skoda, while there are more automatic cars on sale than manual cars, there seems to be no preference between them.
+The average listing duration remains the same overall, always around 100 days.
+For both Toyota and Volvo, there seems to be a preference for automatic cars, as they both stay on average 24 days less longer than manual cars.
+
+2.2.5 Body type vs average listing duration
+
+For the following barplots we decided to only display the models which contain different body types, especially the Golf.
+For models such as the Yaris and the XC60, there is no point in trying to explain this type of relationship, as these two models only have one body type.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(plotly)
+
+create_bar_plot <- function(data, title) {
+  data %>%
+    filter(!is.na(body.type)) %>%
+    group_by(body.type) %>%
+    summarize(average_bt_duration = mean(listing.age, na.rm = TRUE),
+              count=n()) %>%
+    ggplot(aes(x = body.type, y = average_bt_duration, fill = count)) +
+    geom_col() +
+    geom_text(aes(label = count), position = position_stack(vjust = 0.5), size = 3, color = "darkgrey") +
+    scale_fill_gradient(low = "lightblue", high = "darkblue") +
+    labs(title = title, x = "Body type", y = "Average listing duration") +
+    theme_minimal()
+}
+
+# Graphs for each make
+plot_audi <- create_bar_plot(audi2, "Body type vs Average listing duration : Audi A3")
+plot_golf <- create_bar_plot(golf2, "Body type vs Average listing duration : VW Golf")
+plot_skoda <- create_bar_plot(skoda2, "Body type vs Average listing duration : Skoda Octavia")
+
+# Interactive Plotly graphs
+p1 <- ggplotly(plot_audi)
+p2 <- ggplotly(plot_golf)
+p4 <- ggplotly(plot_skoda)
+
+# Buttons and containers for graphs
+buttons <- tagList(
+  tags$button("Audi", onclick = "showPlot('audi')", class = "btn btn-default"),
+  tags$button("VW", onclick = "showPlot('golf')", class = "btn btn-default"),
+  tags$button("Skoda", onclick = "showPlot('skoda')", class = "btn btn-default"),
+
+)
+
+plot_containers <- tagList(
+  tags$div(id = "audi", style = "display:none;", p1),
+  tags$div(id = "golf", style = "display:none;", p2),
+  tags$div(id = "skoda", style = "display:none;", p4),
+)
+
+# Combine buttons and containers
+html_output <- tagList(buttons, plot_containers)
+
+# Add JavaScript code
+js_code <- HTML("
+<script>
+  function showPlot(plotId) {
+    var plots = ['skoda', 'golf', 'audi'];
+    plots.forEach(function(id) {
+      var plotEl = document.getElementById(id);
+      if (plotEl) {
+        plotEl.style.display = 'none';
+      }
+    });
+    var showEl = document.getElementById(plotId);
+    if (showEl) {
+      showEl.style.display = 'block';
+    }
+  }
+  // Afficher le premier graphique par défaut
+  showPlot('Audi');
+</script>
+")
+
+# Display user interface
+htmltools::tagList(html_output, js_code)
+
+```
+
+The observed pattern in these barplots indicates a consistent trend across each make: the category with the highest number of observations tends to have the lowest or among the shortest average listing durations.
+This trend likely stems from higher demand, resulting in quicker turnovers as these models are more demanded.
+Conversely, less frequently observed categories show longer average listing durations, suggesting that buyers tend to favour the more common body types, leading to extended listing periods for other variants.
+It is important to note that categories with less than 5 observations are most likely errors occurred during scraping our data.
