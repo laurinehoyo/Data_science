@@ -79,7 +79,30 @@ ggplot(lm(toyota$price ~ toyota$vehicle.age), aes(x = .fitted, y = .resid)) +
 ```
 :::
 
-The relationship between price and vehicle age is obviously not linear. The blue line that represents the residuals should be more horizontal to ressemble the red fitted values line.
+The relationship between price and vehicle age is obviously not linear. The blue line that represents the residuals should be more horizontal to resemble the red fitted values line. We can see this when we plot both variables with a linear method vs a loess method.
+
+::: panel-tabset
+### Linear model
+```{r}
+ggplot(golf, aes(vehicle.age, price)) + 
+  geom_point() +
+  geom_smooth(method = lm) +
+  ylim(0, max(golf$price))
+```
+### LOESS
+```{r}
+
+ggplot(golf, aes(vehicle.age, price)) + 
+  geom_point() +
+  geom_smooth(method = loess) +
+  ylim(0, max(golf$price))
+```
+:::
+
+In the graph above for the VW Golf, we can see that the average price goes up after a vehicle age of approx. 9000 days (= 24 years, 7 months, 21 days) which is counter-intuitive.
+One hypothesis would be that these cars could be considered as vintage or collector cars, and therefore won't appeal to the average buyer, who is a daily driver. These types of cars have usually been very well maintained and have low mileage, which could also explain this overvaluation.
+We also notice that the curve is steeper and therefore cars seem to depreciate faster in their first 2500 days (6 years, 10 months, 2 days) than in their next 7500 (20 years, 6 months, 12 days).
+
 
 We repeat the process but replace vehicle.age by kilometers and notice similar results.
 
@@ -201,9 +224,9 @@ ggplot(lm(toyota$price ~ toyota$kilometers + toyota$kilometers.squared + toyota$
 ```
 :::
 
-These plots look much better than the ones before. These variables are the only ones that seem to be affected by this type of heteroskedasticity, so we don't need to make squared versions for all our other variables.
+These plots look much better than the ones before. We still notice heteroskedasticity in the errors, especially for the Audis and Volvos.
 
-We need to do a little bit more data wrangling for this question. We need to transform our columns body.type, fuel.type, transmission and drivetrain into logical variables.
+We need to do a little bit more data wrangling for this question. We need to transform our columns body.type, fuel.type, transmission and drivetrain into logical variables, in order to be able to use them in our regression model.
 
 ```{r}
 ### golf
@@ -445,22 +468,63 @@ toyota$pred.price <- toyota_model3$fitted.values
 
 
 ```
+
+Now we have found our optimal regression models, we can have a look at their summaries and residuals vs fitted values plots.
+
+::: panel-tabset
+### VW Golf
 ```{r}
+ggplot(golf_model3, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+summary(golf_model3)
 
 ```
+### Audi A3
 ```{r}
-
+ggplot(audi_model2, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+summary(audi_model2)
 ```
+### Skoda Octavia
 ```{r}
-
+ggplot(skoda_model3, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+summary(skoda_model3)
 ```
+### Volvo XC60
 ```{r}
-
+ggplot(volvo_model3, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+summary(volvo_model3)
 ```
+### Toyota Yaris
 ```{r}
-
+ggplot(toyota_model3, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+summary(toyota_model3)
 ```
+:::
+
+We now need to check the models for multicollinearity. We can do this by calculating the VIF (Variance Inflation Factors) for our models.
+
+We still notice quite a high standard error for all vehicles, which decreases the reliability of the predictions and the usefulness of the tool
+
+For the 5 car models that we have researched, the R-Squared values are between 0.90 and 0.94, which we consider to be very good.
+
 ```{r}
+vif(golf_model3)
+
+#plotly bar chart with VIFs for each factor for each vehicle
 
 ```
 ```{r}
