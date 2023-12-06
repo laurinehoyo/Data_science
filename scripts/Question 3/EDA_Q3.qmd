@@ -14,7 +14,7 @@ In this part, we will look at graphs related to the depreciation of our vehicles
 
 Firstly, we need to filter our data to keep only the observations where the new price of the vehicle is available. When scraping our data, only a portion of the total listings had the vehicle's new age displayed, as it is an optional input for the seller. This reduces our sample sizes a large amount, especially for the Toyota Yaris data set. Below is a table displaying these reductions in sample sizes.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # Question 3: How do different vehicle features affect depreciation ?
 library(patchwork)
 library(ggtext)
@@ -39,7 +39,6 @@ sample_sizes <- data.frame(
   "Volvo XC60" = nrow(volvo),
   "Toyota Yaris" = nrow(toyota)
 )
-sample_sizes
 
 # Depreciation variables
 # We filter to remove NAs from new price for this part
@@ -99,7 +98,7 @@ sample_sizes |>
 
 These plots show the new prices of cars compared with their actual prices, sorted by the new price.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 a1 <- ggplot(golf[order(golf$new.price),]) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue") +
   ylim(0, max(golf$new.price)) +
@@ -180,19 +179,44 @@ a5 <- ggplot(toyota[order(toyota$new.price),]) +
 
 # Patchwork
 
-a1
-(a2 | a3) /
-(a4 | a5)
+#a1
+#(a2 | a3) /
+#(a4 | a5)
 
 ```
+::: panel-tabset
+### VW Golf
+```{r, message=FALSE, warning=FALSE}
+a1
+```
+### Audi A3
+```{r, message=FALSE, warning=FALSE}
+a2
+```
+### Skoda Octavia
+```{r, message=FALSE, warning=FALSE}
+a3
+```
+### Volvo XC60
+```{r, message=FALSE, warning=FALSE}
+a4
+```
+### Toyota Yaris
+```{r, message=FALSE, warning=FALSE}
+a5
+```
+:::
 
+```{r, message=FALSE, warning=FALSE}
+
+```
 It seems the new and actual prices are strongly related.
 
 #### 2.3.3 New prices vs depreciation
 
 We now look at the new prices of vehicles compared to their relative depreciation. The relative depreciation is defined as (new price - actual price) / new price
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # New prices vs depreciation golf
 
 b1 <- ggplot(golf[order(golf$new.price),]) +
@@ -201,7 +225,7 @@ b1 <- ggplot(golf[order(golf$new.price),]) +
   xlim(0, nrow(golf)) +
   geom_point(mapping = aes(x = seq(new.price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = rel_dep*100000), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by new price", y = "Price", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of new prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
@@ -214,7 +238,7 @@ b2 <- ggplot(audi[order(audi$new.price),]) +
   xlim(0, nrow(audi)) +
   geom_point(mapping = aes(x = seq(new.price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = rel_dep*100000), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by new price", y = "Price") +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of new prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
@@ -227,7 +251,7 @@ b3 <- ggplot(skoda[order(skoda$new.price),]) +
   xlim(0, nrow(skoda)) +
   geom_point(mapping = aes(x = seq(new.price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = rel_dep*100000), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by new price", y = "Price") +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of new prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
@@ -240,7 +264,7 @@ b4 <- ggplot(volvo[order(volvo$new.price),]) +
   xlim(0, nrow(volvo)) +
   geom_point(mapping = aes(x = seq(new.price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = rel_dep*100000), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by new price", y = "Price") +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of new prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
@@ -254,20 +278,42 @@ b5 <- ggplot(toyota[order(toyota$new.price),]) +
   xlim(0, nrow(toyota)) +
   geom_point(mapping = aes(x = seq(new.price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = rel_dep*100000), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by new price", y = "Price") +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of new prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
 
 # Patchwork
 
-b1 +
-  plot_annotation(title = "Comparison of new prices and relative depreciation")
+#b1 +
+ # plot_annotation(title = "Comparison of new prices and relative depreciation")
+#b2
+#b3
+#b4
+#b5
+```
+::: panel-tabset
+### VW Golf
+```{r, message=FALSE, warning=FALSE}
+b1
+```
+### Audi A3
+```{r, message=FALSE, warning=FALSE}
 b2
+```
+### Skoda Octavia
+```{r, message=FALSE, warning=FALSE}
 b3
+```
+### Volvo XC60
+```{r, message=FALSE, warning=FALSE}
 b4
+```
+### Toyota Yaris
+```{r, message=FALSE, warning=FALSE}
 b5
 ```
+:::
 
 We can see that these are weakly negatively correlated, but it does not stand out in the graphs.
 
@@ -275,7 +321,7 @@ We can see that these are weakly negatively correlated, but it does not stand ou
 
 We will now compare current vehicle prices and their relative depreciation
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # Prices vs depreciation golf
 
 c1 <- ggplot(golf[order(golf$price),]) +
@@ -297,7 +343,7 @@ c2 <- ggplot(audi[order(audi$price),]) +
   xlim(0, nrow(audi)) +
   geom_point(mapping = aes(x = seq(price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*100000), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by price", y = "Price") +
+  labs(x = "Observations sorted by price", y = "Price", title = "Comparison of prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
@@ -310,7 +356,7 @@ c3 <- ggplot(skoda[order(skoda$price),]) +
   xlim(0, nrow(skoda)) +
   geom_point(mapping = aes(x = seq(price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*100000), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by price", y = "Price") +
+  labs(x = "Observations sorted by price", y = "Price", title = "Comparison of prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
@@ -323,7 +369,7 @@ c4 <- ggplot(volvo[order(volvo$price),]) +
   xlim(0, nrow(volvo)) +
   geom_point(mapping = aes(x = seq(price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*100000), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by price", y = "Price") +
+  labs(x = "Observations sorted by price", y = "Price", title = "Comparison of prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
@@ -336,20 +382,42 @@ c5 <- ggplot(toyota[order(toyota$price),]) +
   xlim(0, nrow(toyota)) +
   geom_point(mapping = aes(x = seq(price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*100000), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by price", y = "Price") +
+  labs(x = "Observations sorted by price", y = "Price", title = "Comparison of prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
 
 # Patchwork
 
-c1 +
-  plot_annotation(title = "Comparison of current prices and relative depreciation")
+#c1 +
+#  plot_annotation(title = "Comparison of current prices and relative depreciation")
+#c2
+#c3
+#c4
+#c5
+```
+::: panel-tabset
+### VW Golf
+```{r, message=FALSE, warning=FALSE}
+c1
+```
+### Audi A3
+```{r, message=FALSE, warning=FALSE}
 c2
+```
+### Skoda Octavia
+```{r, message=FALSE, warning=FALSE}
 c3
+```
+### Volvo XC60
+```{r, message=FALSE, warning=FALSE}
 c4
+```
+### Toyota Yaris
+```{r, message=FALSE, warning=FALSE}
 c5
 ```
+:::
 
 Current vehicle prices are obviously negatively correlated with relative depreciation, which makes sense.
 
@@ -357,7 +425,7 @@ Current vehicle prices are obviously negatively correlated with relative depreci
 
 Vehicle age is probably the biggest influencing factor that defines the definition of depreciation, so we can see in the graphs that it is strongly related to relative depreciation.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # Vehicle age vs depreciation golf
 
 d1 <- ggplot(golf[order(golf$vehicle.age),]) +
@@ -366,11 +434,10 @@ d1 <- ggplot(golf[order(golf$vehicle.age),]) +
   xlim(0, nrow(golf)) +
   geom_point(mapping = aes(x = seq(vehicle.age), y = rel_dep*(max(golf$vehicle.age)/365)), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*(max(golf$vehicle.age)/365)), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", title = "Comparison of vehicle age and relative depreciation", subtitle = "VW Golf") +
+  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", title = "Comparison of vehicle age and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Vehicle age (years)</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./(max(golf$vehicle.age)/365), name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
-d1
 
 # Vehicle age vs depreciation audi
 
@@ -380,10 +447,10 @@ d2 <- ggplot(audi[order(audi$vehicle.age),]) +
   xlim(0, nrow(audi)) +
   geom_point(mapping = aes(x = seq(vehicle.age), y = rel_dep*(max(audi$vehicle.age)/365)), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*(max(audi$vehicle.age)/365)), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", subtitle = "Audi A3", title = "<span style='color:royalblue;'>&#9899; Vehicle age (years)</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", title = "Comparison of vehicle age and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Vehicle age (years)</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./(max(audi$vehicle.age)/365), name = "Relative depreciation")) +
   theme_light() +
-  theme(plot.title = element_markdown())
+  theme(plot.subtitle = element_markdown())
 
 # Vehicle age vs depreciation skoda
 
@@ -393,7 +460,7 @@ d3 <- ggplot(skoda[order(skoda$vehicle.age),]) +
   xlim(0, nrow(skoda)) +
   geom_point(mapping = aes(x = seq(vehicle.age), y = rel_dep*(max(skoda$vehicle.age)/365)), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*(max(skoda$vehicle.age)/365)), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", subtitle = "Skoda Octavia") +
+  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", title = "Comparison of vehicle age and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Vehicle age (years)</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./(max(skoda$vehicle.age)/365), name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
@@ -406,7 +473,7 @@ d4 <- ggplot(volvo[order(volvo$vehicle.age),]) +
   xlim(0, nrow(volvo)) +
   geom_point(mapping = aes(x = seq(vehicle.age), y = rel_dep*(max(volvo$vehicle.age)/365)), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*(max(volvo$vehicle.age)/365)), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", subtitle = "Volvo XC60") +
+  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", title = "Comparison of vehicle age and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Vehicle age (years)</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./(max(volvo$vehicle.age)/365), name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
@@ -419,25 +486,47 @@ d5 <- ggplot(toyota[order(toyota$vehicle.age),]) +
   xlim(0, nrow(toyota)) +
   geom_point(mapping = aes(x = seq(vehicle.age), y = rel_dep*(max(toyota$vehicle.age)/365)), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*(max(toyota$vehicle.age)/365)), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)") +
+  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", title = "Comparison of vehicle age and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Vehicle age (years)</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./(max(toyota$vehicle.age)/365), name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
 
 # Patchwork
 
-(d2 | d3) /
-  (d4 | d5) +
-  plot_annotation(
-    title = "Comparison of vehicle age and relative depreciation"
-  )
+#(d2 | d3) /
+ # (d4 | d5) +
+  #plot_annotation(
+   # title = "Comparison of vehicle age and relative depreciation"
+#  )
 ```
+::: panel-tabset
+### VW Golf
+```{r, message=FALSE, warning=FALSE}
+d1
+```
+### Audi A3
+```{r, message=FALSE, warning=FALSE}
+d2
+```
+### Skoda Octavia
+```{r, message=FALSE, warning=FALSE}
+d3
+```
+### Volvo XC60
+```{r, message=FALSE, warning=FALSE}
+d4
+```
+### Toyota Yaris
+```{r, message=FALSE, warning=FALSE}
+d5
+```
+:::
 
 #### 2.3.6 Kilometers vs depreciation
 
 Kilometers is most likely the second biggest determinant of depreciation. Here are some graphs that put this into perspective.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # Kilometers vs depreciation golf
 
 e1 <- ggplot(golf[order(golf$kilometers),]) +
@@ -446,11 +535,10 @@ e1 <- ggplot(golf[order(golf$kilometers),]) +
   xlim(0, nrow(golf)) +
   geom_point(mapping = aes(x = seq(kilometers), y = rel_dep*max(golf$kilometers)), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*max(golf$kilometers)), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by kilometers", y = "Kilometers", title = "Comparison of kilometers and relative depreciation", subtitle = "VW Golf") +
+  labs(x = "Observations sorted by kilometers", y = "Kilometers", title = "Comparison of kilometers and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Kilometers</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./max(golf$kilometers), name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
-e1
 
 # Kilometers vs depreciation audi
 
@@ -460,10 +548,10 @@ e2 <- ggplot(audi[order(audi$kilometers),]) +
   xlim(0, nrow(audi)) +
   geom_point(mapping = aes(x = seq(kilometers), y = rel_dep*max(audi$kilometers)), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*max(audi$kilometers)), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by kilometers", y = "Kilometers", subtitle = "Audi A3", title = "<span style='color:royalblue;'>&#9899; Kilometers</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  labs(x = "Observations sorted by kilometers", y = "Kilometers", title = "Comparison of kilometers and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Kilometers</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./max(audi$kilometers), name = "Relative depreciation")) +
   theme_light() +
-  theme(plot.title = element_markdown())
+  theme(plot.subtitle = element_markdown())
 
 # Kilometers vs depreciation skoda
 
@@ -473,7 +561,7 @@ e3 <- ggplot(skoda[order(skoda$kilometers),]) +
   xlim(0, nrow(skoda)) +
   geom_point(mapping = aes(x = seq(kilometers), y = rel_dep*max(skoda$kilometers)), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*max(skoda$kilometers)), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by kilometers", y = "Kilometers", subtitle = "Skoda Octavia") +
+  labs(x = "Observations sorted by kilometers", y = "Kilometers", title = "Comparison of kilometers and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Kilometers</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./max(skoda$kilometers), name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
@@ -486,7 +574,7 @@ e4 <- ggplot(volvo[order(volvo$kilometers),]) +
   xlim(0, nrow(volvo)) +
   geom_point(mapping = aes(x = seq(kilometers), y = rel_dep*max(volvo$kilometers)), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*max(volvo$kilometers)), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by kilometers", y = "Kilometers", subtitle = "Volvo XC60") +
+  labs(x = "Observations sorted by kilometers", y = "Kilometers", title = "Comparison of kilometers and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Kilometers</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./max(volvo$kilometers), name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
@@ -499,24 +587,100 @@ e5 <- ggplot(toyota[order(toyota$kilometers),]) +
   xlim(0, nrow(toyota)) +
   geom_point(mapping = aes(x = seq(kilometers), y = rel_dep*max(toyota$kilometers)), size = 1, alpha = 0.5, stroke = 0) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*max(toyota$kilometers)), color = "orangered", se = FALSE) +
-  labs(x = "Observations sorted by kilometers", y = "Kilometers", subtitle = "Toyota Yaris") +
+  labs(x = "Observations sorted by kilometers", y = "Kilometers", title = "Comparison of kilometers and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Kilometers</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
   scale_y_continuous(sec.axis = sec_axis(~./max(toyota$kilometers), name = "Relative depreciation")) +
   theme_light() +
   theme(plot.subtitle = element_markdown())
 
 # Patchwork
 
-(e2 | e3) /
-  (e4 | e5) +
-  plot_annotation(
-    title = "Comparison of kilometers and relative depreciation"
-  )
+#(e2 | e3) /
+ # (e4 | e5) +
+  #plot_annotation(
+   # title = "Comparison of kilometers and relative depreciation"
+  #)
+```
+::: panel-tabset
+### VW Golf
+```{r, message=FALSE, warning=FALSE}
+e1
+```
+### Audi A3
+```{r, message=FALSE, warning=FALSE}
+e2
+```
+### Skoda Octavia
+```{r, message=FALSE, warning=FALSE}
+e3
+```
+### Volvo XC60
+```{r, message=FALSE, warning=FALSE}
+e4
+```
+### Toyota Yaris
+```{r, message=FALSE, warning=FALSE}
+e5
+```
+:::
+
+```{r, message=FALSE, warning=FALSE}
+### Correlation matrices
+
+# golf
+cor_matrix_golf <- cor(select(golf, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "wagon", "diesel", "hybrid", "natural.gas", "manual", "awd")), use = "complete.obs")
+# We don't include natural gas vehicles because there are only 2 observations, and such a small sample size may lead to unreliable estimates of correlations.
+
+# When we run the correlation matrix with variable electric included, we get NAs for correlations between electric and every other variable. We explicitly remove all rows where there is a NA (use = "complete.obs"), so this may be the reason. Upon further inspection, we notice that consumption is NA for all electric vehicles.
+# We still want to check the correlations between electric and all other variables, so we will set consumption for electric vehicles to an arbitrary value, say -999, for our matrix to function correctly. We make a copy of the dataframe for this.
+# For the other vehicles, we will simply omit electric because the counts are too low.
+golf2 <- golf
+golf2$consumption[golf2$electric == TRUE] <- -999
+cor_matrix_golf2 <- cor(select(golf2, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "wagon", "diesel", "hybrid", "electric", "natural.gas", "manual", "awd")), use = "complete.obs")
+
+
+# audi
+cor_matrix_audi <- cor(select(audi, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "cabriolet", "diesel", "hybrid", "manual", "awd")), use = "complete.obs")
+# We omit natural gas vehicles (2 observations) and coupe (1 observation)
+
+
+# skoda
+cor_matrix_skoda <- cor(select(skoda, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "sedan", "diesel", "hybrid", "natural.gas", "manual", "awd")), use = "complete.obs")
+
+
+# volvo
+cor_matrix_volvo <- cor(select(volvo, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "diesel", "hybrid", "manual")), use = "complete.obs")
+
+
+# toyota
+cor_matrix_toyota <- cor(select(toyota, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "sedan", "hybrid", "manual", "awd")), use = "complete.obs")
+
 ```
 
-######notes
-
+#### 2.3.7 Correlation matrices
 ::: panel-tabset
-### graph1
-
-### graph2
+### VW Golf
+```{r, message=FALSE, warning=FALSE}
+corrplot(cor_matrix_golf)
+cor_matrix_golf
+```
+### Audi A3
+```{r, message=FALSE, warning=FALSE}
+corrplot(cor_matrix_audi)
+cor_matrix_audi
+```
+### Skoda Octavia
+```{r, message=FALSE, warning=FALSE}
+corrplot(cor_matrix_skoda)
+cor_matrix_skoda
+```
+### Volvo XC60
+```{r, message=FALSE, warning=FALSE}
+corrplot(cor_matrix_volvo)
+cor_matrix_volvo
+```
+### Toyota Yaris
+```{r, message=FALSE, warning=FALSE}
+corrplot(cor_matrix_toyota)
+cor_matrix_toyota
+```
 :::
