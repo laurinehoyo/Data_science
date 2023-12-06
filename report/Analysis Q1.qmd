@@ -17,6 +17,7 @@ Our dependant variable will be price. We will make a regression model that inclu
 # Libraries + datasets
 
 library(tidyverse)
+library(plotly)
 library(corrplot)
 library(Hmisc)
 library(car)
@@ -522,11 +523,45 @@ We still notice quite a high standard error for all vehicles, which decreases th
 For the 5 car models that we have researched, the R-Squared values are between 0.90 and 0.94, which we consider to be very good.
 
 ```{r}
-vif(golf_model3)
 
 #plotly bar chart with VIFs for each factor for each vehicle
 
+vif_values <- vif(golf_model3)
+vif_values
+
+# data frame
+plot_data <- data.frame(Variables = c("kilometers", "kilometers.squared", "vehicle.age", "vehicle.age.squared", "power", "expertise", "warranty", "wagon", "diesel", "manual", "awd"), VIF = vif(golf_model3))
+
+plot_data2 <- data.frame(Variables = c("kilometers", "kilometers.squared", "vehicle.age", "vehicle.age.squared", "power", "expertise", "warranty", "wagon", "diesel", "manual", "awd"), VIF = 5)
+
+# function to display horizontal line
+hline <- function(y = 0, color = "red") {
+  list(
+    type = "line",
+    x0 = 0,
+    x1 = 1,
+    xref = "paper",
+    y0 = y,
+    y1 = y,
+    line = list(color = color)
+  )
+}
+
+# plotly
+
+
+plot <- plot_ly(plot_data, x = ~Variables, y = ~VIF, type = 'bar', 
+                marker = list(color = 'grey')) %>%
+  layout(shapes = list(hline(5))) |>
+                layout(title = "Variance Inflation Factor (VIF) Values",
+               xaxis = list(title = "Variables"),
+               yaxis = list(title = "VIF"))
+
+
+# Display the plot
+plot
 ```
+By definition, if a variable has a VIF score of 1, it is completely independent. As a rule of thumb, we consider variables with a VIF between 1 and 5 to be moderately correlated and those with a VIF higher than 5 to be highly correlated. These bar charts show us that for every model, vehicle.age and kilometers are clearly correlated. This is logical because the longer an owner has had a car for, the more days he has used it to travel, and the more kilometers have accumulated on the vehicle. In theory, it is possible to own a car and put very few or no kilometers on it for an extended period of time, as well as put a large amount of kilometers in a short amount of time. These 2 variables are equally of great importance to determine a vehicle's price, and therefore we won't exclude either of them from our model, despite there being severe multicollinearity.
 ```{r}
 
 ```
