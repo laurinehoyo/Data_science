@@ -13,6 +13,7 @@ In this part we will attempt to answer our research questions by analysing our g
 ### Q1. Which physical factors have the biggest impact on used car prices?
 
 Our dependant variable will be price. We will make a regression model that includes all of our variables then do a stepwise regression (backward) to remove non significant variables, in order to find the optimal model.
+
 ```{r, message=FALSE, warning=FALSE}
 # Libraries + datasets
 
@@ -34,6 +35,7 @@ We will first have a look at the variables vehicle.age and kilometers, which we 
 
 ::: panel-tabset
 ### VW Golf
+
 ```{r, message=FALSE, warning=FALSE}
 # golf
 ggplot(lm(golf$price ~ golf$vehicle.age), aes(x = .fitted, y = .resid)) +
@@ -42,7 +44,9 @@ ggplot(lm(golf$price ~ golf$vehicle.age), aes(x = .fitted, y = .resid)) +
   geom_smooth()
 
 ```
+
 ### Audi A3
+
 ```{r, message=FALSE, warning=FALSE}
 # audi
 ggplot(lm(audi$price ~ audi$vehicle.age), aes(x = .fitted, y = .resid)) +
@@ -51,7 +55,9 @@ ggplot(lm(audi$price ~ audi$vehicle.age), aes(x = .fitted, y = .resid)) +
   geom_smooth()
 
 ```
+
 ### Skoda Octavia
+
 ```{r, message=FALSE, warning=FALSE}
 # skoda
 ggplot(lm(skoda$price ~ skoda$vehicle.age), aes(x = .fitted, y = .resid)) +
@@ -60,7 +66,9 @@ ggplot(lm(skoda$price ~ skoda$vehicle.age), aes(x = .fitted, y = .resid)) +
   geom_smooth()
 
 ```
+
 ### Volvo XC60
+
 ```{r, message=FALSE, warning=FALSE}
 # volvo
 ggplot(lm(volvo$price ~ volvo$vehicle.age), aes(x = .fitted, y = .resid)) +
@@ -69,7 +77,9 @@ ggplot(lm(volvo$price ~ volvo$vehicle.age), aes(x = .fitted, y = .resid)) +
   geom_smooth()
 
 ```
+
 ### Toyota Yaris
+
 ```{r, message=FALSE, warning=FALSE}
 # toyota
 ggplot(lm(toyota$price ~ toyota$vehicle.age), aes(x = .fitted, y = .resid)) +
@@ -84,13 +94,16 @@ The relationship between price and vehicle age is obviously not linear. The blue
 
 ::: panel-tabset
 ### Linear model
+
 ```{r, message=FALSE, warning=FALSE}
 ggplot(golf, aes(vehicle.age, price)) + 
   geom_point() +
   geom_smooth(method = lm) +
   ylim(0, max(golf$price))
 ```
+
 ### LOESS
+
 ```{r, message=FALSE, warning=FALSE}
 
 ggplot(golf, aes(vehicle.age, price)) + 
@@ -100,15 +113,13 @@ ggplot(golf, aes(vehicle.age, price)) +
 ```
 :::
 
-In the graph above for the VW Golf, we can see that the average price goes up after a vehicle age of approx. 9000 days (= 24 years, 7 months, 21 days) which is counter-intuitive.
-One hypothesis would be that these cars could be considered as vintage or collector cars, and therefore won't appeal to the average buyer, who is a daily driver. These types of cars have usually been very well maintained and have low mileage, which could also explain this overvaluation.
-We also notice that the curve is steeper and therefore cars seem to depreciate faster in their first 2500 days (6 years, 10 months, 2 days) than in their next 7500 (20 years, 6 months, 12 days).
-
+In the graph above for the VW Golf, we can see that the average price goes up after a vehicle age of approx. 9000 days (= 24 years, 7 months, 21 days) which is counter-intuitive. One hypothesis would be that these cars could be considered as vintage or collector cars, and therefore won't appeal to the average buyer, who is a daily driver. These types of cars have usually been very well maintained and have low mileage, which could also explain this overvaluation. We also notice that the curve is steeper and therefore cars seem to depreciate faster in their first 2500 days (6 years, 10 months, 2 days) than in their next 7500 (20 years, 6 months, 12 days).
 
 We repeat the process but replace vehicle.age by kilometers and notice similar results.
 
 ::: panel-tabset
 ### VW Golf
+
 ```{r, message=FALSE, warning=FALSE}
 # golf
 ggplot(lm(golf$price ~ golf$kilometers), aes(x = .fitted, y = .resid)) +
@@ -117,7 +128,9 @@ ggplot(lm(golf$price ~ golf$kilometers), aes(x = .fitted, y = .resid)) +
   geom_smooth()
 
 ```
+
 ### Audi A3
+
 ```{r, message=FALSE, warning=FALSE}
 # audi
 ggplot(lm(audi$price ~ audi$kilometers), aes(x = .fitted, y = .resid)) +
@@ -126,7 +139,9 @@ ggplot(lm(audi$price ~ audi$kilometers), aes(x = .fitted, y = .resid)) +
   geom_smooth()
 
 ```
+
 ### Skoda Octavia
+
 ```{r, message=FALSE, warning=FALSE}
 # skoda
 ggplot(lm(skoda$price ~ skoda$kilometers), aes(x = .fitted, y = .resid)) +
@@ -135,7 +150,9 @@ ggplot(lm(skoda$price ~ skoda$kilometers), aes(x = .fitted, y = .resid)) +
   geom_smooth()
 
 ```
+
 ### Volvo XC60
+
 ```{r, message=FALSE, warning=FALSE}
 # volvo
 ggplot(lm(volvo$price ~ volvo$kilometers), aes(x = .fitted, y = .resid)) +
@@ -144,7 +161,9 @@ ggplot(lm(volvo$price ~ volvo$kilometers), aes(x = .fitted, y = .resid)) +
   geom_smooth()
 
 ```
+
 ### Toyota Yaris
+
 ```{r, message=FALSE, warning=FALSE}
 # toyota
 ggplot(lm(toyota$price ~ toyota$kilometers), aes(x = .fitted, y = .resid)) +
@@ -155,7 +174,7 @@ ggplot(lm(toyota$price ~ toyota$kilometers), aes(x = .fitted, y = .resid)) +
 ```
 :::
 
-We can try to fix this using second degree variables. We add vehicle.age squared and kilometers squared as variables to our datasets and run the plots again. Below are the residuals vs fitted value plots of regressions lm(price ~ vehicle.age + vehicle.aged.squared + kilometers + kilometers.squared). 
+We can try to fix this using second degree variables. We add vehicle.age squared and kilometers squared as variables to our datasets and run the plots again. Below are the residuals vs fitted value plots of regressions lm(price \~ vehicle.age + vehicle.aged.squared + kilometers + kilometers.squared).
 
 ```{r, message=FALSE, warning=FALSE}
 # golf
@@ -178,8 +197,10 @@ volvo$kilometers.squared <- (volvo$kilometers ^ 2)
 toyota$vehicle.age.squared <- (toyota$vehicle.age ^ 2)
 toyota$kilometers.squared <- (toyota$kilometers ^ 2)
 ```
+
 ::: panel-tabset
 ### VW Golf
+
 ```{r, message=FALSE, warning=FALSE}
 # golf
 ggplot(lm(golf$price ~ golf$kilometers + golf$kilometers.squared + golf$vehicle.age + golf$vehicle.age.squared), aes(x = .fitted, y = .resid)) +
@@ -188,7 +209,9 @@ ggplot(lm(golf$price ~ golf$kilometers + golf$kilometers.squared + golf$vehicle.
   geom_smooth()
 
 ```
+
 ### Audi A3
+
 ```{r, message=FALSE, warning=FALSE}
 # audi
 ggplot(lm(audi$price ~ audi$kilometers + audi$kilometers.squared + audi$vehicle.age + audi$vehicle.age.squared), aes(x = .fitted, y = .resid)) +
@@ -197,7 +220,9 @@ ggplot(lm(audi$price ~ audi$kilometers + audi$kilometers.squared + audi$vehicle.
   geom_smooth()
 
 ```
+
 ### Skoda Octavia
+
 ```{r, message=FALSE, warning=FALSE}
 # skoda
 ggplot(lm(skoda$price ~ skoda$kilometers + skoda$kilometers.squared + skoda$vehicle.age + skoda$vehicle.age.squared), aes(x = .fitted, y = .resid)) +
@@ -206,7 +231,9 @@ ggplot(lm(skoda$price ~ skoda$kilometers + skoda$kilometers.squared + skoda$vehi
   geom_smooth()
 
 ```
+
 ### Volvo XC60
+
 ```{r, message=FALSE, warning=FALSE}
 # volvo
 ggplot(lm(volvo$price ~ volvo$kilometers + volvo$kilometers.squared + volvo$vehicle.age + volvo$vehicle.age.squared), aes(x = .fitted, y = .resid)) +
@@ -215,7 +242,9 @@ ggplot(lm(volvo$price ~ volvo$kilometers + volvo$kilometers.squared + volvo$vehi
   geom_smooth()
 
 ```
+
 ### Toyota Yaris
+
 ```{r, message=FALSE, warning=FALSE}
 # toyota
 ggplot(lm(toyota$price ~ toyota$kilometers + toyota$kilometers.squared + toyota$vehicle.age + toyota$vehicle.age.squared), aes(x = .fitted, y = .resid)) +
@@ -474,6 +503,7 @@ Now we have found our optimal regression models, we can have a look at their sum
 
 ::: panel-tabset
 ### VW Golf
+
 ```{r, message=FALSE, warning=FALSE}
 ggplot(golf_model3, aes(x = .fitted, y = .resid)) +
   geom_point() +
@@ -482,7 +512,9 @@ ggplot(golf_model3, aes(x = .fitted, y = .resid)) +
 summary(golf_model3)
 
 ```
+
 ### Audi A3
+
 ```{r, message=FALSE, warning=FALSE}
 ggplot(audi_model2, aes(x = .fitted, y = .resid)) +
   geom_point() +
@@ -490,7 +522,9 @@ ggplot(audi_model2, aes(x = .fitted, y = .resid)) +
   geom_smooth()
 summary(audi_model2)
 ```
+
 ### Skoda Octavia
+
 ```{r, message=FALSE, warning=FALSE}
 ggplot(skoda_model3, aes(x = .fitted, y = .resid)) +
   geom_point() +
@@ -498,7 +532,9 @@ ggplot(skoda_model3, aes(x = .fitted, y = .resid)) +
   geom_smooth()
 summary(skoda_model3)
 ```
+
 ### Volvo XC60
+
 ```{r, message=FALSE, warning=FALSE}
 ggplot(volvo_model3, aes(x = .fitted, y = .resid)) +
   geom_point() +
@@ -506,28 +542,28 @@ ggplot(volvo_model3, aes(x = .fitted, y = .resid)) +
   geom_smooth()
 summary(volvo_model3)
 ```
+
 ### Toyota Yaris
+
 ```{r, message=FALSE, warning=FALSE}
 ggplot(toyota_model3, aes(x = .fitted, y = .resid)) +
-  geom_point(aes(color = toyota$awd)) +
+  geom_point(aes(color = factor(toyota$awd))) +
   geom_hline(yintercept = 0, color = "red", linewidth = 1) +
-  geom_smooth()
+  geom_smooth() +
+  labs(color = "AWD")
 summary(toyota_model3)
 ```
 :::
 
 The graphs of our residuals vs fitted values look better than the previous ones, with less heteroskedasticity. For the 5 car models that we have researched, the R-Squared values are between 0.90 and 0.94, which we consider to be very good. We still notice quite a high standard error for all vehicles, which decreases the reliability of the predictions and the usefulness of the tool.
-Looking closer at the Toyota plot, we can notice 2 clearly delimited clusters....
 
+Looking at the Toyota plot, we can notice 2 clearly defined clusters, which represent the cars with all wheel drive vs those with front wheel drive. This is not the only difference between these cars that explains the massive average price difference. When looking at the data, we see that there are 2 submodels of the Toyota Yaris; the "normal" Yaris and the new "TOYOTA Yaris 1.6 GR Sport". The Sport Yaris is a new trim of the Yaris and therefore the listings have a higher average price. They also have more horsepower and AWD, both of which are correlated with higher prices.
 
 We now need to check the models for multicollinearity. We can do this by calculating the VIF (Variance Inflation Factors) for our models.
 
-
-
-
-
 ::: panel-tabset
 ### VW Golf
+
 ```{r, message=FALSE, warning=FALSE}
 
 #plotly bar chart with VIFs for each factor for each vehicle
@@ -563,6 +599,7 @@ plot
 ```
 
 ### Audi A3
+
 ```{r, message=FALSE, warning=FALSE}
 # audi
 # data frame 
@@ -583,6 +620,7 @@ plot
 ```
 
 ### Skoda Octavia
+
 ```{r, message=FALSE, warning=FALSE}
 # skoda
 # data frame 
@@ -603,6 +641,7 @@ plot
 ```
 
 ### Volvo XC60
+
 ```{r, message=FALSE, warning=FALSE}
 # volvo
 # data frame 
@@ -623,6 +662,7 @@ plot
 ```
 
 ### Toyota Yaris
+
 ```{r, message=FALSE, warning=FALSE}
 # toyota
 # data frame 
@@ -644,10 +684,13 @@ plot
 :::
 
 By definition, if a variable has a VIF score of 1, it is completely independent. As a rule of thumb, we consider variables with a VIF between 1 and 5 to be moderately correlated and those with a VIF higher than 5 to be highly correlated. These bar charts show us that for every model, vehicle.age and kilometers are clearly correlated. This is logical because the longer an owner has had a car for, the more days he has used it to travel, and the more kilometers have accumulated on the vehicle. In theory, it is possible to own a car and put very few or no kilometers on it for an extended period of time, as well as put a large amount of kilometers in a short amount of time. These 2 variables are equally of great importance to determine a vehicle's price, and therefore we won't exclude either of them from our model, despite there being severe multicollinearity.
+
+When looking at the Toyota Yaris chart, we see that awd and power also have a high VIF, and we suspect that this is due to the Toyota Yaris Sport, which we saw has a much higher power and price than the others, and is the only Yaris to be AWD.
+
 ```{r, message=FALSE, warning=FALSE}
 
 ```
+
 ```{r, message=FALSE, warning=FALSE}
 
 ```
-
