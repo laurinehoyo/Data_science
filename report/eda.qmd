@@ -4,27 +4,49 @@ format: html
 editor: visual
 ---
 
-#Question 1 : Which physical factors have the biggest impact on used car prices?
 
-2.1 Impact of Physical Factors on Used Car Prices
+# Exploratory data analysis
 
-2.1.1 Histograms of prices distributions
+```{r, message = FALSE, warning=FALSE}
+source(here::here("scripts/setup.R"))
+```
 
-As part of our exploratory data analysis, we opted for visualizations focusing on the price distribution of the different vehicles (Volvo, Toyota, Skoda, Golf, Audi) present in our datasets. To do this, we used the ggplot2 library to create price distribution histograms, enriched with density curves for a better appreciation of the distribution. For greater interactivity, we then integrated the plotly library, making it easier to observe the concentration of cars at similar prices. These histograms, enriched with density curves, provide a clear perspective on price distribution, highlighting the most frequent price ranges and anomalies.
 
-```{r graph-buttons, collapse=TRUE, warning=FALSE}
+```{r echo=FALSE, message=FALSE, results='hide'}
 # Chargement des bibliothèques nécessaires
 library(ggplot2)
 library(dplyr)
 library(plotly)
 library(htmltools)
-setwd("~/Downloads/Data_science-main-2/cleaned-data")
+library(formattable)
+library(gridExtra)
+library(htmltools)
+library(shiny)
+library(tidyverse)
+library(patchwork)
+```
 
-golf <- read.csv("golf2_cleaned.csv")
-skoda <- read.csv("skoda2_cleaned.csv")
-audi <- read.csv("audi2_cleaned.csv")
-toyota <- read.csv("toyota_cleaned.csv")
-volvo <- read.csv("volvo2_cleaned.csv")
+## Explanatory Variable Analysis: Impact of Physical Factors on Used Car Prices
+
+### Histograms of prices distributions
+
+<p align="justify">
+As part of our exploratory data analysis, we opted for visualizations focusing on the price distribution of the different vehicles (Volvo, Toyota, Skoda, Golf, Audi) present in our datasets. To do this, we used the ggplot2 library to create price distribution histograms, enriched with density curves for a better appreciation of the distribution. For greater interactivity, we then integrated the plotly library, making it easier to observe the concentration of cars at similar prices. These histograms, enriched with density curves, provide a clear perspective on price distribution, highlighting the most frequent price ranges and anomalies.
+<p>
+
+::: panel-tabset
+
+## Volvo
+```{r}
+#| label: load-packages
+#| warning: false
+
+
+golf <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/golf2_cleaned.csv")
+skoda <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/skoda2_cleaned.csv")
+audi <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/audi2_cleaned.csv")
+toyota <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/toyota_cleaned.csv")
+volvo <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/volvo2_cleaned.csv")
 
 # Combiner tous les datasets en un seul dataframe
 data <- rbind(golf, skoda, audi, toyota, volvo)
@@ -39,77 +61,59 @@ plot_price_distribution <- function(data, title) {
     labs(title = paste("Distribution des prix pour", title), x = "Prix", y = "Density")
    ggplotly(p)
 }
-
-# Créez les graphiques plotly ici
 volvo_plot <- plot_price_distribution(volvo, "Volvo")
-toyota_plot <- plot_price_distribution(toyota, "Toyota")
-skoda_plot <- plot_price_distribution(skoda, "Skoda")
-golf_plot <- plot_price_distribution(golf, "Golf")
-audi_plot <- plot_price_distribution(audi, "Audi")
-
-# Générer les boutons et le conteneur pour les graphiques
-tags$div(
-  tags$button("Volvo", onclick = "showPlot('volvo')", class = "btn btn-default"),
-  tags$button("Toyota", onclick = "showPlot('toyota')", class = "btn btn-default"),
-  tags$button("Skoda", onclick = "showPlot('skoda')", class = "btn btn-default"),
-  tags$button("Golf", onclick = "showPlot('golf')", class = "btn btn-default"),
-  tags$button("Audi", onclick = "showPlot('audi')", class = "btn btn-default")
-)
-tags$div(
-  id = "plot-container",
-  tags$div(id = "volvo", style = "display:none;", volvo_plot),
-  tags$div(id = "toyota", style = "display:none;", toyota_plot),
-  tags$div(id = "skoda", style = "display:none;", skoda_plot),
-  tags$div(id = "golf", style = "display:none;", golf_plot),
-  tags$div(id = "audi", style = "display:none;", audi_plot)
-)
-
-# Ajouter le code JavaScript pour contrôler l'affichage des graphiques
-tags$script(HTML("
-  function showPlot(plotId) {
-    var plots = ['volvo', 'toyota', 'skoda', 'golf', 'audi'];
-    plots.forEach(function(id) {
-      var plotEl = document.getElementById(id);
-      if (plotEl) {
-        plotEl.style.display = 'none';
-      }
-    });
-    var showEl = document.getElementById(plotId);
-    if (showEl) {
-      showEl.style.display = 'block';
-    }
-  }
-  // Afficher le premier graphique par défaut
-  showPlot('volvo');
-"))
-
-
-
-
+volvo_plot
 ```
-
-Through our visualizations, we have identified striking price differentials between brands, revealing the influence of multiple factors on the used car market, which we will analyze in detail later. These data raise interesting questions about the perceived value of brands and their market positioning:
-
-# METTRE TEXTE CORRESPONDANT AVEC GRAPHE
-
 -Volvo has an average price of CHF 39,811, with a range from CHF 5,500 to CHF 94,900. This wide price range suggests a diversified Volvo offering, covering different market segments.
+
+## Toyota 
+```{r}
+toyota_plot <- plot_price_distribution(toyota, "Toyota")
+toyota_plot
+```
 
 -Toyota is positioned at an average price of CHF 14,872, ranging from CHF 400 to CHF 80,000. Its down-market price distribution reflects Toyota's reputation for affordable, reliable vehicles.
 
+## Skoda
+```{r}
+skoda_plot <- plot_price_distribution(skoda, "Skoda")
+skoda_plot
+```
 -Skoda has an average price of CHF 18,961, ranging from CHF 300 to CHF 59,900. This distribution, close to that of Toyota, indicates that Skoda targets mainly the economy and mid-range segments.
 
+## Golf
+```{r}
+golf_plot <- plot_price_distribution(golf, "Golf")
+golf_plot
+```
 -The Golf has an average price of CHF 19,398, ranging from CHF 350 to CHF 59,990. Its extensive distribution shows a diversity of models, targeting a wide spectrum of customers, from the most frugal to the most demanding.
 
+## Audi 
+```{r}
+audi_plot <- plot_price_distribution(audi, "Audi")
+audi_plot
+```
 -Audi, with an average price of CHF 20,928 and a range from CHF 600 to CHF 66,500, shows an extensive distribution, with a notable presence in the high-end segment, in line with its positioning as a premium brand.
 
+:::
+
+<p align="justify">
+Through our visualizations, we have identified striking price differentials between brands, revealing the influence of multiple factors on the used car market, which we will analyze in detail later. These data raise interesting questions about the perceived value of brands and their market positioning:
+<p>
+
+
+<p align="justify">
 This approach not only allowed us to observe the price distribution for each type of car but also to understand the price variations by brand in the used car market. Furthermore, this visualization guided our analysis towards a detailed exploration of the factors that may influence these price fluctuations.
+<p>
 
-2.1.2 Brands comparisons
+### Brands comparisons
 
+<p align="justify">
 The bar chart below illustrates the average price of cars by brand, depending on the date of manufacture. To create this visualization, we used the ggplot2 library, then transformed it into an interactive graph using ggplotly. By merging all the data sets into one, we obtained a global view for different brands. This approach enables us to compare directly how the year of manufacture influences the market price of used cars of different makes.
+</p>
 
 ```{r}
-library(ggplot2)
+
 
 # Combinez tous les dataframes en un seul pour faciliter la visualisation
 combined_df <- rbind(
@@ -130,19 +134,20 @@ p1 <- ggplotly(graph)
 p1
 ```
 
+<p align="justify">
 As can be seen from the bar chart, the more recent the car, the higher the price, regardless of brand. However, it is interesting to note that Audi and Golf are generally more expensive than Skoda, Toyota or Volvo.
 
 Understanding this graph has enabled us to visualize the impact of a car's date of manufacture on its selling price on the second-hand market. This variation could also be explained by other factors, such as technological developments in fuel or wear and tear on older cars.
+<p>
 
-2.1.3 Body type and price
+### Body type and price
 
+<p align="justify">
 This box plot enabled us to understand the different prices according to body type for the different makes of car. To do this, we used the ggplot2 library, complemented by the interactivity of plotly. The choice of visualition was motivated by its ability to effectively show the price distribution, including median, quartiles and outliers. In addition, the colors of the plot boxes assigned to a car brand highlight the type of bodywork offered by the different brands.
+<p>
 
 ```{r}
-# Load the ggplot2 library
-library(ggplot2)
-library(dplyr)
-library(plotly)
+
 
 # Assuming you've loaded your datasets into dataframes named volvo_data, toyota_data, skoda_data, golf_data, audi_data
 
@@ -178,18 +183,35 @@ p1
 
 ```
 
-other: This category, encompassing various vehicle types, shows a wide price range. Audi and Volvo stand out with higher median prices, probably reflecting a range of high-end or specialist models.Station wagon: Station wagons of all makes show a fairly uniform price distribution, suggesting a degree of price stability in this body segment.Cabriolet: Cabriolets, particularly from Audi and Volvo, are characterized by higher median prices, suggesting upmarket positioning or luxury features.Coup%C3%A9: The coup%C3%A9 category displays a wide range of prices, with Volvo leading the way in terms of median, which could indicate superior quality or specialization.Limousine: Limousines show a diversity of prices, with less dispersion at Skoda and Toyota, which could reflect a more standardized offering or competitive pricing.MPV / Minibus: In this category, Skoda and Toyota stand out with lower median prices, suggesting more affordable options.Small car: Skoda and Toyota's small cars have lower median prices, in keeping with their image as brands offering economical vehicles.SUV / Off-road: SUVs and off-road vehicles present a wide price range, with Audi and Volvo having higher medians, consistent with their status as luxury brands.
+<p align="justify">
+-   Other: This category, encompassing various vehicle types, shows a wide price range. Audi and Volvo stand out with higher median prices, probably reflecting a range of high-end or specialist models.
 
+-   Station wagon: Station wagons of all makes show a fairly uniform price distribution, suggesting a degree of price stability in this body segment.
+
+-   Cabriolet: Cabriolets, particularly from Audi and Volvo, are characterized by higher median prices, suggesting upmarket positioning or luxury features.
+
+-   Coupé: The coupé category displays a wide range of prices, with Volvo leading the way in terms of median, which could indicate superior quality or specialization.
+
+-   Limousine: Limousines show a diversity of prices, with less dispersion at Skoda and Toyota, which could reflect a more standardized offering or competitive pricing.
+
+-   MPV / Minibus: In this category, Skoda and Toyota stand out with lower median prices, suggesting more affordable options.
+
+-   Small car: Skoda and Toyota's small cars have lower median prices, in keeping with their image as brands offering economical vehicles.
+
+-   SUV / Off-road: SUVs and off-road vehicles present a wide price range, with Audi and Volvo having higher medians, consistent with their status as luxury brands.
+<p>
+
+<p align="justify">
 The box chart revealed more nuanced insights, such as the existence of significant price variability within the same brands according to body type. The box plot has also given us a better understanding of brand trends, and can once again highlight their positioning.
+<p>
 
-2.1.4 summary tables for prices
+### summary tables for prices
 
+<p align="justify">
 We have chosen to summarize vehicle price data through basic descriptive statistics: mean, median and standard deviation. These measures were calculated for each vehicle brand in our dataset. To visualize these statistics, we created a summary table using the formattable library in R, which offers an attractive and intuitive visual representation of numerical data.
+<p>
 
 ```{r}
-# Chargement des librairies nécessaires
-library(dplyr)
-library(formattable)
 
 # Fonction pour calculer les statistiques de base
 calculate_stats <- function(df) {
@@ -229,19 +251,20 @@ formattable(summary_table, list(
 
 ```
 
+<p align="justify">
 Volvo shows the highest average and median prices, suggesting a more premium pricing strategy compared to the other brands. Toyota stands out with significantly lower average and median prices, aligning with its market positioning as an affordable and reliable car brand. Skoda, Golf, and Audi have relatively similar average prices, but Audi tends to be slightly more expensive on average. The standard deviation values indicate the variability in pricing within each brand. Volvo shows the highest variability, suggesting a wide range of models from more affordable to high-end. Toyota, with a lower standard deviation, indicates more consistent pricing across its range.
+<p>
 
-2.1.5 Mileage (Kilometers) and Its Impact on Price
+### Mileage (Kilometers) and Its Impact on Price
 
+<p align="justify">
 For this relationship, we chose to use a scatterplot, which we generated using the ggplot2 library and ggplotly for interactivity. The decision to use scatterplots was based on the need to understand the nature of the relationship between mileage and price. The choice of distinct colors for each car facilitates visualization and comparison between brands.
+<p>
+
+::: panel-tabset
+## Audi
 
 ```{r}
-
-library(ggplot2)
-library(gridExtra)
-library(plotly)
-library(htmltools)
-
 # Enhancing the scatter plots
 
 # AUDI: Mileage vs Price
@@ -249,195 +272,146 @@ graph1 <- ggplot(audi, aes(x = kilometers, y = price)) +
   geom_point(color = "#C0C0C0", size = 1, alpha = 0.6) +
   labs(title = "Audi: Mileage vs Price", x = "Mileage", y = "Price") +
   theme_classic()
+p1 <- ggplotly(graph1)
+p1
+```
+
+## Golf
+
+```{r}
 
 # GOLF: Mileage vs Price
 graph2 <- ggplot(golf, aes(x = kilometers, y = price)) +
   geom_point(color = "#1E90FF", size = 1, alpha = 0.6) +
   labs(title = "Golf: Mileage vs Price", x = "Mileage", y = "Price") +
   theme_classic()
+p2 <- ggplotly(graph2)
+p2
 
+```
+
+## Toyota
+
+```{r}
 # TOYOTA: Mileage vs Price
 graph3 <- ggplot(toyota, aes(x = kilometers, y = price)) +
   geom_point(color = "#FF0000", size = 1, alpha = 0.6) +
   labs(title = "Toyota: Mileage vs Price", x = "Mileage", y = "Price") +
   theme_classic()
+p3 <- ggplotly(graph3)
+p3
+```
 
+## Skoda
+
+```{r}
 # SKODA: Mileage vs Price
 graph4 <- ggplot(skoda, aes(x = kilometers, y = price)) +
   geom_point(color = "#006400", size = 1, alpha = 0.6) +
   labs(title = "Skoda: Mileage vs Price", x = "Mileage", y = "Price") +
   theme_classic()
+p4 <- ggplotly(graph4)
+p4
+```
 
+## Volvo
+
+```{r}
 # VOLVO: Mileage vs Price
 graph5 <- ggplot(volvo, aes(x = kilometers, y = price)) +
   geom_point(color = "#000080", size = 1, alpha = 0.6) +
   labs(title = "Volvo: Mileage vs Price", x = "Mileage", y = "Price") +
   theme_classic()
-
-p1 <- ggplotly(graph1)
-p2 <- ggplotly(graph2)
-p3 <- ggplotly(graph3)
-p4 <- ggplotly(graph4)
 p5 <- ggplotly(graph5)
-
-# Générer les boutons et le conteneur pour les graphiques
-buttons <- tagList(
-  tags$button("Audi", onclick = "showPlot('audi')", class = "btn btn-default"),
-  tags$button("Golf", onclick = "showPlot('golf')", class = "btn btn-default"),
-  tags$button("Toyota", onclick = "showPlot('toyota')", class = "btn btn-default"),
-  tags$button("Skoda", onclick = "showPlot('skoda')", class = "btn btn-default"),
-  tags$button("Volvo", onclick = "showPlot('volvo')", class = "btn btn-default")
-)
-
-plot_containers <- tagList(
-  tags$div(id = "audi", style = "display:none;", p1),
-  tags$div(id = "golf", style = "display:none;", p2),
-  tags$div(id = "toyota", style = "display:none;", p3),
-  tags$div(id = "skoda", style = "display:none;", p4),
-  tags$div(id = "volvo", style = "display:none;", p5)
-)
-
-# Combiner les boutons et les conteneurs
-html_output <- tagList(buttons, plot_containers)
-
-# Ajouter le code JavaScript
-js_code <- HTML("
-<script>
-  function showPlot(plotId) {
-    var plots = ['audi', 'golf', 'toyota', 'skoda', 'volvo'];
-    plots.forEach(function(id) {
-      var plotEl = document.getElementById(id);
-      if (plotEl) {
-        plotEl.style.display = 'none';
-      }
-    });
-    var showEl = document.getElementById(plotId);
-    if (showEl) {
-      showEl.style.display = 'block';
-    }
-  }
-  // Afficher le premier graphique par défaut
-  showPlot('audi');
-</script>
-")
-
-# Afficher l'interface utilisateur
-htmltools::tagList(html_output, js_code)
-
-
-
-
+p5
 ```
+:::
 
+<p align="justify">
 By analyzing the graphs, we have observed that, for some brands, price decreases significantly with increasing mileage, while for others, the impact of mileage on price is less pronounced. This reflects the fact that, while mileage can have an impact on price, other factors can also explain consumer choices.
+<p>
 
-2.1.6 Engine Power (Power) and Price Correlation
-
+### Engine Power (Power) and Price Correlation
+<p align="justify">
 The use of scatter graphs aims to visualize the impact of engine power on sales prices, and whether this trend varies from one brand to another on the used car market.
+<p>
+
+::: panel-tabset
+## Audi
 
 ```{r}
-library(ggplot2)
-library(gridExtra)
-library(plotly)
-
-
-# Create enhanced scatter plots
-
 # AUDI: Engine Power vs Price
 graph1 <- ggplot(audi, aes(x = power, y = price)) +
   geom_point(color = "red", size = 0.5, alpha = 0.6) +
   labs(title = "Audi: Engine Power vs Price", x = "Engine Power (HP)", y = "Price") +
   theme_minimal()
+p1 <- ggplotly(graph1)
+p1
+```
 
-# GOLF: Engine Power vs Price
-graph2 <- ggplot(golf, aes(x = power, y = price)) +
-  geom_point(color = "blue", size = 0.5, alpha = 0.6) +
-  labs(title = "Golf: Engine Power vs Price", x = "Engine Power (HP)", y = "Price") +
-  theme_minimal()
+## Toyota
 
+```{r}
 # TOYOTA: Engine Power vs Price
-graph3 <- ggplot(toyota, aes(x = power, y = price)) +
+graph2 <- ggplot(toyota, aes(x = power, y = price)) +
   geom_point(color = "green", size = 0.5, alpha = 0.6) +
   labs(title = "Toyota: Engine Power vs Price", x = "Engine Power (HP)", y = "Price") +
   theme_minimal()
+p2 <- ggplotly(graph2)
+p2
+```
 
+## Skoda
+
+```{r}
 # SKODA: Engine Power vs Price
-graph4 <- ggplot(skoda, aes(x = power, y = price)) +
+graph3 <- ggplot(skoda, aes(x = power, y = price)) +
   geom_point(color = "purple", size = 0.5, alpha = 0.6) +
   labs(title = "Skoda: Engine Power vs Price", x = "Engine Power (HP)", y = "Price") +
   theme_minimal()
+p3 <- ggplotly(graph3)
+p3
+```
 
+## Golf
+
+```{r}
+# GOLF: Engine Power vs Price
+graph4 <- ggplot(golf, aes(x = power, y = price)) +
+  geom_point(color = "blue", size = 0.5, alpha = 0.6) +
+  labs(title = "Golf: Engine Power vs Price", x = "Engine Power (HP)", y = "Price") +
+  theme_minimal()
+p4 <- ggplotly(graph4)
+p4
+```
+
+## Volvo
+
+```{r}
 # VOLVO: Engine Power vs Price
 graph5 <- ggplot(volvo, aes(x = power, y = price)) +
   geom_point(color = "orange", size = 0.5, alpha = 0.6) +
   labs(title = "Volvo: Engine Power vs Price", x = "Engine Power (HP)", y = "Price") +
   theme_minimal()
-
-p1 <- ggplotly(graph1)
-p2 <- ggplotly(graph2)
-p3 <- ggplotly(graph3)
-p4 <- ggplotly(graph4)
 p5 <- ggplotly(graph5)
-
-# Générer les boutons et le conteneur pour les graphiques
-buttons <- tagList(
-  tags$button("Volvo", onclick = "showPlot('volvo')", class = "btn btn-default"),
-  tags$button("Toyota", onclick = "showPlot('toyota')", class = "btn btn-default"),
-  tags$button("Skoda", onclick = "showPlot('skoda')", class = "btn btn-default"),
-  tags$button("Golf", onclick = "showPlot('golf')", class = "btn btn-default"),
-  tags$button("Audi", onclick = "showPlot('audi')", class = "btn btn-default")
-)
-
-plot_containers <- tagList(
-  tags$div(id = "volvo", style = "display:none;", p1),
-  tags$div(id = "toyota", style = "display:none;", p2),
-  tags$div(id = "skoda", style = "display:none;", p3),
-  tags$div(id = "golf", style = "display:none;", p4),
-  tags$div(id = "audi", style = "display:none;", p5)
-)
-
-# Combiner les boutons et les conteneurs
-html_output <- tagList(buttons, plot_containers)
-
-# Ajouter le code JavaScript
-js_code <- HTML("
-<script>
-  function showPlot(plotId) {
-    var plots = ['volvo', 'toyota', 'skoda', 'golf', 'audi'];
-    plots.forEach(function(id) {
-      var plotEl = document.getElementById(id);
-      if (plotEl) {
-        plotEl.style.display = 'none';
-      }
-    });
-    var showEl = document.getElementById(plotId);
-    if (showEl) {
-      showEl.style.display = 'block';
-    }
-  }
-  // Afficher le premier graphique par défaut
-  showPlot('volvo');
-</script>
-")
-
-# Afficher l'interface utilisateur
-htmltools::tagList(html_output, js_code)
-
-
-
+p5
 ```
+:::
 
+<p align="justify">
 The data suggests a positive correlation between engine power and car price. Higher-powered cars, often offering better performance, command higher prices. This trend is particularly pronounced in brands known for their performance-oriented models like Audi, Golf and toyota.
+<p>
 
-2.1.7 Influence of Fuel Type on Car Pricing
-
+### Influence of Fuel Type on Car Pricing
+<p align="justify">
 Different fuel types cater to various market segments and preferences. To visualize how fuel type influences car prices, average prices for different fuel types were plotted in bar charts for each brand
+<p>
+
+::: panel-tabset
+
+## Audi
 
 ```{r}
-library(dplyr)
-library(ggplot2)
-library(plotly) # Assurez-vous que la bibliothèque plotly est installée et chargée
-
 # Chargement des données
 audi <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/audi_models_data.csv")
 golf <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/golf_models_data.csv")
@@ -460,158 +434,125 @@ create_bar_plot <- function(data, title) {
 
 # Création des graphiques pour chaque marque
 plot_audi <- create_bar_plot(audi, "AUDI - Fuel type vs Average price ")
-plot_golf <- create_bar_plot(golf, "GOLF - Fuel type vs Average price ")
-plot_toyota <- create_bar_plot(toyota, "TOYOTA - Fuel type vs Average price ")
-plot_skoda <- create_bar_plot(skoda, "SKODA - Fuel type vs Average price ")
-plot_volvo <- create_bar_plot(volvo, "VOLVO - Fuel type vs Average price ")
 
-# Conversion des graphiques ggplot en graphiques interactifs Plotly
 p1 <- ggplotly(plot_audi)
-p2 <- ggplotly(plot_golf)
-p3 <- ggplotly(plot_toyota)
-p4 <- ggplotly(plot_skoda)
-p5 <- ggplotly(plot_volvo)
-
-# Générer les boutons et le conteneur pour les graphiques
-buttons <- tagList(
-  tags$button("Volvo", onclick = "showPlot('volvo')", class = "btn btn-default"),
-  tags$button("Toyota", onclick = "showPlot('toyota')", class = "btn btn-default"),
-  tags$button("Skoda", onclick = "showPlot('skoda')", class = "btn btn-default"),
-  tags$button("Golf", onclick = "showPlot('golf')", class = "btn btn-default"),
-  tags$button("Audi", onclick = "showPlot('audi')", class = "btn btn-default")
-)
-
-plot_containers <- tagList(
-  tags$div(id = "volvo", style = "display:none;", p1),
-  tags$div(id = "toyota", style = "display:none;", p2),
-  tags$div(id = "skoda", style = "display:none;", p3),
-  tags$div(id = "golf", style = "display:none;", p4),
-  tags$div(id = "audi", style = "display:none;", p5)
-)
-
-# Combiner les boutons et les conteneurs
-html_output <- tagList(buttons, plot_containers)
-
-# Ajouter le code JavaScript
-js_code <- HTML("
-<script>
-  function showPlot(plotId) {
-    var plots = ['volvo', 'toyota', 'skoda', 'golf', 'audi'];
-    plots.forEach(function(id) {
-      var plotEl = document.getElementById(id);
-      if (plotEl) {
-        plotEl.style.display = 'none';
-      }
-    });
-    var showEl = document.getElementById(plotId);
-    if (showEl) {
-      showEl.style.display = 'block';
-    }
-  }
-  // Afficher le premier graphique par défaut
-  showPlot('volvo');
-</script>
-")
-
-# Afficher l'interface utilisateur
-htmltools::tagList(html_output, js_code)
-
-
-# mettre ensemble les types de hybride 
-# cleaned data : models 
+p1
 ```
 
-The charts reveal significant price disparities based on fuel type, with hybrids and electric vehicles often priced higher. These differences are brand-specific and reflect the brand's technological focus and market positioning in terms of fuel technology.
-
-2.1.8 Year of Manufacture and Its Effect on Pricing
-
-The year a car was manufactured can provide insights into its technological relevance and condition. Bar charts depicting the average price per year for each brand were analyzed
-
+## Golf
 ```{r}
-
-
-
-library(ggplot2)
-library(ggthemes)
-
-# Conversion des dates et extraction de l'année pour chaque marque
-audi$date <- as.Date(audi$date, format="%Y-%m-%d")
-audi$year <- format(audi$date, "%Y")
-
-golf$date <- as.Date(golf$date, format="%Y-%m-%d")
-golf$year <- format(golf$date, "%Y")
-
-toyota$date <- as.Date(toyota$date, format="%Y-%m-%d")
-toyota$year <- format(toyota$date, "%Y")
-
-skoda$date <- as.Date(skoda$date, format="%Y-%m-%d")
-skoda$year <- format(skoda$date, "%Y")
-
-volvo$date <- as.Date(volvo$date, format="%Y-%m-%d")
-volvo$year <- format(volvo$date, "%Y")
-
-ggplot(audi) +
-  geom_point(mapping = aes(x = vehicle.age, y = price, color = warranty)) +
-  scale_color_manual(values = c("red", "darkgreen", "darkgrey")) +
-  theme_minimal() +
-  theme(panel.background = element_rect(fill = "gainsboro"))+
-  geom_smooth(method = loess, mapping = aes(vehicle.age, price), color = "black")
-
-# Création des graphiques avec des palettes de couleurs uniques
-graph1 <- ggplot(audi, aes(x = year, y = price)) +
-  geom_boxplot(aes(fill = year)) +
-  geom_jitter(color = "blue", size = 0.5, alpha = 0.5) +
-  scale_fill_viridis_d() +
-  theme_minimal() +
-  labs(title = "Audi - Année de Fabrication vs Prix", x = "Année", y = "Prix")
-
-graph2 <- ggplot(golf, aes(x = year, y = price)) +
-  geom_boxplot(aes(fill = year)) +
-  geom_jitter(color = "green", size = 0.5, alpha = 0.5) +
-  scale_fill_brewer(palette = "Set1") +
-  theme_minimal() +
-  labs(title = "Golf - Année de Fabrication vs Prix", x = "Année", y = "Prix")
-
-graph3 <- ggplot(toyota, aes(x = year, y = price)) +
-  geom_boxplot(aes(fill = year)) +
-  geom_jitter(color = "red", size = 0.5, alpha = 0.5) +
-  scale_fill_brewer(palette = "Set2") +
-  theme_minimal() +
-  labs(title = "Toyota - Année de Fabrication vs Prix", x = "Année", y = "Prix")
-
-graph4 <- ggplot(skoda, aes(x = year, y = price)) +
-  geom_boxplot(aes(fill = year)) +
-  geom_jitter(color = "purple", size = 0.5, alpha = 0.5) +
-  scale_fill_brewer(palette = "Set3") +
-  theme_minimal() +
-  labs(title = "Skoda - Année de Fabrication vs Prix", x = "Année", y = "Prix")
-
-graph5 <- ggplot(volvo, aes(x = year, y = price)) +
-  geom_boxplot(aes(fill = year)) +
-  geom_jitter(color = "orange", size = 0.5, alpha = 0.5) +
-  scale_fill_brewer(palette = "Pastel1") +
-  theme_minimal() +
-  labs(title = "Volvo - Année de Fabrication vs Prix", x = "Année", y = "Prix")
-
-# Afficher les graphiques
-print(graph1)
-print(graph2)
-print(graph3)
-print(graph4)
-print(graph5)
-
+plot_golf <- create_bar_plot(golf, "GOLF - Fuel type vs Average price ")
+p2 <- ggplotly(plot_golf)
+p2
 ```
+
+## Toyota 
+```{r}
+plot_toyota <- create_bar_plot(toyota, "TOYOTA - Fuel type vs Average price ")
+p3 <- ggplotly(plot_toyota)
+p3
+```
+
+## Skoda 
+```{r}
+plot_skoda <- create_bar_plot(skoda, "SKODA - Fuel type vs Average price ")
+p4 <- ggplotly(plot_skoda)
+p4
+```
+
+## Volvo
+```{r}
+plot_volvo <- create_bar_plot(volvo, "VOLVO - Fuel type vs Average price ")
+p5 <- ggplotly(plot_volvo)
+p5
+```
+:::
+
+
+<p align="justify">
+The charts reveal significant price disparities based on fuel type, with hybrids and electric vehicles often priced higher. These differences are brand-specific and reflect the brand's technological focus and market positioning in terms of fuel technology.
+<p>
+
+### Year of Manufacture and Its Effect on Pricing
+
+<p align="justify">
+The year a car was manufactured can provide insights into its technological relevance and condition. Bar charts depicting the average price per year for each brand were analyzed
+<p> 
+
+::: panel-tabset
+## Audi 
+
+```{r, warning=FALSE}
+## proposition 2 : en fonction de l'année de fabrication 
+graph.1 <- ggplot(audi, aes(x = date, y = price)) +
+  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
+  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
+p.1 <- ggplotly(graph.1)
+p.1
+```
+
+## Golf 
+```{r, warning=FALSE}
+graph.2 <- ggplot(golf, aes(x = date, y = price)) +
+  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
+  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
+p.2 <- ggplotly(graph.2)
+p.2
+```
+
+## Skoda
+```{r, warning=FALSE}
+graph.3 <- ggplot(skoda, aes(x = date, y = price)) +
+  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
+  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
+p.3 <- ggplotly(graph.3)
+p.3
+```
+
+## Toyota
+```{r, warning=FALSE}
+graph.4 <- ggplot(toyota, aes(x = date, y = price)) +
+  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
+  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
+p.4 <- ggplotly(graph.4)
+p.4
+```
+
+## Volvo
+```{r, warning=FALSE}
+graph.5 <- ggplot(volvo, aes(x = date, y = price)) +
+  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
+  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
+p.5 <- ggplotly(graph.5)
+p.5
+```
+::: 
+<p align="justify">
+Newer models generally have higher average prices, likely due to more advanced technology, better features, and lower mileage. The rate of depreciation over the years varies among brands, with some luxury brands retaining their value longer.
+<p>
+
+### Consumption vs price
 
 ```{r}
 ## Proposition 1 : enfonction de l'age du vehicule 
 
 # Calcul de la moyenne des prix pour chaque combinaison année/marque
 audi_heatmap_data <- audi %>%
-  group_by(vehicle.age) %>%
+  group_by(consumption) %>%
   summarise(mean_price = mean(price, na.rm = TRUE))
 
 # Création du graphique de chaleur
-graph_1 <- ggplot(audi_heatmap_data, aes(x = vehicle.age, y = factor(1), fill = mean_price)) +
+graph_1 <- ggplot(audi_heatmap_data, aes(x = consumption, y = factor(1), fill = mean_price)) +
   geom_tile() +
   scale_fill_viridis_c() +
   labs(title = "Audi - Moyenne des Prix par L'age du vehicule", x = "Age", y = "") +
@@ -624,9 +565,9 @@ graph_1 <- ggplot(audi_heatmap_data, aes(x = vehicle.age, y = factor(1), fill = 
 
 # Calcul de la moyenne des prix pour chaque combinaison année/marque
 golf_heatmap_data <- golf %>%
-  group_by(vehicle.age) %>%
+  group_by(consumption) %>%
   summarise(mean_price = mean(price, na.rm = TRUE))
-graph_2 <- ggplot(golf_heatmap_data, aes(x = vehicle.age, y = factor(1), fill = mean_price)) +
+graph_2 <- ggplot(golf_heatmap_data, aes(x = consumption, y = factor(1), fill = mean_price)) +
   geom_tile() +
   scale_fill_viridis_c() +
   labs(title = "golf - Moyenne des Prix par L'age du vehicule", x = "Age", y = "") +
@@ -637,9 +578,9 @@ graph_2 <- ggplot(golf_heatmap_data, aes(x = vehicle.age, y = factor(1), fill = 
 
 # Calcul de la moyenne des prix pour chaque combinaison année/marque
 volvo_heatmap_data <- volvo %>%
-  group_by(vehicle.age) %>%
+  group_by(consumption) %>%
   summarise(mean_price = mean(price, na.rm = TRUE))
-graph_3 <- ggplot(volvo_heatmap_data, aes(x = vehicle.age, y = factor(1), fill = mean_price)) +
+graph_3 <- ggplot(volvo_heatmap_data, aes(x = consumption, y = factor(1), fill = mean_price)) +
   geom_tile() +
   scale_fill_viridis_c() +
   labs(title = "volvo- Moyenne des Prix par l'age du vehicule", x = "age", y = "") +
@@ -650,9 +591,9 @@ graph_3 <- ggplot(volvo_heatmap_data, aes(x = vehicle.age, y = factor(1), fill =
 
 # Calcul de la moyenne des prix pour chaque combinaison année/marque
 skoda_heatmap_data <- skoda %>%
-  group_by(vehicle.age) %>%
+  group_by(consumption) %>%
   summarise(mean_price = mean(price, na.rm = TRUE))
-graph_4 <- ggplot(skoda_heatmap_data, aes(x = vehicle.age, y = factor(1), fill = mean_price)) +
+graph_4 <- ggplot(skoda_heatmap_data, aes(x = consumption, y = factor(1), fill = mean_price)) +
   geom_tile() +
   scale_fill_viridis_c() +
   labs(title = "skoda - Moyenne des Prix par l'age du vehicule", x = "age", y = "") +
@@ -663,9 +604,9 @@ graph_4 <- ggplot(skoda_heatmap_data, aes(x = vehicle.age, y = factor(1), fill =
 
 # Calcul de la moyenne des prix pour chaque combinaison année/marque
 toyota_heatmap_data <- golf %>%
-  group_by(vehicle.age) %>%
+  group_by(consumption) %>%
   summarise(mean_price = mean(price, na.rm = TRUE))
-graph_5 <- ggplot(toyota_heatmap_data, aes(x = vehicle.age, y = factor(1), fill = mean_price)) +
+graph_5 <- ggplot(toyota_heatmap_data, aes(x = consumption, y = factor(1), fill = mean_price)) +
   geom_tile() +
   scale_fill_viridis_c() +
   labs(title = "toyota - Moyenne des Prix par l'age du vehicule", x = "Age", y = "") +
@@ -727,94 +668,3 @@ htmltools::tagList(html_output, js_code)
 
 ```
 
-```{r}
-## proposition 2 : en fonction de l'année de fabrication 
-graph.1 <- ggplot(audi, aes(x = year, y = price)) +
-  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
-  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
-
-
-
-graph.2 <- ggplot(golf, aes(x = year, y = price)) +
-  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
-  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
-
-
-graph.3 <- ggplot(skoda, aes(x = year, y = price)) +
-  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
-  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
-
-
-graph.4 <- ggplot(toyota, aes(x = year, y = price)) +
-  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
-  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
-
-
-graph.5 <- ggplot(volvo, aes(x = year, y = price)) +
-  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
-  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
-
-# Conversion des graphiques ggplot en graphiques interactifs Plotly
-p.1 <- ggplotly(graph.1)
-p.2 <- ggplotly(graph.2)
-p.3 <- ggplotly(graph.3)
-p.4 <- ggplotly(graph.4)
-p.5 <- ggplotly(graph.5)
-
-# Générer les boutons et le conteneur pour les graphiques
-buttons <- tagList(
-  tags$button("Audi", onclick = "showPlot('audi')", class = "btn btn-default"),
-  tags$button("Golf", onclick = "showPlot('golf')", class = "btn btn-default"),
-  tags$button("Skoda", onclick = "showPlot('skoda')", class = "btn btn-default"),
-  tags$button("Toyota", onclick = "showPlot('toyota')", class = "btn btn-default"),
-  tags$button("Volvo", onclick = "showPlot('volvo')", class = "btn btn-default")
-)
-
-plot_containers <- tagList(
-  tags$div(id = "audi", style = "display:none;", p.1),
-  tags$div(id = "golf", style = "display:none;", p.2),
-  tags$div(id = "skoda", style = "display:none;", p.3),
-  tags$div(id = "toyota", style = "display:none;", p.4),
-  tags$div(id = "volvo", style = "display:none;", p.5)
-)
-
-# Combiner les boutons et les conteneurs
-html_output <- tagList(buttons, plot_containers)
-
-# Ajouter le code JavaScript
-js_code <- HTML("
-<script>
-  function showPlot(plotId) {
-    var plots = ['audi', 'golf', 'skoda', 'toyota', 'volvo'];
-    plots.forEach(function(id) {
-      var plotEl = document.getElementById(id);
-      if (plotEl) {
-        plotEl.style.display = 'none';
-      }
-    });
-    var showEl = document.getElementById(plotId);
-    if (showEl) {
-      showEl.style.display = 'block';
-    }
-  }
-  // Afficher le premier graphique par défaut
-  showPlot('audi');
-</script>
-")
-
-# Afficher l'interface utilisateur
-htmltools::tagList(html_output, js_code)
-
-```
-
-Newer models generally have higher average prices, likely due to more advanced technology, better features, and lower mileage. The rate of depreciation over the years varies among brands, with some luxury brands retaining their value longer.
