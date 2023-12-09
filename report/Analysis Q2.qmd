@@ -104,113 +104,76 @@ toyota <- subset(toyota, created.date != "2022-11-14")
 
 ```
 
-Our dependant variable will be listing.age. We will make a regression model that includes all of our variables then do a stepwise regression (backward) to remove non significant variables, in order to find the optimal model.
+Our dependant variable will be listing.age. We will make a regression model that includes all of our variables then remove non significant variables, in order to find the optimal model.
 
 ```{r, message=FALSE, warning=FALSE, results='hide'}
 # golf
 
 golf_model1 <- lm(golf$listing.age ~ golf$price + golf$price.residuals + golf$kilometers + golf$kilometers.squared + golf$vehicle.age + golf$vehicle.age.squared + golf$power + golf$consumption + golf$expertise + golf$warranty + golf$wagon + golf$cabriolet + golf$small.car + golf$coupe + golf$diesel + golf$hybrid + golf$natural.gas + golf$electric + golf$manual + golf$awd)
 summary(golf_model1)
-
-
-##
-
-
-
-
-golf_model2 <- stepAIC(golf_model1, direction = "backward")
-summary(golf_model2)
-# we remove variables that are not significant at alpha = 0.01
-# we subset the data first to exclude observations that contain NA
-golf <- golf[complete.cases(golf[, c("price", "price.residuals", "vehicle.age", "vehicle.age.squared", "warranty", "hybrid", "manual")]), ]
-golf_model3 <- lm(golf$listing.age ~ golf$price + golf$price.residuals + golf$vehicle.age + golf$vehicle.age.squared + golf$warranty + golf$hybrid + golf$manual)
-summary(golf_model3)
-# we remove vehicle.age.squared since it is not significant
-golf_model3 <- lm(golf$listing.age ~ golf$price + golf$price.residuals + golf$vehicle.age + golf$warranty + golf$hybrid + golf$manual)
-# All of our variables are now significant. This will be our final model
-
-ggplot(golf_model3, aes(x = .fitted, y = .resid)) +
-  geom_point() +
-  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
-  geom_smooth()
-summary(golf_model3)
-
-summary(lm(golf$listing.age ~ golf$price.residuals))
-ggplot(lm(golf$listing.age ~ golf$price.residuals), aes(x = .fitted, y = .resid)) +
-  geom_point() +
-  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
-  geom_smooth()
-
-ggplot(golf, aes(listing.age, price.residuals)) + 
-  geom_point() +
-  geom_smooth(method = lm) +
-  ylim(0, max(golf$price))
-
+# No variable is significant at alpha = 0.01 except manual, let's test a simple linear model with manual
+golf_model1 <- lm(golf$listing.age ~ golf$manual)
+summary(golf_model1)
+# No variable is significant
 
 # audi
 
-audi_model1 <- lm(audi$price ~ audi$kilometers + audi$kilometers.squared + audi$vehicle.age + audi$vehicle.age.squared + audi$power + audi$consumption + audi$expertise + audi$warranty + audi$wagon + audi$cabriolet + audi$small.car + audi$coupe + audi$diesel + audi$hybrid + audi$natural.gas + audi$electric + audi$manual + audi$awd)
+audi_model1 <- lm(audi$listing.age ~ audi$price + audi$price.residuals + audi$kilometers + audi$kilometers.squared + audi$vehicle.age + audi$vehicle.age.squared + audi$power + audi$consumption + audi$expertise + audi$warranty + audi$wagon + audi$cabriolet + audi$small.car + audi$coupe + audi$diesel + audi$hybrid + audi$natural.gas + audi$electric + audi$manual + audi$awd)
 summary(audi_model1)
-# we subset the data first to exclude observations that contain NA
-audi <- audi[complete.cases(audi[, c('kilometers', 'kilometers.squared', 'vehicle.age', 'vehicle.age.squared', 'power', 'consumption', 'expertise', 'warranty', 'wagon', 'cabriolet', 'small.car', 'coupe', 'diesel', 'hybrid', 'natural.gas', 'electric', 'manual', 'awd')]), ]
-audi_model2 <- stepAIC(audi_model1, direction = "backward")
-summary(audi_model2)
-# All of our variables are now significant. This will be our final model
-
-audi$price.residuals <- audi_model2$residuals
-audi$pred.price <- audi_model2$fitted.values
+# we notice again that no variables are significant at alpha = 0.01
 
 # skoda
 
-skoda_model1 <- lm(skoda$price ~ skoda$kilometers + skoda$kilometers.squared + skoda$vehicle.age + skoda$vehicle.age.squared + skoda$power + skoda$consumption + skoda$expertise + skoda$warranty + skoda$sedan + skoda$cabriolet + skoda$suv + skoda$diesel + skoda$hybrid + skoda$natural.gas + skoda$manual + skoda$awd)
+skoda_model1 <- lm(skoda$listing.age ~ skoda$price + skoda$price.residuals + skoda$kilometers + skoda$kilometers.squared + skoda$vehicle.age + skoda$vehicle.age.squared + skoda$power + skoda$consumption + skoda$expertise + skoda$warranty + skoda$sedan + skoda$cabriolet + skoda$suv + skoda$diesel + skoda$hybrid + skoda$natural.gas + skoda$manual + skoda$awd)
 summary(skoda_model1)
-skoda_model2 <- stepAIC(skoda_model1, direction = "backward")
-summary(skoda_model2)
-# cabriolet and consumption are still not significant at an alpha of 0.01, we remove them
-# we subset the data first to exclude observations that contain NA
-skoda <- skoda[complete.cases(skoda[, c("kilometers", "kilometers.squared", "vehicle.age", "vehicle.age.squared", "power", "consumption", "expertise", "warranty", "diesel", "manual", "awd")]), ]
-skoda_model3 <- lm(skoda$price ~ skoda$kilometers + skoda$kilometers.squared + skoda$vehicle.age + skoda$vehicle.age.squared + skoda$power + skoda$expertise + skoda$warranty + skoda$consumption + skoda$diesel + skoda$manual + skoda$awd)
-summary(skoda_model3)
-# we remove consumption as it is no longer significant
-skoda_model3 <- lm(skoda$price ~ skoda$kilometers + skoda$kilometers.squared + skoda$vehicle.age + skoda$vehicle.age.squared + skoda$power + skoda$expertise + skoda$warranty + skoda$diesel + skoda$manual + skoda$awd)
-summary(skoda_model3)
-# All of our variables are now significant. This will be our final model
-
-skoda$price.residuals <- skoda_model3$residuals
-skoda$pred.price <- skoda_model3$fitted.values
+# No variable is significant at alpha = 0.01 except sedan, let's test a simple linear model with sedan
+skoda_model1 <- lm(skoda$listing.age ~ skoda$sedan)
+summary(skoda_model1)
+# we notice again that no variables are significant at alpha = 0.01
 
 # volvo
 
-volvo_model1 <- lm(volvo$price ~ volvo$kilometers + volvo$kilometers.squared + volvo$vehicle.age + volvo$vehicle.age.squared + volvo$power + volvo$consumption + volvo$expertise + volvo$warranty + volvo$diesel + volvo$hybrid + volvo$manual + volvo$fwd)
+volvo_model1 <- lm(volvo$listing.age ~ volvo$price + volvo$price.residuals + volvo$kilometers + volvo$kilometers.squared + volvo$vehicle.age + volvo$vehicle.age.squared + volvo$power + volvo$consumption + volvo$expertise + volvo$warranty + volvo$diesel + volvo$hybrid + volvo$manual + volvo$fwd)
 summary(volvo_model1)
-# we subset the data first to exclude observations that contain NA
-volvo <- volvo[complete.cases(volvo[, c('price', 'kilometers', 'kilometers.squared', 'vehicle.age', 'vehicle.age.squared', 'power', 'consumption', 'expertise', 'warranty', 'diesel', 'hybrid', 'manual', 'fwd')]), ]
-volvo_model2 <- stepAIC(volvo_model1, direction = "backward")
-summary(volvo_model2)
-# manual is still not significant at an alpha of 0.01, we remove it
-volvo_model3 <- lm(volvo$price ~ volvo$kilometers + volvo$kilometers.squared + volvo$vehicle.age + volvo$vehicle.age.squared + volvo$power + volvo$consumption + volvo$hybrid)
-summary(volvo_model3)
-# All of our variables are now significant. This will be our final model
-volvo$price.residuals <- volvo_model3$residuals
-volvo$pred.price <- volvo_model3$fitted.values
+# No variable is significant at alpha = 0.01 except expertise, let's test a simple linear model with expertise
+volvo_model1 <- lm(volvo$listing.age ~ volvo$expertise)
+summary(volvo_model1)
+# expertise is significant, but the R squared is very low (0.014), we don't consider this to be a good model.
+
+
 
 # toyota
 
-toyota_model1 <- lm(toyota$price ~ toyota$kilometers + toyota$kilometers.squared + toyota$vehicle.age + toyota$vehicle.age.squared + toyota$power + toyota$consumption + toyota$expertise + toyota$warranty + toyota$sedan + toyota$coupe + toyota$diesel + toyota$hybrid + toyota$manual + toyota$awd)
+toyota_model1 <- lm(toyota$listing.age ~ toyota$price + toyota$price.residuals + toyota$kilometers + toyota$kilometers.squared + toyota$vehicle.age + toyota$vehicle.age.squared + toyota$power + toyota$consumption + toyota$expertise + toyota$warranty + toyota$sedan + toyota$coupe + toyota$diesel + toyota$hybrid + toyota$manual + toyota$awd)
 summary(toyota_model1)
-toyota_model2 <- stepAIC(toyota_model1, direction = "backward")
-summary(toyota_model2)
-# warranty, hybrid, and consumption are still not significant at an alpha of 0.01, we remove them
-# we subset the data first to exclude observations that contain NA
-toyota <- toyota[complete.cases(toyota[, c("kilometers", "kilometers.squared", "vehicle.age", "vehicle.age.squared", "power", "sedan", "manual", "awd")]), ]
-toyota_model3 <- lm(toyota$price ~ toyota$kilometers + toyota$kilometers.squared + toyota$vehicle.age + toyota$vehicle.age.squared + toyota$power + toyota$sedan + toyota$manual + toyota$awd)
-summary(toyota_model3)
-#we remove sedan
-toyota_model3 <- lm(toyota$price ~ toyota$kilometers + toyota$kilometers.squared + toyota$vehicle.age + toyota$vehicle.age.squared + toyota$power + toyota$manual + toyota$awd)
-summary(toyota_model3)
-# All of our variables are now significant. This will be our final model
-toyota$price.residuals <- toyota_model3$residuals
-toyota$pred.price <- toyota_model3$fitted.values
+# No variable is significant at alpha = 0.01 except expertise, let's test a simple linear model with expertise
+toyota_model1 <- lm(toyota$listing.age ~ toyota$price.residuals)
+summary(toyota_model1)
+# expertise is significant, but the R squared is very low (0.025), we don't consider this to be a good model.
+
 
 
 ```
+
+It looks like almost none of the cars' attributes can explain differences in listing ages. We have only managed to find 2 simple linear models with a significant variable for the Volvos and Toyotas, but looking at the plots below, we can see they aren't very useful because the R squared values are very low.
+
+::: panel-tabset
+### Volvo XC60
+```{r, message=FALSE, warning=FALSE}
+ggplot(volvo, aes(listing.age, expertise)) + 
+  geom_point() +
+  ggtitle("Plot of listing age vs expertise")
+summary(volvo_model1)
+```
+### Toyota Yaris
+```{r, message=FALSE, warning=FALSE}
+ggplot(toyota, aes(listing.age, price.residuals)) + 
+  geom_point() +
+  geom_smooth(method = lm) +
+  ylim(min(toyota$price.residuals), max(toyota$price.residuals)) +
+  ggtitle("Plot of listing age vs price residuals")
+summary(toyota_model1)
+
+```
+:::
+
