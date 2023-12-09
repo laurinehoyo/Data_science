@@ -1,0 +1,1629 @@
+---
+editor: visual
+figures: fig-width
+geometry:
+  - top=30mm
+  - left=20mm
+  - heightrounded
+---
+# Exploratory data analysis
+
+```{r, message = FALSE, warning=FALSE}
+source(here::here("scripts/setup.R"))
+```
+
+
+```{r echo=FALSE, message=FALSE, results='hide'}
+# Chargement des bibliothèques nécessaires
+library(ggplot2)
+library(dplyr)
+library(plotly)
+library(htmltools)
+library(formattable)
+library(gridExtra)
+library(htmltools)
+library(shiny)
+library(tidyverse)
+library(patchwork)
+```
+
+## Explanatory Variable Analysis: Impact of Physical Factors on Used Car Prices
+
+### Histograms of prices distributions
+
+<p align="justify">
+As part of our exploratory data analysis, we opted for visualizations focusing on the price distribution of the different vehicles (Volvo, Toyota, Skoda, Golf, Audi) present in our datasets. To do this, we used the ggplot2 library to create price distribution histograms, enriched with density curves for a better appreciation of the distribution. For greater interactivity, we then integrated the plotly library, making it easier to observe the concentration of cars at similar prices. These histograms, enriched with density curves, provide a clear perspective on price distribution, highlighting the most frequent price ranges and anomalies.
+<p>
+
+::: panel-tabset
+
+## Volvo
+```{r}
+#| warning: false
+
+
+golf <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/golf2_cleaned.csv")
+skoda <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/skoda2_cleaned.csv")
+audi <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/audi2_cleaned.csv")
+toyota <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/toyota_cleaned.csv")
+volvo <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/volvo2_cleaned.csv")
+
+# Combiner tous les datasets en un seul dataframe
+data <- rbind(golf, skoda, audi, toyota, volvo)
+
+
+# Création d'une fonction pour tracer un histogramme de distribution des prix
+plot_price_distribution <- function(data, title) {
+   p <- ggplot(data, aes(x = price))  + 
+     geom_histogram(aes(y = ..density..), bins = 30, fill = "#8B94F6", color = "darkblue") +
+    geom_density(color = "darkblue", size = 1) +
+    theme_minimal() +
+    labs(title = paste("Distribution des prix pour", title), x = "Prix", y = "Density")
+   ggplotly(p)
+}
+volvo_plot <- plot_price_distribution(volvo, "Volvo")
+volvo_plot
+```
+-Volvo has an average price of CHF 39,811, with a range from CHF 5,500 to CHF 94,900. This wide price range suggests a diversified Volvo offering, covering different market segments.
+
+## Toyota 
+```{r}
+toyota_plot <- plot_price_distribution(toyota, "Toyota")
+toyota_plot
+```
+
+-Toyota is positioned at an average price of CHF 14,872, ranging from CHF 400 to CHF 80,000. Its down-market price distribution reflects Toyota's reputation for affordable, reliable vehicles.
+
+## Skoda
+```{r}
+skoda_plot <- plot_price_distribution(skoda, "Skoda")
+skoda_plot
+```
+-Skoda has an average price of CHF 18,961, ranging from CHF 300 to CHF 59,900. This distribution, close to that of Toyota, indicates that Skoda targets mainly the economy and mid-range segments.
+
+## Golf
+```{r}
+golf_plot <- plot_price_distribution(golf, "Golf")
+golf_plot
+```
+-The Golf has an average price of CHF 19,398, ranging from CHF 350 to CHF 59,990. Its extensive distribution shows a diversity of models, targeting a wide spectrum of customers, from the most frugal to the most demanding.
+
+## Audi 
+```{r}
+audi_plot <- plot_price_distribution(audi, "Audi")
+audi_plot
+```
+-Audi, with an average price of CHF 20,928 and a range from CHF 600 to CHF 66,500, shows an extensive distribution, with a notable presence in the high-end segment, in line with its positioning as a premium brand.
+
+:::
+
+<p align="justify">
+Through our visualizations, we have identified striking price differentials between brands, revealing the influence of multiple factors on the used car market, which we will analyze in detail later. These data raise interesting questions about the perceived value of brands and their market positioning:
+<p>
+
+
+<p align="justify">
+This approach not only allowed us to observe the price distribution for each type of car but also to understand the price variations by brand in the used car market. Furthermore, this visualization guided our analysis towards a detailed exploration of the factors that may influence these price fluctuations.
+<p>
+
+### Brands comparisons
+
+<p align="justify">
+The bar chart below illustrates the average price of cars by brand, depending on the date of manufacture. To create this visualization, we used the ggplot2 library, then transformed it into an interactive graph using ggplotly. By merging all the data sets into one, we obtained a global view for different brands. This approach enables us to compare directly how the year of manufacture influences the market price of used cars of different makes.
+</p>
+
+```{r}
+
+
+# Combinez tous les dataframes en un seul pour faciliter la visualisation
+combined_df <- rbind(
+  transform(volvo, Brand = 'Volvo'),
+  transform(toyota, Brand = 'Toyota'),
+  transform(skoda, Brand = 'Skoda'),
+  transform(golf, Brand = 'Golf'),
+  transform(audi, Brand = 'Audi')
+)
+
+# Graphique en barres pour le prix moyen en fonction de l'année
+graph <- ggplot(combined_df, aes(x = date, y = price, fill = Brand)) +
+  geom_bar(stat = "summary", fun = mean) +
+  labs(title = "Prix moyen par marque et année", x = "Année de fabrication", y = "Prix moyen") +
+  theme_minimal()
+
+p1 <- ggplotly(graph)
+p1
+```
+
+<p align="justify">
+As can be seen from the bar chart, the more recent the car, the higher the price, regardless of brand. However, it is interesting to note that Audi and Golf are generally more expensive than Skoda, Toyota or Volvo.
+
+Understanding this graph has enabled us to visualize the impact of a car's date of manufacture on its selling price on the second-hand market. This variation could also be explained by other factors, such as technological developments in fuel or wear and tear on older cars.
+<p>
+
+### Body type and price
+
+<p align="justify">
+This box plot enabled us to understand the different prices according to body type for the different makes of car. To do this, we used the ggplot2 library, complemented by the interactivity of plotly. The choice of visualition was motivated by its ability to effectively show the price distribution, including median, quartiles and outliers. In addition, the colors of the plot boxes assigned to a car brand highlight the type of bodywork offered by the different brands.
+<p>
+
+```{r}
+
+
+# Assuming you've loaded your datasets into dataframes named volvo_data, toyota_data, skoda_data, golf_data, audi_data
+
+# Combine all dataframes into one
+all_cars <- bind_rows(
+  mutate(volvo, brand = "Volvo"),
+  mutate(toyota, brand = "Toyota"),
+  mutate(skoda, brand = "Skoda"),
+  mutate(golf, brand = "Golf"),
+  mutate(audi, brand = "Audi")
+)
+
+# Convert body type to a factor for better plotting
+all_cars$body.type <- as.factor(all_cars$body.type)
+
+# Create the scatter plot
+graph0 <- ggplot(all_cars, aes(x = body.type, y = price, fill = brand)) +
+  geom_boxplot() +
+  labs(title = "Price distribution by body type and brand",
+       x = "body type", y = "Price") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotation des étiquettes de l'axe X pour une meilleure lisibilité
+
+p1 <- ggplotly(graph0)
+
+p1
+
+
+# Note: geom_smooth is used here with method = "lm" which fits a linear model to the data. 
+# The 'se = FALSE' argument disables the display of the confidence interval around the smooth line.
+
+# box plot 
+
+```
+
+<p align="justify">
+-   Other: This category, encompassing various vehicle types, shows a wide price range. Audi and Volvo stand out with higher median prices, probably reflecting a range of high-end or specialist models.
+
+-   Station wagon: Station wagons of all makes show a fairly uniform price distribution, suggesting a degree of price stability in this body segment.
+
+-   Cabriolet: Cabriolets, particularly from Audi and Volvo, are characterized by higher median prices, suggesting upmarket positioning or luxury features.
+
+-   Coupé: The coupé category displays a wide range of prices, with Volvo leading the way in terms of median, which could indicate superior quality or specialization.
+
+-   Limousine: Limousines show a diversity of prices, with less dispersion at Skoda and Toyota, which could reflect a more standardized offering or competitive pricing.
+
+-   MPV / Minibus: In this category, Skoda and Toyota stand out with lower median prices, suggesting more affordable options.
+
+-   Small car: Skoda and Toyota's small cars have lower median prices, in keeping with their image as brands offering economical vehicles.
+
+-   SUV / Off-road: SUVs and off-road vehicles present a wide price range, with Audi and Volvo having higher medians, consistent with their status as luxury brands.
+<p>
+
+<p align="justify">
+The box chart revealed more nuanced insights, such as the existence of significant price variability within the same brands according to body type. The box plot has also given us a better understanding of brand trends, and can once again highlight their positioning.
+<p>
+
+### summary tables for prices
+
+<p align="justify">
+We have chosen to summarize vehicle price data through basic descriptive statistics: mean, median and standard deviation. These measures were calculated for each vehicle brand in our dataset. To visualize these statistics, we created a summary table using the formattable library in R, which offers an attractive and intuitive visual representation of numerical data.
+<p>
+
+```{r}
+
+# Fonction pour calculer les statistiques de base
+calculate_stats <- function(df) {
+  df %>%
+    summarise(
+      Moyenne = mean(price, na.rm = TRUE),
+      Médiane = median(price, na.rm = TRUE),
+      Ecart_Type = sd(price, na.rm = TRUE)
+    )
+}
+
+# Calcul des statistiques pour chaque marque
+stats_volvo <- calculate_stats(volvo)
+stats_toyota <- calculate_stats(toyota)
+stats_skoda <- calculate_stats(skoda)
+stats_golf <- calculate_stats(golf)
+stats_audi <- calculate_stats(audi)
+
+# Création d'un tableau récapitulatif
+summary_table <- rbind(
+  Volvo = stats_volvo,
+  Toyota = stats_toyota,
+  Skoda = stats_skoda,
+  Golf = stats_golf,
+  Audi = stats_audi
+)
+
+# Mise en forme du tableau avec formattable
+color_formatter <- color_tile("white", "lightblue")
+formattable(summary_table, list(
+  Moyenne = color_formatter,
+  Médiane = color_formatter,
+  Ecart_Type = color_formatter
+))
+
+
+
+```
+
+<p align="justify">
+Volvo shows the highest average and median prices, suggesting a more premium pricing strategy compared to the other brands. Toyota stands out with significantly lower average and median prices, aligning with its market positioning as an affordable and reliable car brand. Skoda, Golf, and Audi have relatively similar average prices, but Audi tends to be slightly more expensive on average. The standard deviation values indicate the variability in pricing within each brand. Volvo shows the highest variability, suggesting a wide range of models from more affordable to high-end. Toyota, with a lower standard deviation, indicates more consistent pricing across its range.
+<p>
+
+### Mileage (Kilometers) and Its Impact on Price
+
+<p align="justify">
+For this relationship, we chose to use a scatterplot, which we generated using the ggplot2 library and ggplotly for interactivity. The decision to use scatterplots was based on the need to understand the nature of the relationship between mileage and price. The choice of distinct colors for each car facilitates visualization and comparison between brands.
+<p>
+
+::: panel-tabset
+## Audi
+
+```{r}
+# Enhancing the scatter plots
+
+# AUDI: Mileage vs Price
+graph1 <- ggplot(audi, aes(x = kilometers, y = price)) +
+  geom_point(color = "#C0C0C0", size = 1, alpha = 0.6) +
+  labs(title = "Audi: Mileage vs Price", x = "Mileage", y = "Price") +
+  theme_classic()
+p1 <- ggplotly(graph1)
+p1
+```
+
+## Golf
+
+```{r}
+
+# GOLF: Mileage vs Price
+graph2 <- ggplot(golf, aes(x = kilometers, y = price)) +
+  geom_point(color = "#1E90FF", size = 1, alpha = 0.6) +
+  labs(title = "Golf: Mileage vs Price", x = "Mileage", y = "Price") +
+  theme_classic()
+p2 <- ggplotly(graph2)
+p2
+
+```
+
+## Toyota
+
+```{r}
+# TOYOTA: Mileage vs Price
+graph3 <- ggplot(toyota, aes(x = kilometers, y = price)) +
+  geom_point(color = "#FF0000", size = 1, alpha = 0.6) +
+  labs(title = "Toyota: Mileage vs Price", x = "Mileage", y = "Price") +
+  theme_classic()
+p3 <- ggplotly(graph3)
+p3
+```
+
+## Skoda
+
+```{r}
+# SKODA: Mileage vs Price
+graph4 <- ggplot(skoda, aes(x = kilometers, y = price)) +
+  geom_point(color = "#006400", size = 1, alpha = 0.6) +
+  labs(title = "Skoda: Mileage vs Price", x = "Mileage", y = "Price") +
+  theme_classic()
+p4 <- ggplotly(graph4)
+p4
+```
+
+## Volvo
+
+```{r}
+# VOLVO: Mileage vs Price
+graph5 <- ggplot(volvo, aes(x = kilometers, y = price)) +
+  geom_point(color = "#000080", size = 1, alpha = 0.6) +
+  labs(title = "Volvo: Mileage vs Price", x = "Mileage", y = "Price") +
+  theme_classic()
+p5 <- ggplotly(graph5)
+p5
+```
+:::
+
+<p align="justify">
+By analyzing the graphs, we have observed that, for some brands, price decreases significantly with increasing mileage, while for others, the impact of mileage on price is less pronounced. This reflects the fact that, while mileage can have an impact on price, other factors can also explain consumer choices.
+<p>
+
+### Engine Power (Power) and Price Correlation
+<p align="justify">
+The use of scatter graphs aims to visualize the impact of engine power on sales prices, and whether this trend varies from one brand to another on the used car market.
+<p>
+
+::: panel-tabset
+## Audi
+
+```{r}
+# AUDI: Engine Power vs Price
+graph1 <- ggplot(audi, aes(x = power, y = price)) +
+  geom_point(color = "red", size = 0.5, alpha = 0.6) +
+  labs(title = "Audi: Engine Power vs Price", x = "Engine Power (HP)", y = "Price") +
+  theme_minimal()
+p1 <- ggplotly(graph1)
+p1
+```
+
+## Toyota
+
+```{r}
+# TOYOTA: Engine Power vs Price
+graph2 <- ggplot(toyota, aes(x = power, y = price)) +
+  geom_point(color = "green", size = 0.5, alpha = 0.6) +
+  labs(title = "Toyota: Engine Power vs Price", x = "Engine Power (HP)", y = "Price") +
+  theme_minimal()
+p2 <- ggplotly(graph2)
+p2
+```
+
+## Skoda
+
+```{r}
+# SKODA: Engine Power vs Price
+graph3 <- ggplot(skoda, aes(x = power, y = price)) +
+  geom_point(color = "purple", size = 0.5, alpha = 0.6) +
+  labs(title = "Skoda: Engine Power vs Price", x = "Engine Power (HP)", y = "Price") +
+  theme_minimal()
+p3 <- ggplotly(graph3)
+p3
+```
+
+## Golf
+
+```{r}
+# GOLF: Engine Power vs Price
+graph4 <- ggplot(golf, aes(x = power, y = price)) +
+  geom_point(color = "blue", size = 0.5, alpha = 0.6) +
+  labs(title = "Golf: Engine Power vs Price", x = "Engine Power (HP)", y = "Price") +
+  theme_minimal()
+p4 <- ggplotly(graph4)
+p4
+```
+
+## Volvo
+
+```{r}
+# VOLVO: Engine Power vs Price
+graph5 <- ggplot(volvo, aes(x = power, y = price)) +
+  geom_point(color = "orange", size = 0.5, alpha = 0.6) +
+  labs(title = "Volvo: Engine Power vs Price", x = "Engine Power (HP)", y = "Price") +
+  theme_minimal()
+p5 <- ggplotly(graph5)
+p5
+```
+:::
+
+<p align="justify">
+The data suggests a positive correlation between engine power and car price. Higher-powered cars, often offering better performance, command higher prices. This trend is particularly pronounced in brands known for their performance-oriented models like Audi, Golf and toyota.
+<p>
+
+### Influence of Fuel Type on Car Pricing
+<p align="justify">
+Different fuel types cater to various market segments and preferences. To visualize how fuel type influences car prices, average prices for different fuel types were plotted in bar charts for each brand
+<p>
+
+::: panel-tabset
+
+## Audi
+
+```{r}
+# Chargement des données
+audi <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/audi_models_data.csv")
+golf <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/golf_models_data.csv")
+toyota <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/toyota_models_data.csv")
+skoda <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/skoda_models_data.csv")
+volvo <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/volvo_models_data.csv")
+
+# Fonction pour ajuster les données et créer le graphique en barres
+create_bar_plot <- function(data, title) {
+  data %>%
+    mutate(fuel.type = ifelse(grepl("hybrid", fuel.type, ignore.case = TRUE), "hybrid", fuel.type)) %>%  # Regroupe tous les types d'hybrides
+    group_by(fuel.type) %>%
+    summarize(Average_Price = mean(price, na.rm = TRUE)) %>%
+    ggplot(aes(x = fuel.type, y = Average_Price, fill = fuel.type)) +
+    geom_col() +
+    scale_fill_manual(values = c("Diesel" = "blue", "Essence" = "red", "hybrid" = "green", "Electrique" = "violet", "Gaz naturel (CNG) /Essence " = "orange")) +
+    labs(title = title, x = "Type de Carburant", y = "Prix Moyen") +
+    theme_minimal()
+}
+
+# Création des graphiques pour chaque marque
+plot_audi <- create_bar_plot(audi, "AUDI - Fuel type vs Average price ")
+
+p1 <- ggplotly(plot_audi)
+p1
+```
+
+## Golf
+```{r}
+plot_golf <- create_bar_plot(golf, "GOLF - Fuel type vs Average price ")
+p2 <- ggplotly(plot_golf)
+p2
+```
+
+## Toyota 
+```{r}
+plot_toyota <- create_bar_plot(toyota, "TOYOTA - Fuel type vs Average price ")
+p3 <- ggplotly(plot_toyota)
+p3
+```
+
+## Skoda 
+```{r}
+plot_skoda <- create_bar_plot(skoda, "SKODA - Fuel type vs Average price ")
+p4 <- ggplotly(plot_skoda)
+p4
+```
+
+## Volvo
+```{r}
+plot_volvo <- create_bar_plot(volvo, "VOLVO - Fuel type vs Average price ")
+p5 <- ggplotly(plot_volvo)
+p5
+```
+:::
+
+
+<p align="justify">
+The charts reveal significant price disparities based on fuel type, with hybrids and electric vehicles often priced higher. These differences are brand-specific and reflect the brand's technological focus and market positioning in terms of fuel technology.
+<p>
+
+### Year of Manufacture and Its Effect on Pricing
+
+<p align="justify">
+The year a car was manufactured can provide insights into its technological relevance and condition. Bar charts depicting the average price per year for each brand were analyzed
+<p> 
+
+::: panel-tabset
+## Audi 
+
+```{r, warning=FALSE}
+## proposition 2 : en fonction de l'année de fabrication 
+graph.1 <- ggplot(audi, aes(x = date, y = price)) +
+  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
+  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
+p.1 <- ggplotly(graph.1)
+p.1
+```
+
+## Golf 
+```{r, warning=FALSE}
+graph.2 <- ggplot(golf, aes(x = date, y = price)) +
+  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
+  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
+p.2 <- ggplotly(graph.2)
+p.2
+```
+
+## Skoda
+```{r, warning=FALSE}
+graph.3 <- ggplot(skoda, aes(x = date, y = price)) +
+  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
+  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
+p.3 <- ggplotly(graph.3)
+p.3
+```
+
+## Toyota
+```{r, warning=FALSE}
+graph.4 <- ggplot(toyota, aes(x = date, y = price)) +
+  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
+  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
+p.4 <- ggplotly(graph.4)
+p.4
+```
+
+## Volvo
+```{r, warning=FALSE}
+graph.5 <- ggplot(volvo, aes(x = date, y = price)) +
+  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
+  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
+p.5 <- ggplotly(graph.5)
+p.5
+```
+::: 
+<p align="justify">
+Newer models generally have higher average prices, likely due to more advanced technology, better features, and lower mileage. The rate of depreciation over the years varies among brands, with some luxury brands retaining their value longer.
+<p>
+
+### Consumption vs price
+<p align="justify">
+The rationale behind using a scatter plot was to effectively display the relationship between two continuous variables: car consumption (measured in liters per 100 kilometers) and price (in currency units). By plotting each car as a point on this graph, with its consumption on the x-axis and its price on the y-axis, we could visually inspect trends, patterns, and potential outliers in the data.
+<p>
+
+```{r}
+
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+# Add a 'brand' column to each dataframe
+all_cars <- bind_rows(
+  mutate(volvo, brand = "Volvo"),
+  mutate(toyota, brand = "Toyota"),
+  mutate(skoda, brand = "Skoda"),
+  mutate(golf, brand = "Golf"),
+  mutate(audi, brand = "Audi")
+)
+
+# Clean the data by removing rows with NA in 'consumption' and 'price'
+all_cars_cleaned <- na.omit(all_cars[, c("consumption", "price", "brand")])
+
+scatter_plot <- ggplot(all_cars_cleaned, aes(x = consumption, y = price, color = brand)) +
+  geom_point() +
+  labs(title = "Comparison of Car Price and Consumption by Brand",
+       x = "Consumption (L/100km)",
+       y = "Price (Currency Unit)",
+       color = "Brand") +
+  theme_minimal()
+
+
+consumption <- ggplotly(scatter_plot)
+consumption
+
+```
+
+
+## Factors influencing the listing duration
+
+### Histograms of listing duration
+<p align="justify">
+The comparison of histograms allows us to observe the distribution of how long each car model remains listed for sale.
+It helps identify the typical durations or patterns for listings of these specific car models.
+It might indicate which models tend to have shorter or longer listing durations compared to others.
+<p>
+<p align="justify">
+Understanding these durations can offer insights into potentially the efficiency of selling particular car models.
+<p>
+
+```{r, echo = FALSE, message = FALSE}
+
+golf <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/golf2_cleaned.csv")
+skoda <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/skoda2_cleaned.csv")
+audi <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/audi2_cleaned.csv")
+toyota <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/toyota_cleaned.csv")
+volvo <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/volvo2_cleaned.csv")
+
+```
+
+::: panel-tabset
+## Audi
+```{r}
+filtered_audi <- audi %>%
+  filter(created.date != as.Date("2022-11-14"))
+graph1 <- ggplot(filtered_audi, aes(x = listing.age)) +
+  geom_histogram(binwidth = 10, fill = "skyblue", color = "black") +
+  theme_minimal()
+  labs(
+    title = "Histogram of Listing Duration : Audi A3",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+p1 <- ggplotly(graph1)
+p1
+```
+
+## VW
+```{r}
+filtered_golf <- golf %>%
+  filter(created.date != as.Date("2022-11-14"))
+graph2 <- ggplot(filtered_golf, aes(x = listing.age)) +
+  geom_histogram(binwidth = 10, fill = "skyblue", color = "black") +
+  theme_minimal()
+  labs(
+    title = "Histogram of Listing Duration : VW Golf",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+p2 <- ggplotly(graph2)
+p2
+```
+
+## Toyota
+```{r}
+filtered_toyota <- toyota %>%
+  filter(created.date != as.Date("2022-11-14"))
+graph3 <- ggplot(filtered_toyota, aes(x = listing.age)) +
+  geom_histogram(binwidth = 10, fill = "skyblue", color = "black") +
+  theme_minimal()
+  labs(
+    title = "Histogram of Listing Duration : Toyota Yaris",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+p3 <- ggplotly(graph3)
+p3
+```
+
+## Skoda
+```{r}
+filtered_skoda <- skoda %>%
+  filter(created.date != as.Date("2022-11-14"))
+graph4 <- ggplot(filtered_skoda, aes(x = listing.age)) +
+  geom_histogram(binwidth = 10, fill = "skyblue", color = "black") +
+   theme_minimal()
+  labs(
+    title = "Histogram of Listing Duration : Skoda Octavia",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+p4 <- ggplotly(graph4)
+p4
+```
+
+## Volvo
+```{r}
+filtered_volvo <- volvo %>%
+  filter(created.date != as.Date("2022-11-14"))
+graph5 <- ggplot(filtered_volvo, aes(x = listing.age)) +
+  geom_histogram(binwidth = 10, fill = "skyblue", color = "black") +
+   theme_minimal()
+  labs(
+    title = "Histogram of Listing Duration : Volvo XC60",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+p5 <- ggplotly(graph5)
+p5
+```
+:::
+
+<p align="justify">
+We can observe that for all makes, even though the number of observations differ, the most frequent listings available on the used car website are recent.
+As the listing age increases, the frequency decreases.
+<p>
+
+### Price vs listing duration
+<p align="justify">
+The following scatterplots may help us understand the sensitivity of the used car market to pricing and the potential impact of price variations on how long a car remains listed for sale.
+<p>
+```{r}
+library(patchwork)
+
+create_scatter_plot <- function(golf, model_name) {
+  ggplot(golf, aes(x = price, y = listing.age)) +
+    geom_point(color = "blue", alpha = 0.6) +
+    labs(
+      title = paste("Price vs. Listing Duration for", model_name),
+      x = "Price",
+      y = "Listing Duration (Days)"
+    )+
+    theme_minimal()
+  
+}
+
+list_of_datasets <- list(golf, audi, toyota, volvo, skoda)
+car_model_names <- c("VW Golf", "Audi A3", "Toyota Yaris", "Volvo XC60", "Skoda Octavia")
+
+plots <- lapply(seq_along(list_of_datasets), function(i) {
+  create_scatter_plot(list_of_datasets[[i]], car_model_names[i])
+})
+
+# Combine plots
+plot_arrangement <- wrap_plots(plots, ncol = 2)  # Adjust ncol for layout
+plot_arrangement
+```
+
+We unfortunately do not see any pattern or any structure when taking into account the price.
+
+### Fuel type vs average listing duration
+
+<p align="justify">
+The following interactive barplots aim to reveal any observable patterns or trends associated with the fuel type concerning the listing duration for each make.
+It is important to note that the length of the barplots depends on the average listing duration of each category, the number of observations has no effect on the length, but we found it important to include it in the bar plot to show that even if a category does not have many observations, the category might stand out compared to others.
+The darker the colour of the barplot, the higher the number of observations in the category.
+<p>
+```{r}
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(shiny)
+
+audi2 <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/audi_models_data.csv")
+golf2 <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/golf_models_data.csv")
+toyota2 <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/toyota_models_data.csv")
+skoda2 <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/skoda_models_data.csv")
+volvo2 <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/volvo_models_data.csv")
+```
+
+::: panel-tabset
+
+## Audi
+
+```{r}
+create_bar_plot <- function(data, title) {
+  data %>%
+    mutate(fuel.type = ifelse(grepl("Hybrid", fuel.type, ignore.case = TRUE), "Hybrid", fuel.type)) %>% 
+    filter(!is.na(fuel.type)) %>%
+    group_by(fuel.type) %>%
+    summarize(avg_duration = mean(listing.age, na.rm = TRUE),
+              count = n()) %>%
+    ggplot(aes(x = fuel.type, y = avg_duration, fill = count)) +  
+    geom_col() +
+    geom_text(aes(label = count), position = position_stack(vjust = 0.5), size = 3, color = "darkgrey") +
+    scale_fill_gradient(low = "lightblue", high = "darkblue") +
+    labs(title = title, x = "Fuel type", y = "Average listing duration") +
+    theme_minimal()
+}
+
+# Graphs for each make
+plot_audi <- create_bar_plot(audi2, "Fuel type vs Average listing duration : Audi A3")
+
+# Interactive Plotly graphs
+p1 <- ggplotly(plot_audi)
+p1
+```
+
+## VW
+
+```{r}
+plot_golf <- create_bar_plot(golf2, "Fuel type vs Average listing duration : VW Golf")
+p2 <- ggplotly(plot_golf)
+p2
+```
+
+## Toyota
+
+```{r}
+plot_toyota <- create_bar_plot(toyota2, "Fuel type vs Average listing duration : Toyota Yaris")
+p3 <- ggplotly(plot_toyota)
+p3
+```
+
+## Skoda
+
+```{r}
+plot_skoda <- create_bar_plot(skoda2, "Fuel type vs Average listing duration : Skoda Octavia")
+p4 <- ggplotly(plot_skoda)
+p4
+```
+
+## Volvo
+
+```{r}
+plot_volvo <- create_bar_plot(volvo2, "Fuel type vs Average listing duration : Volvo XC60")
+p5 <- ggplotly(plot_volvo)
+p5
+```
+
+:::
+
+<p align="justify">
+Audi : While the category with the most observations is composed of petrol cars, the category with the highest average listing duration is "Diesel".
+Petrol cars have an average listing duration of 91 days.
+Volkswagen : This model has the largest panel of categories.
+Hybrid cars tend to stay on the website longer, with an average of 166 days.
+The category with the most observations, "Diesel", has an average listing duration of 119 days, which remains higher than that of Audi, but remains lower than other categories.
+Toyota : For this model, the highest average listing duration goes to the category with the most observations, i.e. petrol cars.
+The average listing duration does not vary much between categories, as there is a 23-day gap between the highest and lowest average listing duration.
+Skoda : Like Toyota, there is not much variation in average listing duration, with a 20-day gap between the highest and lowest average listing duration.
+Volvo : Like Skoda and Toyota, there is not much variation in average listing duration, with a 16-day gap between the highest and lowest average listing duration.
+<p>
+<p align="justify">
+We notice that 3 out of 5 models (Toyota, Skoda and Volvo) have a maximum variation of less than a month between categories, which indicates that for these models, the fuel type does not really influence the average listing duration.
+For the 2 remaining models (VW and Audi), fuel type may influence the average listing duration, as the variation exceeds 30 days.
+<p>
+
+### Transmission vs average listing duration 
+<p align="justify">
+The following boxplots will help us reveal if there is a difference in listing durations based on transmission types (automatic or manual). Outliers in the boxplot might represent exceptional cases, indicating factors beyond transmission influencing the listing duration for those particular cars.  
+<p>
+::: panel-tabset
+## Audi
+```{r}
+library(dplyr)
+library(ggplot2)
+library(plotly)
+
+create_box_plot <- function(data, title) {
+  data %>%
+    mutate(
+      transmission = ifelse(grepl("Boîte manuelle automatisée", transmission, ignore.case = TRUE), "Automatique", transmission),
+      transmission = ifelse(transmission == "Boîte automatique variable", "Automatique", transmission)  
+    ) %>%
+    filter(!is.na(transmission)) %>%
+    ggplot(aes(x = transmission, y = listing.age, fill = transmission)) +
+    geom_boxplot() +
+    labs(title = title, x = "Transmission", y = "Listing duration") +
+    scale_fill_manual(values = c("Automatique" = "lightblue", "Boîte manuelle" = "lightpink")) +
+    theme_minimal()
+}
+
+
+# Graphs for each make
+plot_audi <- create_box_plot(audi2, "Transmission vs listing duration : Audi A3")
+p.1 <- ggplotly(plot_audi)
+p.1
+```
+
+## Golf
+```{r}
+plot_golf <- create_box_plot(golf2, "Transmission vs listing duration : VW Golf")
+p.2 <- ggplotly(plot_golf)
+p.2
+```
+
+## Toyota
+```{r}
+plot_toyota <- create_box_plot(toyota2, "Transmission vs listing duration : Toyota Yaris")
+p.3 <- ggplotly(plot_toyota)
+p.3
+```
+
+## Skoda
+```{r}
+plot_skoda <- create_box_plot(skoda2, "Transmission vs listing duration : Skoda Octavia")
+p.4 <- ggplotly(plot_skoda)
+p.4
+```
+
+## Volvo 
+```{r}
+plot_volvo <- create_box_plot(volvo2, "Transmission vs listing duration : Volvo XC60")
+p.5 <- ggplotly(plot_volvo)
+p.5
+
+```
+:::
+
+<p align="justify">
+For the A3 and the Golf, there seems to be no preference between automatic or manual cars. For each make, each category has similar medians, first and third quartiles, and upper and lower whiskers. The Audi A3 however display outliers in the upper portion of both automatic and manual cars boxplots, suggesting additional factors beyond transmission type impacting the duration of the listing.  
+<p>
+<p align="justify">
+For the Yaris and the Octavia, the boxplots show that there might be a preference for automatic cars, as they have a shorter listing duration range. Nonetheless, outliers in the upper part of the boxplot hint at other influencing elements affecting the listing duration. 
+<p>
+<p align="justify">
+For the XC60, manual cars seems to have a higher listing duration range than automatic cars, with a median of 125,5 days, compared to 82 days respectively. 
+<p>
+<p align="justify">
+These graphs show us that while preferences can be shown, the transmission type of the car is not the only variable influencing the duration of a listing. 
+<p>
+
+### Body type vs average listing duration
+<p align="justify">
+For the following barplots we decided to only display the models which contain different body types, especially the Golf.
+For models such as the Yaris and the XC60, there is no point in trying to explain this type of relationship, as these two models only have one body type.
+<p>
+::: panel-tabset
+## Audi 
+```{r}
+library(dplyr)
+library(ggplot2)
+library(plotly)
+
+create_bar_plot <- function(data, title) {
+  data %>%
+    filter(!is.na(body.type)) %>%
+    group_by(body.type) %>%
+    summarize(average_bt_duration = mean(listing.age, na.rm = TRUE),
+              count=n()) %>%
+    ggplot(aes(x = body.type, y = average_bt_duration, fill = count)) +
+    geom_col() +
+    geom_text(aes(label = count), position = position_stack(vjust = 0.5), size = 3, color = "darkgrey") +
+    scale_fill_gradient(low = "lightblue", high = "darkblue") +
+    labs(title = title, x = "Body type", y = "Average listing duration") +
+    theme_minimal()
+}
+
+# Graphs for each make
+plot_audi <- create_bar_plot(audi2, "Body type vs Average listing duration : Audi A3")
+p_1 <- ggplotly(plot_audi)
+p_1
+```
+
+## Golf
+```{r}
+plot_golf <- create_bar_plot(golf2, "Body type vs Average listing duration : VW Golf")
+p_2 <- ggplotly(plot_golf)
+p_2
+```
+
+## Skoda 
+```{r}
+plot_skoda <- create_bar_plot(skoda2, "Body type vs Average listing duration : Skoda Octavia")
+p_4 <- ggplotly(plot_skoda)
+p_4
+```
+:::
+
+```{r}
+
+```
+
+<p align="justify">
+The observed pattern in these barplots indicates a consistent trend across each make: the category with the highest number of observations tends to have the lowest or among the shortest average listing durations.
+This trend likely stems from higher demand, resulting in quicker turnovers as these models are more demanded.
+Conversely, less frequently observed categories show longer average listing durations, suggesting that buyers tend to favour the more common body types, leading to extended listing periods for other variants.
+It is important to note that categories with less than 5 observations are most likely errors occurred during scraping our data.
+<p>
+
+## How do different vehicle features affect depreciation ?
+
+In this part, we will look at graphs related to the depreciation of our vehicles and identify various trends, as well as correlation matrices to observe the correlations between depreciation and vehicle age and mileage, as well as other immovable factors such as power and fuel consumption.
+
+### Filtering data
+
+Firstly, we need to filter our data to keep only the observations where the new price of the vehicle is available. When scraping our data, only a portion of the total listings had the vehicle's new age displayed, as it is an optional input for the seller. This reduces our sample sizes a large amount, especially for the Toyota Yaris data set. Below is a table displaying these reductions in sample sizes.
+
+```{r, message=FALSE, warning=FALSE}
+# Question 3: How do different vehicle features affect depreciation ?
+library(patchwork)
+library(ggtext)
+library(tidyverse)
+library(corrplot)
+library(kableExtra)
+audi <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/audi_models_data.csv")
+golf <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/golf_models_data.csv")
+toyota <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/toyota_models_data.csv")
+skoda <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/skoda_models_data.csv")
+volvo <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/volvo_models_data.csv")
+
+
+# Table for reductions in sample size
+
+sample_sizes <- data.frame(
+  "VW Golf" = nrow(golf),
+  "Audi A3" = nrow(audi),
+  "Skoda Octavia" = nrow(skoda),
+  "Volvo XC60" = nrow(volvo),
+  "Toyota Yaris" = nrow(toyota)
+)
+
+# Depreciation variables
+# We filter to remove NAs from new price for this part
+
+# golf
+golf <- golf |> filter(!is.na(new.price))
+golf$depreciation = golf$new.price - golf$price
+golf$rel_dep = golf$depreciation / golf$new.price
+
+# audi
+audi <- audi |> filter(!is.na(new.price))
+audi$depreciation = audi$new.price - audi$price
+audi$rel_dep = audi$depreciation / audi$new.price
+
+# skoda
+skoda <- skoda |> filter(!is.na(new.price))
+skoda$depreciation = skoda$new.price - skoda$price
+skoda$rel_dep = skoda$depreciation / skoda$new.price
+
+#remove NAs from skoda
+skoda <- skoda[!is.na(skoda$vehicle.age),]
+
+# volvo
+volvo <- volvo |> filter(!is.na(new.price))
+volvo$depreciation = volvo$new.price - volvo$price
+volvo$rel_dep = volvo$depreciation / volvo$new.price
+
+# toyota
+toyota <- toyota |> filter(!is.na(new.price))
+toyota$depreciation = toyota$new.price - toyota$price
+toyota$rel_dep = toyota$depreciation / toyota$new.price
+
+# Table for reductions in sample size continued
+
+sample_sizes_2 <- data.frame(
+  "VW Golf" = nrow(golf),
+  "Audi A3" = nrow(audi),
+  "Skoda Octavia" = nrow(skoda),
+  "Volvo XC60" = nrow(volvo),
+  "Toyota Yaris" = nrow(toyota)
+)
+
+sample_sizes_change <- ((sample_sizes - sample_sizes_2) / sample_sizes) * 100
+sample_sizes <- rbind(sample_sizes, sample_sizes_2)
+sample_sizes <- rbind(sample_sizes, sample_sizes_change)
+sample_sizes <- round(sample_sizes, digits = 0)
+sample_sizes[3,] <- paste(sample_sizes[3,], "%", sep = " ")
+rownames(sample_sizes) <- c("Original", "Filtered", "Reduction")
+
+sample_sizes |>
+  kable() |>
+  kable_styling()
+
+```
+
+#### New prices vs listing prices
+
+These plots show the new prices of cars compared with their actual prices, sorted by the new price.
+
+```{r, message=FALSE, warning=FALSE}
+a1 <- ggplot(golf[order(golf$new.price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue") +
+  ylim(0, max(golf$new.price)) +
+  xlim(0, nrow(golf)) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = price), color = "orangered", se = FALSE) +
+  geom_ribbon(aes(x = seq(new.price),
+                  ymin = predict(loess(price ~ seq(price), span = 0.1)),
+                  ymax = predict(loess(new.price ~ seq(price), span = 0.1))),
+              fill = "grey", alpha = 0.5) +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of listing prices and new prices", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Actual prices</span>") +
+  ggtitle("VW Golf") +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# New prices vs listing prices audi
+
+a2 <- ggplot(audi[order(audi$new.price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue") +
+  ylim(0, max(audi$new.price)) +
+  xlim(0, nrow(audi)) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = price), color = "orangered", se = FALSE) +
+  geom_ribbon(aes(x = seq(new.price),
+                  ymin = predict(loess(price ~ seq(price), span = 0.1)),
+                  ymax = predict(loess(new.price ~ seq(price), span = 0.1))),
+              fill = "grey", alpha = 0.5) +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of listing prices and new prices", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Actual prices</span>") +
+  ggtitle("Audi A3") +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# New prices vs listing prices skoda
+
+a3 <- ggplot(skoda[order(skoda$new.price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue") +
+  ylim(0, max(skoda$new.price)) +
+  xlim(0, nrow(skoda)) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = price), color = "orangered", se = FALSE) +
+  geom_ribbon(aes(x = seq(new.price),
+                  ymin = predict(loess(price ~ seq(price), span = 0.1)),
+                  ymax = predict(loess(new.price ~ seq(price), span = 0.1))),
+              fill = "grey", alpha = 0.5) +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of listing prices and new prices", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Actual prices</span>") +
+  ggtitle("Skoda Octavia") +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# New prices vs listing prices volvo
+
+a4 <- ggplot(volvo[order(volvo$new.price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue") +
+  ylim(0, max(volvo$new.price)) +
+  xlim(0, nrow(volvo)) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = price), color = "orangered", se = FALSE) +
+  geom_ribbon(aes(x = seq(new.price),
+                  ymin = predict(loess(price ~ seq(price), span = 0.1)),
+                  ymax = predict(loess(new.price ~ seq(price), span = 0.1))),
+              fill = "grey", alpha = 0.5) +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of listing prices and new prices", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Actual prices</span>") +
+  ggtitle("Volvo XC60") +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# New prices vs listing prices toyota
+
+a5 <- ggplot(toyota[order(toyota$new.price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue") +
+  ylim(0, max(toyota$new.price)) +
+  xlim(0, nrow(toyota)) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = price), color = "orangered", se = FALSE) +
+  geom_ribbon(aes(x = seq(new.price),
+                  ymin = predict(loess(price ~ seq(price), span = 0.1)),
+                  ymax = predict(loess(new.price ~ seq(price), span = 0.1))),
+              fill = "grey", alpha = 0.5) +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of listing prices and new prices", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Actual prices</span>") +
+  ggtitle("Toyota Yaris") +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Patchwork
+
+#a1
+#(a2 | a3) /
+#(a4 | a5)
+
+```
+::: panel-tabset
+### VW Golf
+```{r, message=FALSE, warning=FALSE}
+a1
+```
+### Audi A3
+```{r, message=FALSE, warning=FALSE}
+a2
+```
+### Skoda Octavia
+```{r, message=FALSE, warning=FALSE}
+a3
+```
+### Volvo XC60
+```{r, message=FALSE, warning=FALSE}
+a4
+```
+### Toyota Yaris
+```{r, message=FALSE, warning=FALSE}
+a5
+```
+:::
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+It seems the new and actual prices are strongly related.
+
+#### New prices vs depreciation
+<p align="justify">
+We now look at the new prices of vehicles compared to their relative depreciation. The relative depreciation is defined as (new price - actual price) / new price.
+<p>
+```{r, message=FALSE, warning=FALSE}
+# New prices vs depreciation golf
+
+b1 <- ggplot(golf[order(golf$new.price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue", se = FALSE) +
+  ylim(0, 100000) +
+  xlim(0, nrow(golf)) +
+  geom_point(mapping = aes(x = seq(new.price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = rel_dep*100000), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of new prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# New prices vs depreciation audi
+
+b2 <- ggplot(audi[order(audi$new.price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue", se = FALSE) +
+  ylim(0, 100000) +
+  xlim(0, nrow(audi)) +
+  geom_point(mapping = aes(x = seq(new.price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = rel_dep*100000), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of new prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# New prices vs depreciation skoda
+
+b3 <- ggplot(skoda[order(skoda$new.price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue", se = FALSE) +
+  ylim(0, 100000) +
+  xlim(0, nrow(skoda)) +
+  geom_point(mapping = aes(x = seq(new.price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = rel_dep*100000), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of new prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# New prices vs depreciation volvo
+
+b4 <- ggplot(volvo[order(volvo$new.price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue", se = FALSE) +
+  ylim(0, 100000) +
+  xlim(0, nrow(volvo)) +
+  geom_point(mapping = aes(x = seq(new.price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = rel_dep*100000), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of new prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+
+# New prices vs depreciation toyota
+
+b5 <- ggplot(toyota[order(toyota$new.price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue", se = FALSE) +
+  ylim(0, 100000) +
+  xlim(0, nrow(toyota)) +
+  geom_point(mapping = aes(x = seq(new.price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = rel_dep*100000), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by new price", y = "Price", title = "Comparison of new prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; New prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Patchwork
+
+#b1 +
+ # plot_annotation(title = "Comparison of new prices and relative depreciation")
+#b2
+#b3
+#b4
+#b5
+```
+::: panel-tabset
+### VW Golf
+```{r, message=FALSE, warning=FALSE}
+b1
+```
+### Audi A3
+```{r, message=FALSE, warning=FALSE}
+b2
+```
+### Skoda Octavia
+```{r, message=FALSE, warning=FALSE}
+b3
+```
+### Volvo XC60
+```{r, message=FALSE, warning=FALSE}
+b4
+```
+### Toyota Yaris
+```{r, message=FALSE, warning=FALSE}
+b5
+```
+:::
+
+We can see that these are weakly negatively correlated, but it does not stand out in the graphs.
+
+#### Current prices vs depreciation
+
+We will now compare current vehicle prices and their relative depreciation.
+
+```{r, message=FALSE, warning=FALSE}
+# Prices vs depreciation golf
+
+c1 <- ggplot(golf[order(golf$price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = price), color = "royalblue", se = FALSE) +
+  ylim(0, 100000) +
+  xlim(0, nrow(golf)) +
+  geom_point(mapping = aes(x = seq(price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*100000), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by price", y = "Price", title = "Comparison of prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Prices vs depreciation audi
+
+c2 <- ggplot(audi[order(audi$price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = price), color = "royalblue", se = FALSE) +
+  ylim(0, 100000) +
+  xlim(0, nrow(audi)) +
+  geom_point(mapping = aes(x = seq(price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*100000), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by price", y = "Price", title = "Comparison of prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Prices vs depreciation skoda
+
+c3 <- ggplot(skoda[order(skoda$price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = price), color = "royalblue", se = FALSE) +
+  ylim(0, 100000) +
+  xlim(0, nrow(skoda)) +
+  geom_point(mapping = aes(x = seq(price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*100000), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by price", y = "Price", title = "Comparison of prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Prices vs depreciation volvo
+
+c4 <- ggplot(volvo[order(volvo$price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = price), color = "royalblue", se = FALSE) +
+  ylim(0, 100000) +
+  xlim(0, nrow(volvo)) +
+  geom_point(mapping = aes(x = seq(price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*100000), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by price", y = "Price", title = "Comparison of prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Prices vs depreciation toyota
+
+c5 <- ggplot(toyota[order(toyota$price),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = price), color = "royalblue", se = FALSE) +
+  ylim(0, 100000) +
+  xlim(0, nrow(toyota)) +
+  geom_point(mapping = aes(x = seq(price), y = rel_dep*100000), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*100000), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by price", y = "Price", title = "Comparison of prices and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Prices</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Patchwork
+
+#c1 +
+#  plot_annotation(title = "Comparison of current prices and relative depreciation")
+#c2
+#c3
+#c4
+#c5
+```
+::: panel-tabset
+### VW Golf
+```{r, message=FALSE, warning=FALSE}
+c1
+```
+### Audi A3
+```{r, message=FALSE, warning=FALSE}
+c2
+```
+### Skoda Octavia
+```{r, message=FALSE, warning=FALSE}
+c3
+```
+### Volvo XC60
+```{r, message=FALSE, warning=FALSE}
+c4
+```
+### Toyota Yaris
+```{r, message=FALSE, warning=FALSE}
+c5
+```
+:::
+
+Current vehicle prices are obviously negatively correlated with relative depreciation, which makes sense.
+
+#### Vehicle age vs depreciation
+<p align="justify">
+Vehicle age is probably the biggest influencing factor that defines the definition of depreciation, so we can see in the graphs that it is strongly related to relative depreciation.
+<p>
+```{r, message=FALSE, warning=FALSE}
+# Vehicle age vs depreciation golf
+
+d1 <- ggplot(golf[order(golf$vehicle.age),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(vehicle.age), y = vehicle.age/365), color = "royalblue", se = FALSE) +
+  ylim(0, max(golf$vehicle.age)/365) +
+  xlim(0, nrow(golf)) +
+  geom_point(mapping = aes(x = seq(vehicle.age), y = rel_dep*(max(golf$vehicle.age)/365)), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*(max(golf$vehicle.age)/365)), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", title = "Comparison of vehicle age and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Vehicle age (years)</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./(max(golf$vehicle.age)/365), name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Vehicle age vs depreciation audi
+
+d2 <- ggplot(audi[order(audi$vehicle.age),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(vehicle.age), y = vehicle.age/365), color = "royalblue", se = FALSE) +
+  ylim(0, max(audi$vehicle.age)/365) +
+  xlim(0, nrow(audi)) +
+  geom_point(mapping = aes(x = seq(vehicle.age), y = rel_dep*(max(audi$vehicle.age)/365)), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*(max(audi$vehicle.age)/365)), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", title = "Comparison of vehicle age and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Vehicle age (years)</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./(max(audi$vehicle.age)/365), name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Vehicle age vs depreciation skoda
+
+d3 <- ggplot(skoda[order(skoda$vehicle.age),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(vehicle.age), y = vehicle.age/365), color = "royalblue", se = FALSE) +
+  ylim(0, max(skoda$vehicle.age)/365) +
+  xlim(0, nrow(skoda)) +
+  geom_point(mapping = aes(x = seq(vehicle.age), y = rel_dep*(max(skoda$vehicle.age)/365)), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*(max(skoda$vehicle.age)/365)), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", title = "Comparison of vehicle age and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Vehicle age (years)</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./(max(skoda$vehicle.age)/365), name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Vehicle age vs depreciation volvo
+
+d4 <- ggplot(volvo[order(volvo$vehicle.age),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(vehicle.age), y = vehicle.age/365), color = "royalblue", se = FALSE) +
+  ylim(0, max(volvo$vehicle.age)/365) +
+  xlim(0, nrow(volvo)) +
+  geom_point(mapping = aes(x = seq(vehicle.age), y = rel_dep*(max(volvo$vehicle.age)/365)), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*(max(volvo$vehicle.age)/365)), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", title = "Comparison of vehicle age and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Vehicle age (years)</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./(max(volvo$vehicle.age)/365), name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Vehicle age vs depreciation toyota
+
+d5 <- ggplot(toyota[order(toyota$vehicle.age),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(vehicle.age), y = vehicle.age/365), color = "royalblue", se = FALSE) +
+  ylim(0, max(toyota$vehicle.age)/365) +
+  xlim(0, nrow(toyota)) +
+  geom_point(mapping = aes(x = seq(vehicle.age), y = rel_dep*(max(toyota$vehicle.age)/365)), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*(max(toyota$vehicle.age)/365)), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by vehicle age", y = "Vehicle age (years)", title = "Comparison of vehicle age and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Vehicle age (years)</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./(max(toyota$vehicle.age)/365), name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Patchwork
+
+#(d2 | d3) /
+ # (d4 | d5) +
+  #plot_annotation(
+   # title = "Comparison of vehicle age and relative depreciation"
+#  )
+```
+::: panel-tabset
+### VW Golf
+```{r, message=FALSE, warning=FALSE}
+d1
+```
+### Audi A3
+```{r, message=FALSE, warning=FALSE}
+d2
+```
+### Skoda Octavia
+```{r, message=FALSE, warning=FALSE}
+d3
+```
+### Volvo XC60
+```{r, message=FALSE, warning=FALSE}
+d4
+```
+### Toyota Yaris
+```{r, message=FALSE, warning=FALSE}
+d5
+```
+:::
+
+#### Kilometers vs depreciation
+<p align="justify">
+Kilometers is most likely the second biggest determinant of depreciation. Here are some graphs that put this into perspective.
+<p>
+```{r, message=FALSE, warning=FALSE}
+# Kilometers vs depreciation golf
+
+e1 <- ggplot(golf[order(golf$kilometers),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(kilometers), y = kilometers), color = "royalblue", se = FALSE) +
+  ylim(0, max(golf$kilometers)) +
+  xlim(0, nrow(golf)) +
+  geom_point(mapping = aes(x = seq(kilometers), y = rel_dep*max(golf$kilometers)), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*max(golf$kilometers)), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by kilometers", y = "Kilometers", title = "Comparison of kilometers and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Kilometers</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./max(golf$kilometers), name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Kilometers vs depreciation audi
+
+e2 <- ggplot(audi[order(audi$kilometers),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(kilometers), y = kilometers), color = "royalblue", se = FALSE) +
+  ylim(0, max(audi$kilometers)) +
+  xlim(0, nrow(audi)) +
+  geom_point(mapping = aes(x = seq(kilometers), y = rel_dep*max(audi$kilometers)), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*max(audi$kilometers)), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by kilometers", y = "Kilometers", title = "Comparison of kilometers and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Kilometers</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./max(audi$kilometers), name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Kilometers vs depreciation skoda
+
+e3 <- ggplot(skoda[order(skoda$kilometers),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(kilometers), y = kilometers), color = "royalblue", se = FALSE) +
+  ylim(0, max(skoda$kilometers)) +
+  xlim(0, nrow(skoda)) +
+  geom_point(mapping = aes(x = seq(kilometers), y = rel_dep*max(skoda$kilometers)), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*max(skoda$kilometers)), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by kilometers", y = "Kilometers", title = "Comparison of kilometers and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Kilometers</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./max(skoda$kilometers), name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Kilometers vs depreciation volvo
+
+e4 <- ggplot(volvo[order(volvo$kilometers),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(kilometers), y = kilometers), color = "royalblue", se = FALSE) +
+  ylim(0, max(volvo$kilometers)) +
+  xlim(0, nrow(volvo)) +
+  geom_point(mapping = aes(x = seq(kilometers), y = rel_dep*max(volvo$kilometers)), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*max(volvo$kilometers)), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by kilometers", y = "Kilometers", title = "Comparison of kilometers and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Kilometers</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./max(volvo$kilometers), name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Kilometers vs depreciation toyota
+
+e5 <- ggplot(toyota[order(toyota$kilometers),]) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(kilometers), y = kilometers), color = "royalblue", se = FALSE) +
+  ylim(0, max(toyota$kilometers)) +
+  xlim(0, nrow(toyota)) +
+  geom_point(mapping = aes(x = seq(kilometers), y = rel_dep*max(toyota$kilometers)), size = 1, alpha = 0.5, stroke = 0) +
+  geom_smooth(span = 0.1, mapping = aes(x = seq(price), y = rel_dep*max(toyota$kilometers)), color = "orangered", se = FALSE) +
+  labs(x = "Observations sorted by kilometers", y = "Kilometers", title = "Comparison of kilometers and relative depreciation", subtitle = "<span style='color:royalblue;'>&#9899; Kilometers</span><br/><span style='color:orangered;'>&#9899; Relative depreciation</span>") +
+  scale_y_continuous(sec.axis = sec_axis(~./max(toyota$kilometers), name = "Relative depreciation")) +
+  theme_light() +
+  theme(plot.subtitle = element_markdown())
+
+# Patchwork
+
+#(e2 | e3) /
+ # (e4 | e5) +
+  #plot_annotation(
+   # title = "Comparison of kilometers and relative depreciation"
+  #)
+```
+::: panel-tabset
+### VW Golf
+```{r, message=FALSE, warning=FALSE}
+e1
+```
+### Audi A3
+```{r, message=FALSE, warning=FALSE}
+e2
+```
+### Skoda Octavia
+```{r, message=FALSE, warning=FALSE}
+e3
+```
+### Volvo XC60
+```{r, message=FALSE, warning=FALSE}
+e4
+```
+### Toyota Yaris
+```{r, message=FALSE, warning=FALSE}
+e5
+```
+:::
+
+```{r, message=FALSE, warning=FALSE}
+### Correlation matrices
+
+# golf
+cor_matrix_golf <- cor(select(golf, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "wagon", "diesel", "hybrid", "natural.gas", "manual", "awd")), use = "complete.obs")
+# We don't include natural gas vehicles because there are only 2 observations, and such a small sample size may lead to unreliable estimates of correlations.
+
+# When we run the correlation matrix with variable electric included, we get NAs for correlations between electric and every other variable. We explicitly remove all rows where there is a NA (use = "complete.obs"), so this may be the reason. Upon further inspection, we notice that consumption is NA for all electric vehicles.
+# We still want to check the correlations between electric and all other variables, so we will set consumption for electric vehicles to an arbitrary value, say -999, for our matrix to function correctly. We make a copy of the dataframe for this.
+# For the other vehicles, we will simply omit electric because the counts are too low.
+golf2 <- golf
+golf2$consumption[golf2$electric == TRUE] <- -999
+cor_matrix_golf2 <- cor(select(golf2, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "wagon", "diesel", "hybrid", "electric", "natural.gas", "manual", "awd")), use = "complete.obs")
+
+
+# audi
+cor_matrix_audi <- cor(select(audi, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "cabriolet", "diesel", "hybrid", "manual", "awd")), use = "complete.obs")
+# We omit natural gas vehicles (2 observations) and coupe (1 observation)
+
+
+# skoda
+cor_matrix_skoda <- cor(select(skoda, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "sedan", "diesel", "hybrid", "natural.gas", "manual", "awd")), use = "complete.obs")
+
+
+# volvo
+cor_matrix_volvo <- cor(select(volvo, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "diesel", "hybrid", "manual")), use = "complete.obs")
+
+
+# toyota
+cor_matrix_toyota <- cor(select(toyota, c("depreciation", "rel_dep", "new.price", "price", "kilometers", "vehicle.age", "power", "consumption", "expertise", "warranty", "sedan", "hybrid", "manual", "awd")), use = "complete.obs")
+
+```
+
+#### Correlation matrices
+::: panel-tabset
+### VW Golf
+```{r, message=FALSE, warning=FALSE}
+corrplot(cor_matrix_golf)
+cor_matrix_golf
+```
+### Audi A3
+```{r, message=FALSE, warning=FALSE}
+corrplot(cor_matrix_audi)
+cor_matrix_audi
+```
+### Skoda Octavia
+```{r, message=FALSE, warning=FALSE}
+corrplot(cor_matrix_skoda)
+cor_matrix_skoda
+```
+### Volvo XC60
+```{r, message=FALSE, warning=FALSE}
+corrplot(cor_matrix_volvo)
+cor_matrix_volvo
+```
+### Toyota Yaris
+```{r, message=FALSE, warning=FALSE}
+corrplot(cor_matrix_toyota)
+cor_matrix_toyota
+```
+:::
