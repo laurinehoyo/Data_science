@@ -1,0 +1,34 @@
+---
+title: "A cool title"
+author: "Hogan Victor, Yussuf Annisa, Hoyo Laurine"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+toc: true
+number-sections: true
+highlight-style: pygments
+format:
+  html:
+    theme: Lux
+    code-fold: true
+    code-tools: true
+    self-contained: true
+    html-math-method: katex
+geometry:
+  - top=30mm
+  - left=20mm
+  - heightrounded
+execute:
+  warning: false
+  docx: default
+output: html_document
+---
+```{r, echo = FALSE, message = FALSE}
+library(blastula)
+block_social_links(
+  social_link(
+            service = "github",
+                        link ="https://github.com/laurinehoyo/Data_science/tree/main",
+                        variant = "color"))
+```
+
+```{r child = c('intro.qmd', 'data.qmd', 'eda.qmd', 'analysis.qmd', 'concl.qmd')}
+```
