@@ -1,0 +1,216 @@
+---
+title: "Q2 models"
+format:
+  html: 
+    code-fold: true
+editor: visual
+---
+
+### Q2. What are the factors that influence the duration of a listing for a used car?
+
+```{r, message=FALSE, warning=FALSE}
+# Libraries + datasets
+
+library(tidyverse)
+library(plotly)
+library(corrplot)
+library(Hmisc)
+library(car)
+library(MASS)
+library(kableExtra)
+setwd("~/GitHub/Data_science/cleaned-data")
+golf <- read.csv("golf_models_data.csv")
+audi <- read.csv("audi_models_data.csv")
+skoda <- read.csv("skoda_models_data.csv")
+volvo <- read.csv("volvo_models_data.csv")
+toyota <- read.csv("toyota_models_data.csv")
+```
+
+If we first look at the data, we will see an enormous amount of listings on 2022-11-14, which is unrealistic, and most likely an error. We can see this clearly by visualising the frequency of listings by date.
+
+::: panel-tabset
+### VW Golf
+```{r, message=FALSE, warning=FALSE}
+ggplot(golf, aes(x = listing.age)) +
+  geom_histogram(binwidth = 3, fill = "skyblue", color = "black") +
+  labs(
+    title = "Histogram of Listing Duration",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+```
+### Audi A3
+```{r, message=FALSE, warning=FALSE}
+ggplot(audi, aes(x = listing.age)) +
+  geom_histogram(binwidth = 3, fill = "skyblue", color = "black") +
+  labs(
+    title = "Histogram of Listing Duration",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+```
+### Skoda Octavia
+```{r, message=FALSE, warning=FALSE}
+ggplot(skoda, aes(x = listing.age)) +
+  geom_histogram(binwidth = 3, fill = "skyblue", color = "black") +
+  labs(
+    title = "Histogram of Listing Duration",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+```
+### Volvo XC60
+```{r, message=FALSE, warning=FALSE}
+ggplot(volvo, aes(x = listing.age)) +
+  geom_histogram(binwidth = 3, fill = "skyblue", color = "black") +
+  labs(
+    title = "Histogram of Listing Duration",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+```
+### Toyota Yaris
+```{r, message=FALSE, warning=FALSE}
+ggplot(toyota, aes(x = listing.age)) +
+  geom_histogram(binwidth = 3, fill = "skyblue", color = "black") +
+  labs(
+    title = "Histogram of Listing Duration",
+    x = "Listing Duration (Days)",
+    y = "Frequency"
+  )
+```
+:::
+
+When inspecting the listings one by one, we saw that this is not a scraping error, and this is really the data found on AutoScout24.ch. A possible explanation would be that all listings before this date have taken as a value this date.
+Regardless of the reason, we can safely assume that this doesn't represent reality, so to prevent this from biasing our models, we will remove all observations with created.date set at 2022-11-14.
+
+```{r, message=FALSE, warning=FALSE}
+golf <- subset(golf, created.date != "2022-11-14")
+audi <- subset(audi, created.date != "2022-11-14")
+skoda <- subset(skoda, created.date != "2022-11-14")
+volvo <- subset(volvo, created.date != "2022-11-14")
+toyota <- subset(toyota, created.date != "2022-11-14")
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+Our dependant variable will be listing.age. We will make a regression model that includes all of our variables then do a stepwise regression (backward) to remove non significant variables, in order to find the optimal model.
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+# golf
+
+golf_model1 <- lm(golf$listing.age ~ golf$price + golf$price.residuals + golf$kilometers + golf$kilometers.squared + golf$vehicle.age + golf$vehicle.age.squared + golf$power + golf$consumption + golf$expertise + golf$warranty + golf$wagon + golf$cabriolet + golf$small.car + golf$coupe + golf$diesel + golf$hybrid + golf$natural.gas + golf$electric + golf$manual + golf$awd)
+summary(golf_model1)
+
+
+##
+
+
+
+
+golf_model2 <- stepAIC(golf_model1, direction = "backward")
+summary(golf_model2)
+# we remove variables that are not significant at alpha = 0.01
+# we subset the data first to exclude observations that contain NA
+golf <- golf[complete.cases(golf[, c("price", "price.residuals", "vehicle.age", "vehicle.age.squared", "warranty", "hybrid", "manual")]), ]
+golf_model3 <- lm(golf$listing.age ~ golf$price + golf$price.residuals + golf$vehicle.age + golf$vehicle.age.squared + golf$warranty + golf$hybrid + golf$manual)
+summary(golf_model3)
+# we remove vehicle.age.squared since it is not significant
+golf_model3 <- lm(golf$listing.age ~ golf$price + golf$price.residuals + golf$vehicle.age + golf$warranty + golf$hybrid + golf$manual)
+# All of our variables are now significant. This will be our final model
+
+ggplot(golf_model3, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+summary(golf_model3)
+
+summary(lm(golf$listing.age ~ golf$price.residuals))
+ggplot(lm(golf$listing.age ~ golf$price.residuals), aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+
+ggplot(golf, aes(listing.age, price.residuals)) + 
+  geom_point() +
+  geom_smooth(method = lm) +
+  ylim(0, max(golf$price))
+
+
+# audi
+
+audi_model1 <- lm(audi$price ~ audi$kilometers + audi$kilometers.squared + audi$vehicle.age + audi$vehicle.age.squared + audi$power + audi$consumption + audi$expertise + audi$warranty + audi$wagon + audi$cabriolet + audi$small.car + audi$coupe + audi$diesel + audi$hybrid + audi$natural.gas + audi$electric + audi$manual + audi$awd)
+summary(audi_model1)
+# we subset the data first to exclude observations that contain NA
+audi <- audi[complete.cases(audi[, c('kilometers', 'kilometers.squared', 'vehicle.age', 'vehicle.age.squared', 'power', 'consumption', 'expertise', 'warranty', 'wagon', 'cabriolet', 'small.car', 'coupe', 'diesel', 'hybrid', 'natural.gas', 'electric', 'manual', 'awd')]), ]
+audi_model2 <- stepAIC(audi_model1, direction = "backward")
+summary(audi_model2)
+# All of our variables are now significant. This will be our final model
+
+audi$price.residuals <- audi_model2$residuals
+audi$pred.price <- audi_model2$fitted.values
+
+# skoda
+
+skoda_model1 <- lm(skoda$price ~ skoda$kilometers + skoda$kilometers.squared + skoda$vehicle.age + skoda$vehicle.age.squared + skoda$power + skoda$consumption + skoda$expertise + skoda$warranty + skoda$sedan + skoda$cabriolet + skoda$suv + skoda$diesel + skoda$hybrid + skoda$natural.gas + skoda$manual + skoda$awd)
+summary(skoda_model1)
+skoda_model2 <- stepAIC(skoda_model1, direction = "backward")
+summary(skoda_model2)
+# cabriolet and consumption are still not significant at an alpha of 0.01, we remove them
+# we subset the data first to exclude observations that contain NA
+skoda <- skoda[complete.cases(skoda[, c("kilometers", "kilometers.squared", "vehicle.age", "vehicle.age.squared", "power", "consumption", "expertise", "warranty", "diesel", "manual", "awd")]), ]
+skoda_model3 <- lm(skoda$price ~ skoda$kilometers + skoda$kilometers.squared + skoda$vehicle.age + skoda$vehicle.age.squared + skoda$power + skoda$expertise + skoda$warranty + skoda$consumption + skoda$diesel + skoda$manual + skoda$awd)
+summary(skoda_model3)
+# we remove consumption as it is no longer significant
+skoda_model3 <- lm(skoda$price ~ skoda$kilometers + skoda$kilometers.squared + skoda$vehicle.age + skoda$vehicle.age.squared + skoda$power + skoda$expertise + skoda$warranty + skoda$diesel + skoda$manual + skoda$awd)
+summary(skoda_model3)
+# All of our variables are now significant. This will be our final model
+
+skoda$price.residuals <- skoda_model3$residuals
+skoda$pred.price <- skoda_model3$fitted.values
+
+# volvo
+
+volvo_model1 <- lm(volvo$price ~ volvo$kilometers + volvo$kilometers.squared + volvo$vehicle.age + volvo$vehicle.age.squared + volvo$power + volvo$consumption + volvo$expertise + volvo$warranty + volvo$diesel + volvo$hybrid + volvo$manual + volvo$fwd)
+summary(volvo_model1)
+# we subset the data first to exclude observations that contain NA
+volvo <- volvo[complete.cases(volvo[, c('price', 'kilometers', 'kilometers.squared', 'vehicle.age', 'vehicle.age.squared', 'power', 'consumption', 'expertise', 'warranty', 'diesel', 'hybrid', 'manual', 'fwd')]), ]
+volvo_model2 <- stepAIC(volvo_model1, direction = "backward")
+summary(volvo_model2)
+# manual is still not significant at an alpha of 0.01, we remove it
+volvo_model3 <- lm(volvo$price ~ volvo$kilometers + volvo$kilometers.squared + volvo$vehicle.age + volvo$vehicle.age.squared + volvo$power + volvo$consumption + volvo$hybrid)
+summary(volvo_model3)
+# All of our variables are now significant. This will be our final model
+volvo$price.residuals <- volvo_model3$residuals
+volvo$pred.price <- volvo_model3$fitted.values
+
+# toyota
+
+toyota_model1 <- lm(toyota$price ~ toyota$kilometers + toyota$kilometers.squared + toyota$vehicle.age + toyota$vehicle.age.squared + toyota$power + toyota$consumption + toyota$expertise + toyota$warranty + toyota$sedan + toyota$coupe + toyota$diesel + toyota$hybrid + toyota$manual + toyota$awd)
+summary(toyota_model1)
+toyota_model2 <- stepAIC(toyota_model1, direction = "backward")
+summary(toyota_model2)
+# warranty, hybrid, and consumption are still not significant at an alpha of 0.01, we remove them
+# we subset the data first to exclude observations that contain NA
+toyota <- toyota[complete.cases(toyota[, c("kilometers", "kilometers.squared", "vehicle.age", "vehicle.age.squared", "power", "sedan", "manual", "awd")]), ]
+toyota_model3 <- lm(toyota$price ~ toyota$kilometers + toyota$kilometers.squared + toyota$vehicle.age + toyota$vehicle.age.squared + toyota$power + toyota$sedan + toyota$manual + toyota$awd)
+summary(toyota_model3)
+#we remove sedan
+toyota_model3 <- lm(toyota$price ~ toyota$kilometers + toyota$kilometers.squared + toyota$vehicle.age + toyota$vehicle.age.squared + toyota$power + toyota$manual + toyota$awd)
+summary(toyota_model3)
+# All of our variables are now significant. This will be our final model
+toyota$price.residuals <- toyota_model3$residuals
+toyota$pred.price <- toyota_model3$fitted.values
+
+
+```

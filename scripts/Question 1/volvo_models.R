@@ -262,5 +262,24 @@ data_no_def <- data_no_def |>
   mutate(count = row_number()) |>
   select(count, everything())
 
+#############################################################
+
+# volvo
+
+volvo_model1 <- lm(data$price ~ data$kilometers + data$kilometers.squared + data$vehicle.age + data$vehicle.age.squared + data$power + data$consumption + data$expertise + data$warranty + data$diesel + data$hybrid + data$manual + data$fwd)
+summary(volvo_model1)
+# we subset the data first to exclude observations that contain NA
+data <- data[complete.cases(data[, c('price', 'kilometers', 'kilometers.squared', 'vehicle.age', 'vehicle.age.squared', 'power', 'consumption', 'expertise', 'warranty', 'diesel', 'hybrid', 'manual', 'fwd')]), ]
+volvo_model2 <- stepAIC(volvo_model1, direction = "backward")
+summary(volvo_model2)
+# manual is still not significant at an alpha of 0.01, we remove it
+volvo_model3 <- lm(data$price ~ data$kilometers + data$kilometers.squared + data$vehicle.age + data$vehicle.age.squared + data$power + data$consumption + data$hybrid)
+summary(volvo_model3)
+# All of our variables are now significant. This will be our final model
+data$price.residuals <- volvo_model3$residuals
+data$pred.price <- volvo_model3$fitted.values
+
+
+
 #Save file
 write.csv(data, "volvo_models_data.csv")

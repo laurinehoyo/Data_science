@@ -276,5 +276,26 @@ data_no_def <- data_no_def |>
   mutate(count = row_number()) |>
   select(count, everything())
 
+###################################################################
+
+# skoda
+
+skoda_model1 <- lm(data$price ~ data$kilometers + data$kilometers.squared + data$vehicle.age + data$vehicle.age.squared + data$power + data$consumption + data$expertise + data$warranty + data$sedan + data$cabriolet + data$suv + data$diesel + data$hybrid + data$natural.gas + data$manual + data$awd)
+summary(skoda_model1)
+skoda_model2 <- stepAIC(skoda_model1, direction = "backward")
+summary(skoda_model2)
+# cabriolet and consumption are still not significant at an alpha of 0.01, we remove them
+# we subset the data first to exclude observations that contain NA
+data <- data[complete.cases(data[, c("kilometers", "kilometers.squared", "vehicle.age", "vehicle.age.squared", "power", "consumption", "expertise", "warranty", "diesel", "manual", "awd")]), ]
+skoda_model3 <- lm(data$price ~ data$kilometers + data$kilometers.squared + data$vehicle.age + data$vehicle.age.squared + data$power + data$expertise + data$warranty + data$consumption + data$diesel + data$manual + data$awd)
+summary(skoda_model3)
+# we remove consumption as it is no longer significant
+skoda_model3 <- lm(data$price ~ data$kilometers + data$kilometers.squared + data$vehicle.age + data$vehicle.age.squared + data$power + data$expertise + data$warranty + data$diesel + data$manual + data$awd)
+summary(skoda_model3)
+# All of our variables are now significant. This will be our final model
+
+data$price.residuals <- skoda_model3$residuals
+data$pred.price <- skoda_model3$fitted.values
+
 #Save file
 write.csv(data, "skoda_models_data.csv")

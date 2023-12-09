@@ -279,5 +279,26 @@ data_no_def <- data_no_def |>
   mutate(count = row_number()) |>
   select(count, everything())
 
+############################################################
+
+# toyota
+
+toyota_model1 <- lm(data$price ~ data$kilometers + data$kilometers.squared + data$vehicle.age + data$vehicle.age.squared + data$power + data$consumption + data$expertise + data$warranty + data$sedan + data$coupe + data$diesel + data$hybrid + data$manual + data$awd)
+summary(toyota_model1)
+toyota_model2 <- stepAIC(toyota_model1, direction = "backward")
+summary(toyota_model2)
+# warranty, hybrid, and consumption are still not significant at an alpha of 0.01, we remove them
+# we subset the data first to exclude observations that contain NA
+data <- data[complete.cases(data[, c("kilometers", "kilometers.squared", "vehicle.age", "vehicle.age.squared", "power", "sedan", "manual", "awd")]), ]
+toyota_model3 <- lm(data$price ~ data$kilometers + data$kilometers.squared + data$vehicle.age + data$vehicle.age.squared + data$power + data$sedan + data$manual + data$awd)
+summary(toyota_model3)
+#we remove sedan
+toyota_model3 <- lm(data$price ~ data$kilometers + data$kilometers.squared + data$vehicle.age + data$vehicle.age.squared + data$power + data$manual + data$awd)
+summary(toyota_model3)
+# All of our variables are now significant. This will be our final model
+data$price.residuals <- toyota_model3$residuals
+data$pred.price <- toyota_model3$fitted.values
+
+
 #Save file
 write.csv(data, "toyota_models_data.csv")

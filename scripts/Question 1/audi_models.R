@@ -280,5 +280,23 @@ data_no_def <- data_no_def |>
   mutate(count = row_number()) |>
   select(count, everything())
 
+######################################################################
+# audi
+
+audi_model1 <- lm(data$price ~ data$kilometers + data$kilometers.squared + data$vehicle.age + data$vehicle.age.squared + data$power + data$consumption + data$expertise + data$warranty + data$wagon + data$cabriolet + data$small.car + data$coupe + data$diesel + data$hybrid + data$natural.gas + data$electric + data$manual + data$awd)
+summary(audi_model1)
+# we subset the data first to exclude observations that contain NA
+data <- data[complete.cases(data[, c('kilometers', 'kilometers.squared', 'vehicle.age', 'vehicle.age.squared', 'power', 'consumption', 'expertise', 'warranty', 'wagon', 'cabriolet', 'small.car', 'coupe', 'diesel', 'hybrid', 'natural.gas', 'electric', 'manual', 'awd')]), ]
+audi_model2 <- stepAIC(audi_model1, direction = "backward")
+summary(audi_model2)
+# All of our variables are now significant. This will be our final model
+
+data$price.residuals <- audi_model2$residuals
+data$pred.price <- audi_model2$fitted.values
+
+
+
+
+
 #Save file
 write.csv(data, "audi_models_data.csv")

@@ -1,10 +1,10 @@
 ### Research question 1: Which physical factors have the biggest impact on used car prices?
 
+library(MASS)
 library(tidyverse)
 library(corrplot)
 library(Hmisc)
 library(car)
-library(MASS)
 setwd("~/GitHub/Data_science/cleaned-data")
 data <- read.csv("golf2_cleaned.csv")
 golf2_cleaned <- read.csv("golf2_cleaned.csv")
