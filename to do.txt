@@ -2,4 +2,6 @@
 reformuler objectifs
 
 Victor
-- correlation matrices for all variables ? including questions 1&2
+- demo of project?
+- on devrait se focuser principalement sur une des questions?
+- on est obligé de faire la présentation avec R ?
