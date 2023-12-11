@@ -1,0 +1,109 @@
+---
+title: "Q1 models"
+format:
+  html: 
+    code-fold: true
+editor: visual
+---
+
+### Q3. How do different car features affect depreciation ?
+
+We will first filter our data to only include listings that have a value for new.price. Then we create a variable rel_dep for all of our datasets which will be the depreciation the car has experienced relative to its new price. We prefer this over simple depreciation (new price - actual price) because that variable would be a lot greater when the new price of the vehicle is large, which could bias our tests.
+
+
+
+```{r, message=FALSE, warning=FALSE}
+# Libraries + datasets
+
+library(tidyverse)
+library(corrplot)
+library(MASS)
+setwd("~/GitHub/Data_science/cleaned-data")
+
+golf <- read.csv("golf_models_data.csv")
+audi <- read.csv("audi_models_data.csv")
+skoda <- read.csv("skoda_models_data.csv")
+volvo <- read.csv("volvo_models_data.csv")
+toyota <- read.csv("toyota_models_data.csv")
+
+golf <- golf |> filter(!is.na(new.price))
+audi <- audi |> filter(!is.na(new.price))
+skoda <- skoda |> filter(!is.na(new.price))
+volvo <- volvo |> filter(!is.na(new.price))
+toyota <- toyota |> filter(!is.na(new.price))
+
+# We create the depreciation variables
+# absolute depreciation will be a lot greater when the new price of the vehicle is large, which could bias our tests. To resolve this, we will create a variable rel_dep which is relative depreciation.
+golf$rel_dep <- 1 - golf$price/golf$new.price
+audi$rel_dep <- 1 - audi$price/audi$new.price
+skoda$rel_dep <- 1 - skoda$price/skoda$new.price
+volvo$rel_dep <- 1 - volvo$price/volvo$new.price
+toyota$rel_dep <- 1 - toyota$price/toyota$new.price
+
+```
+
+rel_dep will be our dependent variable. We will make a regression model that includes all of our variables then do a stepwise regression (backward) to remove non significant variables, in order to find the optimal models.
+```{r, message=FALSE, warning=FALSE}
+# golf
+
+golf_model1 <- lm(golf$rel_dep ~ golf$kilometers + golf$kilometers.squared + golf$vehicle.age + golf$vehicle.age.squared + golf$power + golf$consumption + golf$expertise + golf$warranty + golf$wagon + golf$cabriolet + golf$diesel + golf$hybrid + golf$natural.gas + golf$manual + golf$awd)
+summary(golf_model1)
+test <- golf[complete.cases(golf[, c("consumption")]), ]
+golf_model2 <- stepAIC(golf_model1, direction = "backward")
+summary(golf_model2)
+
+#error
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+```
+

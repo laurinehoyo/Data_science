@@ -184,24 +184,34 @@ a5 <- ggplot(toyota[order(toyota$new.price),]) +
 #(a4 | a5)
 
 ```
+
 ::: panel-tabset
 ### VW Golf
+
 ```{r, message=FALSE, warning=FALSE}
 a1
 ```
+
 ### Audi A3
+
 ```{r, message=FALSE, warning=FALSE}
 a2
 ```
+
 ### Skoda Octavia
+
 ```{r, message=FALSE, warning=FALSE}
 a3
 ```
+
 ### Volvo XC60
+
 ```{r, message=FALSE, warning=FALSE}
 a4
 ```
+
 ### Toyota Yaris
+
 ```{r, message=FALSE, warning=FALSE}
 a5
 ```
@@ -210,6 +220,7 @@ a5
 ```{r, message=FALSE, warning=FALSE}
 
 ```
+
 It seems the new and actual prices are strongly related.
 
 #### 2.3.3 New prices vs depreciation
@@ -292,24 +303,34 @@ b5 <- ggplot(toyota[order(toyota$new.price),]) +
 #b4
 #b5
 ```
+
 ::: panel-tabset
 ### VW Golf
+
 ```{r, message=FALSE, warning=FALSE}
 b1
 ```
+
 ### Audi A3
+
 ```{r, message=FALSE, warning=FALSE}
 b2
 ```
+
 ### Skoda Octavia
+
 ```{r, message=FALSE, warning=FALSE}
 b3
 ```
+
 ### Volvo XC60
+
 ```{r, message=FALSE, warning=FALSE}
 b4
 ```
+
 ### Toyota Yaris
+
 ```{r, message=FALSE, warning=FALSE}
 b5
 ```
@@ -396,24 +417,34 @@ c5 <- ggplot(toyota[order(toyota$price),]) +
 #c4
 #c5
 ```
+
 ::: panel-tabset
 ### VW Golf
+
 ```{r, message=FALSE, warning=FALSE}
 c1
 ```
+
 ### Audi A3
+
 ```{r, message=FALSE, warning=FALSE}
 c2
 ```
+
 ### Skoda Octavia
+
 ```{r, message=FALSE, warning=FALSE}
 c3
 ```
+
 ### Volvo XC60
+
 ```{r, message=FALSE, warning=FALSE}
 c4
 ```
+
 ### Toyota Yaris
+
 ```{r, message=FALSE, warning=FALSE}
 c5
 ```
@@ -499,24 +530,34 @@ d5 <- ggplot(toyota[order(toyota$vehicle.age),]) +
    # title = "Comparison of vehicle age and relative depreciation"
 #  )
 ```
+
 ::: panel-tabset
 ### VW Golf
+
 ```{r, message=FALSE, warning=FALSE}
 d1
 ```
+
 ### Audi A3
+
 ```{r, message=FALSE, warning=FALSE}
 d2
 ```
+
 ### Skoda Octavia
+
 ```{r, message=FALSE, warning=FALSE}
 d3
 ```
+
 ### Volvo XC60
+
 ```{r, message=FALSE, warning=FALSE}
 d4
 ```
+
 ### Toyota Yaris
+
 ```{r, message=FALSE, warning=FALSE}
 d5
 ```
@@ -600,24 +641,34 @@ e5 <- ggplot(toyota[order(toyota$kilometers),]) +
    # title = "Comparison of kilometers and relative depreciation"
   #)
 ```
+
 ::: panel-tabset
 ### VW Golf
+
 ```{r, message=FALSE, warning=FALSE}
 e1
 ```
+
 ### Audi A3
+
 ```{r, message=FALSE, warning=FALSE}
 e2
 ```
+
 ### Skoda Octavia
+
 ```{r, message=FALSE, warning=FALSE}
 e3
 ```
+
 ### Volvo XC60
+
 ```{r, message=FALSE, warning=FALSE}
 e4
 ```
+
 ### Toyota Yaris
+
 ```{r, message=FALSE, warning=FALSE}
 e5
 ```
@@ -657,28 +708,38 @@ cor_matrix_toyota <- cor(select(toyota, c("depreciation", "rel_dep", "new.price"
 ```
 
 #### 2.3.7 Correlation matrices
+
 ::: panel-tabset
 ### VW Golf
+
 ```{r, message=FALSE, warning=FALSE}
 corrplot(cor_matrix_golf)
 cor_matrix_golf
 ```
+
 ### Audi A3
+
 ```{r, message=FALSE, warning=FALSE}
 corrplot(cor_matrix_audi)
 cor_matrix_audi
 ```
+
 ### Skoda Octavia
+
 ```{r, message=FALSE, warning=FALSE}
 corrplot(cor_matrix_skoda)
 cor_matrix_skoda
 ```
+
 ### Volvo XC60
+
 ```{r, message=FALSE, warning=FALSE}
 corrplot(cor_matrix_volvo)
 cor_matrix_volvo
 ```
+
 ### Toyota Yaris
+
 ```{r, message=FALSE, warning=FALSE}
 corrplot(cor_matrix_toyota)
 cor_matrix_toyota

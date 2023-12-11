@@ -12,7 +12,7 @@ In this part we will attempt to answer our research questions by analysing our g
 
 ### Q1. Which physical factors have the biggest impact on used car prices?
 
-Our dependant variable will be price. We will make a regression model that includes all of our variables then do a stepwise regression (backward) to remove non significant variables, in order to find the optimal model.
+Our dependent variable will be price. We will make a regression model that includes all of our variables then do a stepwise regression (backward) to remove non significant variables, in order to find the optimal model.
 
 ```{r, message=FALSE, warning=FALSE}
 # Libraries + datasets
