@@ -30,6 +30,7 @@ If we first look at the data, we will see an enormous amount of listings on 2022
 
 ::: panel-tabset
 ### VW Golf
+
 ```{r, message=FALSE, warning=FALSE}
 ggplot(golf, aes(x = listing.age)) +
   geom_histogram(binwidth = 3, fill = "skyblue", color = "black") +
@@ -39,7 +40,9 @@ ggplot(golf, aes(x = listing.age)) +
     y = "Frequency"
   )
 ```
+
 ### Audi A3
+
 ```{r, message=FALSE, warning=FALSE}
 ggplot(audi, aes(x = listing.age)) +
   geom_histogram(binwidth = 3, fill = "skyblue", color = "black") +
@@ -49,7 +52,9 @@ ggplot(audi, aes(x = listing.age)) +
     y = "Frequency"
   )
 ```
+
 ### Skoda Octavia
+
 ```{r, message=FALSE, warning=FALSE}
 ggplot(skoda, aes(x = listing.age)) +
   geom_histogram(binwidth = 3, fill = "skyblue", color = "black") +
@@ -59,7 +64,9 @@ ggplot(skoda, aes(x = listing.age)) +
     y = "Frequency"
   )
 ```
+
 ### Volvo XC60
+
 ```{r, message=FALSE, warning=FALSE}
 ggplot(volvo, aes(x = listing.age)) +
   geom_histogram(binwidth = 3, fill = "skyblue", color = "black") +
@@ -69,7 +76,9 @@ ggplot(volvo, aes(x = listing.age)) +
     y = "Frequency"
   )
 ```
+
 ### Toyota Yaris
+
 ```{r, message=FALSE, warning=FALSE}
 ggplot(toyota, aes(x = listing.age)) +
   geom_histogram(binwidth = 3, fill = "skyblue", color = "black") +
@@ -81,8 +90,7 @@ ggplot(toyota, aes(x = listing.age)) +
 ```
 :::
 
-When inspecting the listings one by one, we saw that this is not a scraping error, and this is really the data found on AutoScout24.ch. A possible explanation would be that all listings before this date have taken as a value this date.
-Regardless of the reason, we can safely assume that this doesn't represent reality, so to prevent this from biasing our models, we will remove all observations with created.date set at 2022-11-14.
+When inspecting the listings one by one, we saw that this is not a scraping error, and this is really the data found on AutoScout24.ch. A possible explanation would be that all listings before this date have taken as a value this date. Regardless of the reason, we can safely assume that this doesn't represent reality, so to prevent this from biasing our models, we will remove all observations with created.date set at 2022-11-14.
 
 ```{r, message=FALSE, warning=FALSE}
 golf <- subset(golf, created.date != "2022-11-14")
@@ -159,13 +167,16 @@ It looks like almost none of the cars' attributes can explain differences in lis
 
 ::: panel-tabset
 ### Volvo XC60
+
 ```{r, message=FALSE, warning=FALSE}
 ggplot(volvo, aes(listing.age, expertise)) + 
   geom_point() +
   ggtitle("Plot of listing age vs expertise")
 summary(volvo_model1)
 ```
+
 ### Toyota Yaris
+
 ```{r, message=FALSE, warning=FALSE}
 ggplot(toyota, aes(listing.age, price.residuals)) + 
   geom_point() +
@@ -176,4 +187,3 @@ summary(toyota_model1)
 
 ```
 :::
-

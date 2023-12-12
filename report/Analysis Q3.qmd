@@ -46,13 +46,83 @@ rel_dep will be our dependent variable. We will make a regression model that inc
 ```{r, message=FALSE, warning=FALSE}
 # golf
 
-golf_model1 <- lm(golf$rel_dep ~ golf$kilometers + golf$kilometers.squared + golf$vehicle.age + golf$vehicle.age.squared + golf$power + golf$consumption + golf$expertise + golf$warranty + golf$wagon + golf$cabriolet + golf$diesel + golf$hybrid + golf$natural.gas + golf$manual + golf$awd)
+golf_model1 <- lm(golf$rel_dep ~ golf$kilometers + golf$kilometers.squared + golf$vehicle.age + golf$vehicle.age.squared + golf$power + golf$expertise + golf$warranty + golf$wagon + golf$cabriolet + golf$diesel + golf$hybrid + golf$natural.gas + golf$manual + golf$awd)
 summary(golf_model1)
-test <- golf[complete.cases(golf[, c("consumption")]), ]
+
+# stepwise regression
 golf_model2 <- stepAIC(golf_model1, direction = "backward")
 summary(golf_model2)
 
-#error
+# we remove variables not significant at alpha = 0.01
+
+golf_model3 <- lm(golf$rel_dep ~ golf$kilometers + golf$kilometers.squared + golf$vehicle.age + golf$vehicle.age.squared + golf$power + golf$diesel)
+summary(golf_model3)
+
+# we remove diesel (not significant)
+
+golf_model3 <- lm(golf$rel_dep ~ golf$kilometers + golf$kilometers.squared + golf$vehicle.age + golf$vehicle.age.squared + golf$power)
+summary(golf_model3)
+
+
+# audi
+
+audi_model1 <- lm(audi$rel_dep ~ audi$kilometers + audi$kilometers.squared + audi$vehicle.age + audi$vehicle.age.squared + audi$power + audi$consumption + audi$expertise + audi$warranty + audi$cabriolet + audi$coupe + audi$diesel + audi$hybrid + audi$natural.gas + audi$manual + audi$awd)
+summary(audi_model1)
+
+# stepwise regression
+audi_model2 <- stepAIC(audi_model1, direction = "backward")
+summary(audi_model2)
+
+# we remove variables not significant at alpha = 0.01
+
+audi_model3 <- lm(audi$rel_dep ~ audi$kilometers + audi$kilometers.squared + audi$vehicle.age + audi$manual)
+summary(audi_model3)
+
+
+# skoda
+skoda_model1 <- lm(skoda$rel_dep ~ skoda$kilometers + skoda$kilometers.squared + skoda$vehicle.age + skoda$vehicle.age.squared + skoda$power + skoda$consumption + skoda$expertise + skoda$warranty + skoda$sedan + skoda$cabriolet + skoda$suv + skoda$diesel + skoda$hybrid + skoda$natural.gas + skoda$manual + skoda$awd)
+summary(skoda_model1)
+
+# stepwise regression
+skoda_model2 <- stepAIC(skoda_model1, direction = "backward")
+summary(skoda_model2)
+
+# we remove variables not significant at alpha = 0.01
+skoda_model3 <- lm(skoda$rel_dep ~ skoda$kilometers + skoda$vehicle.age + skoda$diesel + skoda$hybrid)
+summary(skoda_model3)
+
+
+# volvo
+volvo_model1 <- lm(volvo$price ~ volvo$kilometers + volvo$kilometers.squared + volvo$vehicle.age + volvo$vehicle.age.squared + volvo$power + volvo$consumption + volvo$expertise + volvo$warranty + volvo$diesel + volvo$hybrid + volvo$manual + volvo$fwd)
+summary(volvo_model1)
+
+# stepwise regression
+volvo_model2 <- stepAIC(volvo_model1, direction = "backward")
+summary(volvo_model2)
+
+# we remove variables not significant at alpha = 0.01
+volvo_model3 <- lm(volvo$rel_dep ~ volvo$kilometers + volvo$kilometers.squared + volvo$vehicle.age + volvo$vehicle.age.squared + volvo$power)
+summary(volvo_model3)
+
+# we remove vehicle.age.squared and power (not significant)
+volvo_model3 <- lm(volvo$rel_dep ~ volvo$kilometers + volvo$kilometers.squared + volvo$vehicle.age)
+summary(volvo_model3)
+
+
+#toyota
+toyota_model1 <- lm(toyota$rel_dep ~ toyota$kilometers + toyota$kilometers.squared + toyota$vehicle.age + toyota$vehicle.age.squared + toyota$power + toyota$expertise + toyota$warranty + toyota$sedan + toyota$manual + toyota$awd)
+summary(toyota_model1)
+
+# stepwise regression
+toyota_model2 <- stepAIC(toyota_model1, direction = "backward")
+summary(toyota_model2)
+
+# we remove variables not significant at alpha = 0.01
+toyota_model3 <- lm(toyota$rel_dep ~ toyota$vehicle.age + toyota$power)
+summary(toyota_model3)
+
+## toyota does not have many observations, so this model is probably not accurate.
+# continue this by looking at what is in q1 
 ```
 
 ```{r, message=FALSE, warning=FALSE}
