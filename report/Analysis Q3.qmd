@@ -10,8 +10,6 @@ editor: visual
 
 We will first filter our data to only include listings that have a value for new.price. Then we create a variable rel_dep for all of our datasets which will be the depreciation the car has experienced relative to its new price. We prefer this over simple depreciation (new price - actual price) because that variable would be a lot greater when the new price of the vehicle is large, which could bias our tests.
 
-
-
 ```{r, message=FALSE, warning=FALSE}
 # Libraries + datasets
 
@@ -43,7 +41,8 @@ toyota$rel_dep <- 1 - toyota$price/toyota$new.price
 ```
 
 rel_dep will be our dependent variable. We will make a regression model that includes all of our variables then do a stepwise regression (backward) to remove non significant variables, in order to find the optimal models.
-```{r, message=FALSE, warning=FALSE}
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
 # golf
 
 golf_model1 <- lm(golf$rel_dep ~ golf$kilometers + golf$kilometers.squared + golf$vehicle.age + golf$vehicle.age.squared + golf$power + golf$expertise + golf$warranty + golf$wagon + golf$cabriolet + golf$diesel + golf$hybrid + golf$natural.gas + golf$manual + golf$awd)
@@ -125,6 +124,69 @@ summary(toyota_model3)
 # continue this by looking at what is in q1 
 ```
 
+Now we have found our optimal regression models, we can have a look at their summaries and residuals vs fitted values plots.
+
+::: panel-tabset
+### VW Golf
+
+```{r, message=FALSE, warning=FALSE}
+ggplot(golf_model3, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+summary(golf_model3)
+
+```
+
+### Audi A3
+
+```{r, message=FALSE, warning=FALSE}
+ggplot(audi_model3, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+summary(audi_model3)
+```
+
+### Skoda Octavia
+
+```{r, message=FALSE, warning=FALSE}
+ggplot(skoda_model3, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+summary(skoda_model3)
+```
+
+### Volvo XC60
+
+```{r, message=FALSE, warning=FALSE}
+ggplot(volvo_model3, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+summary(volvo_model3)
+```
+
+### Toyota Yaris
+
+```{r, message=FALSE, warning=FALSE}
+ggplot(toyota_model3, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linewidth = 1) +
+  geom_smooth()
+summary(toyota_model3)
+```
+:::
+
+The residuals vs fitted values plots and summaries of the linear models are very similar to our first research question, where price was the dependent variable. This is likely because relative depreciation is strongly negatively correlated with price, as seen in our EDA. This makes sense, because we know that price is mostly influenced by vehicle age and kilometers thanks to our first question. These 2 factors are commonly cited in various definitions of depreciation for vehicles and essentially define the concept.
+
+What is interesting to observe are other factors that are found to influence depreciation. Manual Audi A3s have a lower relative depreciation, and diesel and hybrid Skoda Octavias have a higher relative depreciation. We assume that these factors don't have a significant effect on the vehicles' physical depreciation, so the depreciation might be related to the customers' demand.
+
+Manual transmission is decreasingly prevalent among new cars, so this could be a strong selling point for older Audi A3s, which would explain the weaker depreciation.
+
+Diesel engines have become and are still becoming increasingly unpopular since the Volkswagen emissions scandal in 2015, which could explain the stronger depreciation in diesel Skoda Octavias. The oldest hybrid Skoda in our dataset is from 2021, so it is shocking that the depreciation is higher than other fuel types as the average age and kilometers of the hybrids is much lower.
+
 ```{r, message=FALSE, warning=FALSE}
 
 ```
@@ -176,4 +238,3 @@ summary(toyota_model3)
 ```{r, message=FALSE, warning=FALSE}
 
 ```
-

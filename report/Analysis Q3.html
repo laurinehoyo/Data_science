@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Q1 models</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Analysis Q3_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Analysis Q3_files/libs/quarto-html/quarto.js"></script>
+<script src="Analysis Q3_files/libs/quarto-html/popper.min.js"></script>
+<script src="Analysis Q3_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Analysis Q3_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Analysis Q3_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Analysis Q3_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Analysis Q3_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Analysis Q3_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Analysis Q3_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Q1 models</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="q3.-how-do-different-car-features-affect-depreciation" class="level3">
+<h3 class="anchored" data-anchor-id="q3.-how-do-different-car-features-affect-depreciation">Q3. How do different car features affect depreciation ?</h3>
+<p>We will first filter our data to only include listings that have a value for new.price. Then we create a variable rel_dep for all of our datasets which will be the depreciation the car has experienced relative to its new price. We prefer this over simple depreciation (new price - actual price) because that variable would be a lot greater when the new price of the vehicle is large, which could bias our tests.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Libraries + datasets</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"~/GitHub/Data_science/cleaned-data"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>golf <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"golf_models_data.csv"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>audi <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"audi_models_data.csv"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>skoda <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"skoda_models_data.csv"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>volvo <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"volvo_models_data.csv"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>toyota <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"toyota_models_data.csv"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>golf <span class="ot">&lt;-</span> golf <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(new.price))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>audi <span class="ot">&lt;-</span> audi <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(new.price))</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>skoda <span class="ot">&lt;-</span> skoda <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(new.price))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>volvo <span class="ot">&lt;-</span> volvo <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(new.price))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>toyota <span class="ot">&lt;-</span> toyota <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(new.price))</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># We create the depreciation variables</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># absolute depreciation will be a lot greater when the new price of the vehicle is large, which could bias our tests. To resolve this, we will create a variable rel_dep which is relative depreciation.</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>golf<span class="sc">$</span>rel_dep <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> golf<span class="sc">$</span>price<span class="sc">/</span>golf<span class="sc">$</span>new.price</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>audi<span class="sc">$</span>rel_dep <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> audi<span class="sc">$</span>price<span class="sc">/</span>audi<span class="sc">$</span>new.price</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>skoda<span class="sc">$</span>rel_dep <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> skoda<span class="sc">$</span>price<span class="sc">/</span>skoda<span class="sc">$</span>new.price</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>volvo<span class="sc">$</span>rel_dep <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> volvo<span class="sc">$</span>price<span class="sc">/</span>volvo<span class="sc">$</span>new.price</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>toyota<span class="sc">$</span>rel_dep <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> toyota<span class="sc">$</span>price<span class="sc">/</span>toyota<span class="sc">$</span>new.price</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>rel_dep will be our dependent variable. We will make a regression model that includes all of our variables then do a stepwise regression (backward) to remove non significant variables, in order to find the optimal models.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># golf</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>golf_model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(golf<span class="sc">$</span>rel_dep <span class="sc">~</span> golf<span class="sc">$</span>kilometers <span class="sc">+</span> golf<span class="sc">$</span>kilometers.squared <span class="sc">+</span> golf<span class="sc">$</span>vehicle.age <span class="sc">+</span> golf<span class="sc">$</span>vehicle.age.squared <span class="sc">+</span> golf<span class="sc">$</span>power <span class="sc">+</span> golf<span class="sc">$</span>expertise <span class="sc">+</span> golf<span class="sc">$</span>warranty <span class="sc">+</span> golf<span class="sc">$</span>wagon <span class="sc">+</span> golf<span class="sc">$</span>cabriolet <span class="sc">+</span> golf<span class="sc">$</span>diesel <span class="sc">+</span> golf<span class="sc">$</span>hybrid <span class="sc">+</span> golf<span class="sc">$</span>natural.gas <span class="sc">+</span> golf<span class="sc">$</span>manual <span class="sc">+</span> golf<span class="sc">$</span>awd)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(golf_model1)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># stepwise regression</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>golf_model2 <span class="ot">&lt;-</span> <span class="fu">stepAIC</span>(golf_model1, <span class="at">direction =</span> <span class="st">"backward"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(golf_model2)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># we remove variables not significant at alpha = 0.01</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>golf_model3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(golf<span class="sc">$</span>rel_dep <span class="sc">~</span> golf<span class="sc">$</span>kilometers <span class="sc">+</span> golf<span class="sc">$</span>kilometers.squared <span class="sc">+</span> golf<span class="sc">$</span>vehicle.age <span class="sc">+</span> golf<span class="sc">$</span>vehicle.age.squared <span class="sc">+</span> golf<span class="sc">$</span>power <span class="sc">+</span> golf<span class="sc">$</span>diesel)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(golf_model3)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># we remove diesel (not significant)</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>golf_model3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(golf<span class="sc">$</span>rel_dep <span class="sc">~</span> golf<span class="sc">$</span>kilometers <span class="sc">+</span> golf<span class="sc">$</span>kilometers.squared <span class="sc">+</span> golf<span class="sc">$</span>vehicle.age <span class="sc">+</span> golf<span class="sc">$</span>vehicle.age.squared <span class="sc">+</span> golf<span class="sc">$</span>power)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(golf_model3)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># audi</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>audi_model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(audi<span class="sc">$</span>rel_dep <span class="sc">~</span> audi<span class="sc">$</span>kilometers <span class="sc">+</span> audi<span class="sc">$</span>kilometers.squared <span class="sc">+</span> audi<span class="sc">$</span>vehicle.age <span class="sc">+</span> audi<span class="sc">$</span>vehicle.age.squared <span class="sc">+</span> audi<span class="sc">$</span>power <span class="sc">+</span> audi<span class="sc">$</span>consumption <span class="sc">+</span> audi<span class="sc">$</span>expertise <span class="sc">+</span> audi<span class="sc">$</span>warranty <span class="sc">+</span> audi<span class="sc">$</span>cabriolet <span class="sc">+</span> audi<span class="sc">$</span>coupe <span class="sc">+</span> audi<span class="sc">$</span>diesel <span class="sc">+</span> audi<span class="sc">$</span>hybrid <span class="sc">+</span> audi<span class="sc">$</span>natural.gas <span class="sc">+</span> audi<span class="sc">$</span>manual <span class="sc">+</span> audi<span class="sc">$</span>awd)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(audi_model1)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co"># stepwise regression</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>audi_model2 <span class="ot">&lt;-</span> <span class="fu">stepAIC</span>(audi_model1, <span class="at">direction =</span> <span class="st">"backward"</span>)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(audi_model2)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co"># we remove variables not significant at alpha = 0.01</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>audi_model3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(audi<span class="sc">$</span>rel_dep <span class="sc">~</span> audi<span class="sc">$</span>kilometers <span class="sc">+</span> audi<span class="sc">$</span>kilometers.squared <span class="sc">+</span> audi<span class="sc">$</span>vehicle.age <span class="sc">+</span> audi<span class="sc">$</span>manual)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(audi_model3)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co"># skoda</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>skoda_model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(skoda<span class="sc">$</span>rel_dep <span class="sc">~</span> skoda<span class="sc">$</span>kilometers <span class="sc">+</span> skoda<span class="sc">$</span>kilometers.squared <span class="sc">+</span> skoda<span class="sc">$</span>vehicle.age <span class="sc">+</span> skoda<span class="sc">$</span>vehicle.age.squared <span class="sc">+</span> skoda<span class="sc">$</span>power <span class="sc">+</span> skoda<span class="sc">$</span>consumption <span class="sc">+</span> skoda<span class="sc">$</span>expertise <span class="sc">+</span> skoda<span class="sc">$</span>warranty <span class="sc">+</span> skoda<span class="sc">$</span>sedan <span class="sc">+</span> skoda<span class="sc">$</span>cabriolet <span class="sc">+</span> skoda<span class="sc">$</span>suv <span class="sc">+</span> skoda<span class="sc">$</span>diesel <span class="sc">+</span> skoda<span class="sc">$</span>hybrid <span class="sc">+</span> skoda<span class="sc">$</span>natural.gas <span class="sc">+</span> skoda<span class="sc">$</span>manual <span class="sc">+</span> skoda<span class="sc">$</span>awd)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(skoda_model1)</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="co"># stepwise regression</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>skoda_model2 <span class="ot">&lt;-</span> <span class="fu">stepAIC</span>(skoda_model1, <span class="at">direction =</span> <span class="st">"backward"</span>)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(skoda_model2)</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="co"># we remove variables not significant at alpha = 0.01</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>skoda_model3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(skoda<span class="sc">$</span>rel_dep <span class="sc">~</span> skoda<span class="sc">$</span>kilometers <span class="sc">+</span> skoda<span class="sc">$</span>vehicle.age <span class="sc">+</span> skoda<span class="sc">$</span>diesel <span class="sc">+</span> skoda<span class="sc">$</span>hybrid)</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(skoda_model3)</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="co"># volvo</span></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>volvo_model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(volvo<span class="sc">$</span>price <span class="sc">~</span> volvo<span class="sc">$</span>kilometers <span class="sc">+</span> volvo<span class="sc">$</span>kilometers.squared <span class="sc">+</span> volvo<span class="sc">$</span>vehicle.age <span class="sc">+</span> volvo<span class="sc">$</span>vehicle.age.squared <span class="sc">+</span> volvo<span class="sc">$</span>power <span class="sc">+</span> volvo<span class="sc">$</span>consumption <span class="sc">+</span> volvo<span class="sc">$</span>expertise <span class="sc">+</span> volvo<span class="sc">$</span>warranty <span class="sc">+</span> volvo<span class="sc">$</span>diesel <span class="sc">+</span> volvo<span class="sc">$</span>hybrid <span class="sc">+</span> volvo<span class="sc">$</span>manual <span class="sc">+</span> volvo<span class="sc">$</span>fwd)</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(volvo_model1)</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="co"># stepwise regression</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>volvo_model2 <span class="ot">&lt;-</span> <span class="fu">stepAIC</span>(volvo_model1, <span class="at">direction =</span> <span class="st">"backward"</span>)</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(volvo_model2)</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="co"># we remove variables not significant at alpha = 0.01</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>volvo_model3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(volvo<span class="sc">$</span>rel_dep <span class="sc">~</span> volvo<span class="sc">$</span>kilometers <span class="sc">+</span> volvo<span class="sc">$</span>kilometers.squared <span class="sc">+</span> volvo<span class="sc">$</span>vehicle.age <span class="sc">+</span> volvo<span class="sc">$</span>vehicle.age.squared <span class="sc">+</span> volvo<span class="sc">$</span>power)</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(volvo_model3)</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a><span class="co"># we remove vehicle.age.squared and power (not significant)</span></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>volvo_model3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(volvo<span class="sc">$</span>rel_dep <span class="sc">~</span> volvo<span class="sc">$</span>kilometers <span class="sc">+</span> volvo<span class="sc">$</span>kilometers.squared <span class="sc">+</span> volvo<span class="sc">$</span>vehicle.age)</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(volvo_model3)</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a><span class="co">#toyota</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>toyota_model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(toyota<span class="sc">$</span>rel_dep <span class="sc">~</span> toyota<span class="sc">$</span>kilometers <span class="sc">+</span> toyota<span class="sc">$</span>kilometers.squared <span class="sc">+</span> toyota<span class="sc">$</span>vehicle.age <span class="sc">+</span> toyota<span class="sc">$</span>vehicle.age.squared <span class="sc">+</span> toyota<span class="sc">$</span>power <span class="sc">+</span> toyota<span class="sc">$</span>expertise <span class="sc">+</span> toyota<span class="sc">$</span>warranty <span class="sc">+</span> toyota<span class="sc">$</span>sedan <span class="sc">+</span> toyota<span class="sc">$</span>manual <span class="sc">+</span> toyota<span class="sc">$</span>awd)</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(toyota_model1)</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a><span class="co"># stepwise regression</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>toyota_model2 <span class="ot">&lt;-</span> <span class="fu">stepAIC</span>(toyota_model1, <span class="at">direction =</span> <span class="st">"backward"</span>)</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(toyota_model2)</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a><span class="co"># we remove variables not significant at alpha = 0.01</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>toyota_model3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(toyota<span class="sc">$</span>rel_dep <span class="sc">~</span> toyota<span class="sc">$</span>vehicle.age <span class="sc">+</span> toyota<span class="sc">$</span>power)</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(toyota_model3)</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a><span class="do">## toyota does not have many observations, so this model is probably not accurate.</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a><span class="co"># continue this by looking at what is in q1 </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Now we have found our optimal regression models, we can have a look at their summaries and residuals vs fitted values plots.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">VW Golf</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Audi A3</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Skoda Octavia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">Volvo XC60</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">Toyota Yaris</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(golf_model3, <span class="fu">aes</span>(<span class="at">x =</span> .fitted, <span class="at">y =</span> .resid)) <span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="Analysis-Q3_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(golf_model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = golf$rel_dep ~ golf$kilometers + golf$kilometers.squared + 
+    golf$vehicle.age + golf$vehicle.age.squared + golf$power)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.50491 -0.03765  0.00203  0.04221  0.23143 
+
+Coefficients:
+                           Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)               1.688e-01  9.116e-03  18.514  &lt; 2e-16 ***
+golf$kilometers           2.688e-06  2.094e-07  12.835  &lt; 2e-16 ***
+golf$kilometers.squared  -5.539e-12  9.862e-13  -5.617 2.70e-08 ***
+golf$vehicle.age          7.932e-05  6.139e-06  12.921  &lt; 2e-16 ***
+golf$vehicle.age.squared -5.008e-09  6.425e-10  -7.795 2.06e-14 ***
+golf$power                9.192e-05  3.371e-05   2.726  0.00655 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.06758 on 781 degrees of freedom
+Multiple R-squared:  0.8302,    Adjusted R-squared:  0.8291 
+F-statistic: 763.5 on 5 and 781 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(audi_model3, <span class="fu">aes</span>(<span class="at">x =</span> .fitted, <span class="at">y =</span> .resid)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="Analysis-Q3_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(audi_model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = audi$rel_dep ~ audi$kilometers + audi$kilometers.squared + 
+    audi$vehicle.age + audi$manual)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.50458 -0.03471  0.00378  0.04032  0.15259 
+
+Coefficients:
+                          Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)              2.480e-01  1.040e-02  23.839  &lt; 2e-16 ***
+audi$kilometers          3.659e-06  3.416e-07  10.710  &lt; 2e-16 ***
+audi$kilometers.squared -1.264e-11  1.976e-12  -6.393  8.1e-10 ***
+audi$vehicle.age         5.912e-05  4.783e-06  12.361  &lt; 2e-16 ***
+audi$manualTRUE         -4.659e-02  1.254e-02  -3.715 0.000251 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.06564 on 246 degrees of freedom
+Multiple R-squared:  0.8049,    Adjusted R-squared:  0.8017 
+F-statistic: 253.7 on 4 and 246 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(skoda_model3, <span class="fu">aes</span>(<span class="at">x =</span> .fitted, <span class="at">y =</span> .resid)) <span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="Analysis-Q3_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(skoda_model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = skoda$rel_dep ~ skoda$kilometers + skoda$vehicle.age + 
+    skoda$diesel + skoda$hybrid)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.272196 -0.034579  0.002502  0.036569  0.179474 
+
+Coefficients:
+                   Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)       1.608e-01  7.028e-03  22.878  &lt; 2e-16 ***
+skoda$kilometers  1.390e-06  9.606e-08  14.467  &lt; 2e-16 ***
+skoda$vehicle.age 8.489e-05  4.508e-06  18.832  &lt; 2e-16 ***
+skoda$dieselTRUE  2.325e-02  6.253e-03   3.718 0.000225 ***
+skoda$hybridTRUE  3.342e-02  1.236e-02   2.704 0.007108 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.06254 on 471 degrees of freedom
+Multiple R-squared:  0.8302,    Adjusted R-squared:  0.8288 
+F-statistic: 575.8 on 4 and 471 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(volvo_model3, <span class="fu">aes</span>(<span class="at">x =</span> .fitted, <span class="at">y =</span> .resid)) <span class="sc">+</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="Analysis-Q3_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(volvo_model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = volvo$rel_dep ~ volvo$kilometers + volvo$kilometers.squared + 
+    volvo$vehicle.age)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.48920 -0.03385  0.00644  0.03465  0.20551 
+
+Coefficients:
+                           Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)               2.192e-01  7.653e-03  28.640  &lt; 2e-16 ***
+volvo$kilometers          2.123e-06  2.008e-07  10.571  &lt; 2e-16 ***
+volvo$kilometers.squared -4.278e-12  8.585e-13  -4.983 8.91e-07 ***
+volvo$vehicle.age         8.565e-05  4.783e-06  17.908  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.06118 on 454 degrees of freedom
+Multiple R-squared:  0.814, Adjusted R-squared:  0.8128 
+F-statistic: 662.4 on 3 and 454 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(toyota_model3, <span class="fu">aes</span>(<span class="at">x =</span> .fitted, <span class="at">y =</span> .resid)) <span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="Analysis-Q3_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(toyota_model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = toyota$rel_dep ~ toyota$vehicle.age + toyota$power)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.34259 -0.05653  0.00814  0.06497  0.15685 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)         1.916e-01  3.518e-02   5.445 6.13e-07 ***
+toyota$vehicle.age  1.106e-04  6.615e-06  16.716  &lt; 2e-16 ***
+toyota$power       -7.904e-04  2.169e-04  -3.645 0.000487 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.09151 on 76 degrees of freedom
+Multiple R-squared:  0.8413,    Adjusted R-squared:  0.8371 
+F-statistic: 201.4 on 2 and 76 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>The residuals vs fitted values plots and summaries of the linear models are very similar to our first research question, where price was the dependent variable. This is likely because relative depreciation is strongly negatively correlated with price, as seen in our EDA. This makes sense, because we know that price is mostly influenced by vehicle age and kilometers thanks to our first question. These 2 factors are commonly cited in various definitions of depreciation for vehicles and essentially define the concept.</p>
+<p>What is interesting to observe are other factors that are found to influence depreciation. Manual Audi A3s have a lower relative depreciation, and diesel and hybrid Skoda Octavias have a higher relative depreciation. We assume that these factors don’t have a significant effect on the vehicles’ physical depreciation, so the depreciation might be related to the customers’ demand.</p>
+<p>Manual transmission is decreasingly prevalent among new cars, so this could be a strong selling point for older Audi A3s, which would explain the weaker depreciation.</p>
+<p>Diesel engines have become and are still becoming increasingly unpopular since the Volkswagen emissions scandal in 2015, which could explain the stronger depreciation in diesel Skoda Octavias. The oldest hybrid Skoda in our dataset is from 2021, so it is shocking that the depreciation is higher than other fuel types as the average age and kilometers of the hybrids is much lower.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
