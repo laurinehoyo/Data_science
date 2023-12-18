@@ -42,12 +42,12 @@ These histograms, enriched with density curves, provide a clear perspective on p
 ```{r}
 #| warning: false
 
-
-golf <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/golf2_cleaned.csv")
-skoda <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/skoda2_cleaned.csv")
-audi <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/audi2_cleaned.csv")
-toyota <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/toyota_cleaned.csv")
-volvo <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/volvo2_cleaned.csv")
+setwd("~/GitHub/Data_science/cleaned-data")
+golf <- read.csv("golf2_cleaned.csv")
+skoda <- read.csv("skoda2_cleaned.csv")
+audi <- read.csv("audi2_cleaned.csv")
+toyota <- read.csv("toyota_cleaned.csv")
+volvo <- read.csv("volvo2_cleaned.csv")
 
 # Combiner tous les datasets en un seul dataframe
 data <- rbind(golf, skoda, audi, toyota, volvo)
@@ -447,11 +447,13 @@ To visualize how fuel type influences car prices, average prices for different f
 ```{r}
 library(dplyr)
 # Chargement des données
-audi <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/audi_models_data.csv")
-golf <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/golf_models_data.csv")
-toyota <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/toyota_models_data.csv")
-skoda <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/skoda_models_data.csv")
-volvo <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/volvo_models_data.csv")
+
+setwd("~/GitHub/Data_science/cleaned-data")
+audi <- read.csv("audi_models_data.csv")
+golf <- read.csv("golf_models_data.csv")
+toyota <- read.csv("toyota_models_data.csv")
+skoda <- read.csv("skoda_models_data.csv")
+volvo <- read.csv("volvo_models_data.csv")
 
 # Fonction pour ajuster les données et créer le graphique en barres
 create_bar_plot <- function(data, title) {
@@ -641,12 +643,12 @@ Understanding these durations can offer insights into potentially the efficiency
 <p>
 
 ```{r, echo=FALSE, message=FALSE}
-
-golf <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/golf2_cleaned.csv")
-skoda <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/skoda2_cleaned.csv")
-audi <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/audi2_cleaned.csv")
-toyota <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/toyota_cleaned.csv")
-volvo <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/volvo2_cleaned.csv")
+setwd("~/GitHub/Data_science/cleaned-data")
+golf <- read.csv("golf2_cleaned.csv")
+skoda <- read.csv("skoda2_cleaned.csv")
+audi <- read.csv("audi2_cleaned.csv")
+toyota <- read.csv("toyota_cleaned.csv")
+volvo <- read.csv("volvo2_cleaned.csv")
 
 ```
 
@@ -785,12 +787,12 @@ library(dplyr)
 library(ggplot2)
 library(plotly)
 library(shiny)
-
-audi2 <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/audi_models_data.csv")
-golf2 <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/golf_models_data.csv")
-toyota2 <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/toyota_models_data.csv")
-skoda2 <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/skoda_models_data.csv")
-volvo2 <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/volvo_models_data.csv")
+setwd("~/GitHub/Data_science/cleaned-data")
+audi2 <- read.csv("audi_models_data.csv")
+golf2 <- read.csv("golf_models_data.csv")
+toyota2 <- read.csv("toyota_models_data.csv")
+skoda2 <- read.csv("skoda_models_data.csv")
+volvo2 <- read.csv("volvo_models_data.csv")
 ```
 
 ::: panel-tabset
@@ -1038,11 +1040,12 @@ library(ggtext)
 library(tidyverse)
 library(corrplot)
 library(kableExtra)
-audi <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/audi_models_data.csv")
-golf <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/golf_models_data.csv")
-toyota <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/toyota_models_data.csv")
-skoda <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/skoda_models_data.csv")
-volvo <- read.csv("~/Downloads/Data_science-main-2/cleaned-data/volvo_models_data.csv")
+setwd("~/GitHub/Data_science/cleaned-data")
+audi <- read.csv("audi_models_data.csv")
+golf <- read.csv("golf_models_data.csv")
+toyota <- read.csv("toyota_models_data.csv")
+skoda <- read.csv("skoda_models_data.csv")
+volvo <- read.csv("volvo_models_data.csv")
 
 
 # Table for reductions in sample size
