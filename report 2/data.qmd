@@ -1,26 +1,25 @@
-# Data
+---
+code-fold: true
+---
 
-```{r, message = FALSE}
-source(here::here("scripts/setup.R"))
-```
+# Data
 
 ## Data source
 
 ### Sources : <https://www.autoscout24.ch/fr>
-
+<p align="justify">
 We obtained the five datasets corresponding to distinct car models from various brands and groups by extracting data from the used car market website \*Autoscout24.ch\*. The data extraction was carried out using the Chrome extension \*webscraper.io\*. Each table represents the total listings of used cars for a particular make and model at one given point in time. The data for the different tables were scraped between 07.10.2023 and 31.10.2023.
-
+<p>
 ### Description
-
+<p align="justify">
 The datasets comprise five distinct car models originating from various brands. The models are the following : Audi A3, Skoda Octavia, Toyota Yaris, Volkswagen Golf, and Volvo XC60. While each table shares identical variables, the number of observations varies. Each observation represents a car sold on the website Autoscout24.ch.
-
+<p>
 Below are the variables that we kept :
 
 ```{r, echo = FALSE, message= FALSE}
 library("tibble")
 library("kableExtra")
 library("dplyr")
-
 ```
 
 
@@ -54,7 +53,7 @@ kable_styling
 
 ```
 
-###Data clean-up
+### Data clean-up
 <p align="justify">
 The cleaning process of our data was quite tedious. We used the same process for each of the five datasets, as they come from the same website and contain the same variables. The necessary libraries to clean our data were the packages "tidyverse", and "lubridate", which helped us format our dates.
 <p>
