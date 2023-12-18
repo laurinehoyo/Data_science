@@ -1,12 +1,15 @@
 ---
-title: "A cool title"
-author: "Hogan Victor, Yussuf Annisa, Hoyo Laurine"
+title: "Predictive modeling of used car prices, depreciation and listing duration on marketplace/second-hand market."
+author: "Hogan Victor, Yusuf Annisa, Hoyo Laurine"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 toc: true
 number-sections: true
 highlight-style: pygments
 format:
   html:
+    title-block:
+      style: |
+        font-size: 24px; /* Adjust the size as needed */
     theme: Lux
     code-fold: true
     code-tools: true
@@ -20,6 +23,7 @@ execute:
   warning: false
   docx: default
 output: html_document
+
 ---
 ```{r, echo = FALSE, message = FALSE}
 library(blastula)
@@ -32,3 +36,5 @@ block_social_links(
 
 ```{r child = c('intro.qmd', 'data.qmd', 'eda.qmd', 'analysis.qmd', 'concl.qmd')}
 ```
+
+
