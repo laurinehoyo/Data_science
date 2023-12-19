@@ -21,19 +21,25 @@ library(tidyverse)
 library(patchwork)
 ```
 
-## Explanatory Variable Analysis: Impact of Physical Factors on Used Car Prices
+## Impact of physical factors on car prices
+
 <p align="justify">
+
 In this part, we will explore at graphs related to the impact of physical factors on used car prices.
 To achieve this, we decide to plot our data in some scatterplot, histograms, box plot and other tools.
 These graphical representations will help to illustrates some trends and examine all the factors influencing the prices.
+
 <p>
+
 ### Histograms of price distributions
 
 <p align="justify">
+
 As part of our exploratory data analysis, we opted for visualizations focusing on the price distribution of the different vehicles (Volvo, Toyota, Skoda, Golf, Audi) present in our data sets.
 To do this, we used the `ggplot2` library to create price distribution histograms, enriched with density curves for a better appreciation of the distribution.
 For greater interactivity, we then integrated the `plotly` library, making it easier to observe the concentration of cars at similar prices.
 These histograms, enriched with density curves, provide a clear perspective on price distribution, highlighting the most frequent price ranges and anomalies.
+
 <p>
 
 ::: panel-tabset
@@ -110,22 +116,27 @@ Audi, with an average price of CHF 20,928 and a range from CHF 600 to CHF 66,500
 :::
 
 <p align="justify">
+
 Through our visualizations, we have identified striking price differentials between brands, revealing the influence of multiple factors on the used car market, which we will analyze in detail later.
 These data raise interesting questions about the perceived value of brands and their market positioning.
+
 <p>
 
 <p align="justify">
+
 This approach not only allowed us to observe the price distribution for each type of car but also to understand the price variations by brand in the used car market.
 Furthermore, this visualization guided our analysis towards a detailed exploration of the factors that may influence these price fluctuations.
+
 <p>
 
 ### Comparison of vehicle age and price
 
 <p align="justify">
+
 The scatterplot below illustrates the prices of cars in CHF by brand on the y axis, and on the x axis the vehicle age in years.
 This approach enables us to compare directly how the year of manufacture influences the market price of used cars of different makes.
-<p>
 
+<p>
 
 ::: panel-tabset
 ## Audi
@@ -194,21 +205,28 @@ p5
 :::
 
 <p align="justify">
+
 As can be seen from the bar chart, the more recent the car, the higher the price, regardless of brand, which is logical.
-However, it is interesting to note that Audi, Skoda and VW are broadly in the same price range (all 3 belong to VW Group), Toyota is more affordable and Volvo is the most expensive of our brands. We also notice an increase in price for older Golf models, we will try to explain this phenomenon later on.
+However, it is interesting to note that Audi, Skoda and VW are broadly in the same price range (all 3 belong to VW Group), Toyota is more affordable and Volvo is the most expensive of our brands.
+We also notice an increase in price for older Golf models, we will try to explain this phenomenon later on.
+
 <p>
 
 <p align="justify">
+
 Understanding this graph has enabled us to visualize the impact of a car's date of manufacture on its selling price on the second-hand market.
 This variation could also be explained by other factors, such as technological developments or wear and tear on older cars.
+
 <p>
 
 ### Body type and price
 
 <p align="justify">
+
 This box plot enabled us to understand the different prices according to body type for the different makes of cars.
 To do this, we used the `ggplot2` library, complemented by the interactivity of `plotly`.
 The choice of visualization was motivated by its ability to effectively show the price distribution, including median, quartiles and outliers.
+
 <p>
 
 ```{r}
@@ -245,7 +263,7 @@ p1
 
 <p align="justify">
 
--   Break: Station wagons of all show a fairly uniform price distribution, with some outliers above the upper fence (= Q3 + (1.5 * IQR)), suggesting a degree of price stability in this body segment.
+-   Break: Station wagons of all show a fairly uniform price distribution, with some outliers above the upper fence (= Q3 + (1.5 \* IQR)), suggesting a degree of price stability in this body segment.
 
 -   Cabriolet: Cabriolets are characterized by lower median prices.
 
@@ -254,19 +272,24 @@ p1
 -   Small car: Toyota's small cars have lower median prices, in keeping with their image as brands offering economical vehicles.
 
 -   SUV / Off-road: SUVs and off-road vehicles present a wide price range and a high maximum, consistent with Volvo having their status as a luxury brand.
-<p>
+
+    <p>
 
 <p align="justify">
+
 The box chart revealed more nuanced insights, such as the existence of significant price variability within the same brands according to body type.
 The box plot has also given us a better understanding of brand trends, and can once again highlight their positioning.
+
 <p>
 
 ### Summary tables for prices
 
 <p align="justify">
+
 We have chosen to summarize vehicle price data through basic descriptive statistics: mean, median and standard deviation.
 These measures were calculated for each vehicle brand in our dataset.
 To visualize these statistics, we created a summary table using the `formattable` library in R, which offers an attractive and intuitive visual representation of numerical data.
+
 <p>
 
 ```{r}
@@ -310,20 +333,24 @@ formattable(summary_table, list(
 ```
 
 <p align="justify">
+
 Volvo shows the highest average and median prices, suggesting a more premium pricing strategy compared to the other brands.
 Toyota stands out with significantly lower average and median prices, aligning with its market positioning as an affordable and reliable car brand.
 Skoda, Golf, and Audi have relatively similar average prices, but Audi tends to be slightly more expensive on average.
 The standard deviation values indicate the variability in pricing within each brand.
 Volvo shows the highest variability, suggesting a wide range of options, from more affordable to high-end.
 Skoda, with the lowest standard deviation, indicates more consistent pricing across its cars, this could mean the Octavias have similar options on average.
+
 <p>
 
 ### Mileage (Kilometers) and Its Impact on Price
 
 <p align="justify">
+
 For this relationship, we chose to use a scatterplot, which we generated using the `ggplot2` library and `ggplotly` for interactivity.
 The decision to use scatterplots was based on the need to understand the nature of the relationship between mileage and price.
 The choice of distinct colors for each car facilitates visualization and comparison between brands.
+
 <p>
 
 ::: panel-tabset
@@ -393,14 +420,18 @@ p5
 :::
 
 <p align="justify">
+
 By analyzing the graphs, we have observed that, for some brands, price decreases significantly with increasing mileage, while for others, the impact of mileage on price is less pronounced.
 This reflects the fact that, while mileage can have an impact on price, other factors can also explain consumer choices.
+
 <p>
 
 ### Engine horsepower (Power) and price correlation
 
 <p align="justify">
+
 The use of scatter graphs aims to visualize the impact of engine power on listing prices, and whether this trend varies from one brand to another on the used car market.
+
 <p>
 
 ::: panel-tabset
@@ -466,15 +497,19 @@ p5
 :::
 
 <p align="justify">
+
 The data suggests a positive correlation between engine power and car price.
 Higher-powered cars, often offering better performance, command higher prices.
+
 <p>
 
 ### Influence of fuel type on car pricing
 
 <p align="justify">
+
 Different fuel types cater to various market segments and preferences.
 To visualize how fuel type influences car prices, average prices for different fuel types were plotted in bar charts for each brand
+
 <p>
 
 ::: panel-tabset
@@ -522,7 +557,7 @@ p2
 ## Toyota
 
 ```{r}
-plot_toyota <- create_bar_plot(toyota, "TOYOTA - Fuel type vs Average price ")
+plot_toyota <- create_bar_plot(toyota[!is.na(toyota$fuel.type),], "TOYOTA - Fuel type vs Average price ")
 p3 <- ggplotly(plot_toyota)
 p3
 ```
@@ -544,94 +579,26 @@ p5
 ```
 :::
 
-<p align="justify"
+<p align="justify">
+
 The charts clearly demonstrate notable price differences depending on the fuel type.
 Hybrids and electric vehicles generally command higher prices.
 For each brand, it's evident that hybrids significantly elevate the average price, whereas diesel vehicles tend to be more affordable in comparison.
 Given the growing concerns over climate change, consumers are increasingly steering away from diesel, contributing to the higher prices observed for hybrid vehicles.
-<p>
 
-### Year of manufacture and its effect on pricing
-
-<p align="justify">
-The year of manufacture of a car, can influence its price.
-The graphs below illustrate price trends as a function of vehicle age.
-<p>
-
-::: panel-tabset
-## Audi
-
-```{r, warning=FALSE, message=FALSE}
-## proposition 2 : en fonction de l'année de fabrication 
-graph.1 <- ggplot(audi, aes(x = date, y = price)) +
-  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
-  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Audi - Price distribution over manufacture years ", x = "Année", y = "Prix")
-p.1 <- ggplotly(graph.1)
-p.1
-```
-
-## Golf
-
-```{r, warning=FALSE, message=FALSE}
-graph.2 <- ggplot(golf, aes(x = date, y = price)) +
-  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
-  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Audi - Distribution des Prix par Année de Fabrication", x = "Année", y = "Prix")
-p.2 <- ggplotly(graph.2)
-p.2
-```
-
-## Skoda
-
-```{r, warning=FALSE, message=FALSE}
-graph.3 <- ggplot(skoda, aes(x = date, y = price)) +
-  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
-  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Audi - Price distribution over manufacture years", x = "Année", y = "Prix")
-p.3 <- ggplotly(graph.3)
-p.3
-```
-
-## Toyota
-
-```{r, warning=FALSE, message=FALSE}
-graph.4 <- ggplot(toyota, aes(x = date, y = price)) +
-  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
-  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Audi - Price distribution over manufacture years", x = "Année", y = "Prix")
-p.4 <- ggplotly(graph.4)
-p.4
-```
-
-## Volvo
-
-```{r, warning=FALSE, message=FALSE}
-graph.5 <- ggplot(volvo, aes(x = date, y = price)) +
-  geom_violin(trim = FALSE, fill = "skyblue", alpha = 0.7) +
-  geom_jitter(width = 0.2, color = "darkblue", size = 1, alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Audi - Price distribution over manufacture years", x = "Année", y = "Prix")
-p.5 <- ggplotly(graph.5)
-p.5
-```
-:::
-
-<p align="justify">
-Newer models generally have higher average prices, likely due to more advanced technology, better features, and lower mileage.
-The rate of depreciation over the years varies among brands, with some luxury brands retaining their value longer.
 <p>
 
 ### Consumption vs price
 
 <p align="justify">
-The rationale behind using a scatter plot was to effectively display the relationship between two continuous variables: car consumption (measured in liters per 100 kilometers) and price (in currency units).
+
+The rationale behind using a scatter plot was to effectively display the relationship between two continuous variables: fuel consumption (measured in liters per 100 kilometers) and price (in CHF).
 By plotting each car as a point on this graph, with its consumption on the x-axis and its price on the y-axis, we could visually inspect trends, patterns, and potential outliers in the data.
+
 <p>
+
+::: panel-tabset
+### Brand
 
 ```{r}
 
@@ -648,13 +615,13 @@ all_cars <- bind_rows(
 )
 
 # Clean the data by removing rows with NA in 'consumption' and 'price'
-all_cars_cleaned <- na.omit(all_cars[, c("consumption", "price", "brand")])
+all_cars_cleaned <- na.omit(all_cars[, c("consumption", "price", "brand", "hybrid")])
 
 scatter_plot <- ggplot(all_cars_cleaned, aes(x = consumption, y = price, color = brand)) +
-  geom_point() +
+  geom_point(size = 0.3, alpha = 0.7) +
   labs(title = "Comparison of Car Price and Consumption by Brand",
        x = "Consumption (L/100km)",
-       y = "Price (Currency Unit)",
+       y = "Price (CHF)",
        color = "Brand") +
   theme_minimal()
 
@@ -663,19 +630,48 @@ consumption <- ggplotly(scatter_plot)
 consumption
 
 ```
- 
+
+### Hybrid
+
+```{r}
+
+scatter_plot <- ggplot(all_cars_cleaned, aes(x = consumption, y = price, color = hybrid)) +
+  geom_point(size = 0.3, alpha = 0.7) +
+  labs(title = "Comparison of Car Price and Consumption by Hybrid",
+       x = "Consumption (L/100km)",
+       y = "Price (CHF)",
+       color = "Hybrid") +
+  theme_minimal()
+
+
+hybrid <- ggplotly(scatter_plot)
+hybrid
+
+```
+:::
+
+<p align="justify">
+
+We don't immediately notice a pattern for any of the car makes, on the other hand there is a clearly defined cluster on the left of the plot, which only contains hybrid vehicles, showing us that hybrid vehicles have lower fuel consumption on average compared to other fuels.
+
+<p>
+
 ## Factors influencing the listing duration
 
 ### Histograms of listing duration
 
 <p align="justify">
+
 The comparison of histograms allows us to observe the distribution of how long each car model remains listed for sale.
 It helps identify the typical durations or patterns for listings of these specific car models.
 It might indicate which models tend to have shorter or longer listing durations compared to others.
+
 <p>
 
 <p align="justify">
+
 Understanding these durations can offer insights into potentially the efficiency of selling particular car models.
+
 <p>
 
 ```{r, echo=FALSE, message=FALSE}
@@ -771,14 +767,18 @@ p5
 :::
 
 <p align="justify">
+
 We can observe that for all makes, even though the number of observations differ, the most frequent listings available on the used car website are recent.
 As the listing age increases, the frequency decreases.
+
 <p>
 
 ### Price vs listing duration
 
 <p align="justify">
+
 The following scatterplots may help us understand the sensitivity of the used car market to pricing and the potential impact of price variations on how long a car remains listed for sale.
+
 <p>
 
 ```{r}
@@ -808,14 +808,16 @@ plot_arrangement <- wrap_plots(plots, ncol = 2)  # Adjust ncol for layout
 plot_arrangement
 ```
 
-We unfortunately do not see any pattern or any structure when taking into account the price.
+We unfortunately do not see any pattern or structure when comparing the price with listing age.
 
 ### Fuel type vs average listing duration
 
 <p align="justify">
+
 The following interactive barplots aim to reveal any observable patterns or trends associated with the fuel type concerning the listing duration for each make.
 It is important to note that the length of the barplots depends on the average listing duration of each category, the number of observations has no effect on the length, but we found it important to include it in the bar plot to show that even if a category does not have many observations, the category might stand out compared to others.
 The darker the colour of the barplot, the higher the number of observations in the category.
+
 <p>
 
 ```{r}
@@ -892,27 +894,39 @@ p5
 :::
 
 <p align="justify">
+
 Audi : While the category with the most observations is composed of petrol cars, the category with the highest average listing duration is "Diesel".
 Petrol cars have an average listing duration of 91 days.
+
 Volkswagen : This model has the largest panel of categories.
 Hybrid cars tend to stay on the website longer, with an average of 166 days.
-The category with the most observations, "Diesel", has an average listing duration of 119 days, which remains higher than that of Audi, but remains lower than other categories.
+The category with the most observations, petrol, has an average listing duration of 110 days, which remains higher than that of Audi, but remains lower than other categories.
+
 Toyota : For this model, the highest average listing duration goes to the category with the most observations, i.e. petrol cars.
 The average listing duration does not vary much between categories, as there is a 23-day gap between the highest and lowest average listing duration.
-Skoda : Like Toyota, there is not much variation in average listing duration, with a 20-day gap between the highest and lowest average listing duration.
+
+Skoda : Like Toyota, there is not much variation in average listing duration, with a 20-day gap between the highest and lowest average listing duration, except for natural gas vehicles, which have a very high listing age.
+This could mean that this fuel type is undesirable to customers.
+This could also be due to chance, because the sample size is so small, the variance is high.
+
 Volvo : Like Skoda and Toyota, there is not much variation in average listing duration, with a 16-day gap between the highest and lowest average listing duration.
+
 <p>
 
 <p align="justify">
+
 We notice that 3 out of 5 models (Toyota, Skoda and Volvo) have a maximum variation of less than a month between categories, which indicates that for these models, the fuel type does not really influence the average listing duration.
 For the 2 remaining models (VW and Audi), fuel type may influence the average listing duration, as the variation exceeds 30 days.
+
 <p>
 
 ### Transmission vs average listing duration
 
 <p align="justify">
+
 The following boxplots will help us reveal if there is a difference in listing durations based on transmission types (automatic or manual).
 Outliers in the boxplot might represent exceptional cases, indicating factors beyond transmission influencing the listing duration for those particular cars.\
+
 <p>
 
 ::: panel-tabset
@@ -979,29 +993,39 @@ p.5
 :::
 
 <p align="justify">
-For the A3 and the Golf, there seems to be no preference between automatic or manual cars.
+
+For the Audi A3 and the Golf, there seems to be no distinction between automatic or manual cars.
 For each make, each category has similar medians, first and third quartiles, and upper and lower whiskers.
 The Audi A3 however display outliers in the upper portion of both automatic and manual cars boxplots, suggesting additional factors beyond transmission type impacting the duration of the listing.\
+
 <p>
 
 <p align="justify">
-For the Yaris and the Octavia, the boxplots show that there might be a preference for automatic cars, as they have a shorter listing duration range.
+
+For the Toyota Yaris and the Skoda Octavia, the boxplots show that there is a slight preference for automatic cars, as they have a shorter listing duration range.
 Nonetheless, outliers in the upper part of the boxplot hint at other influencing elements affecting the listing duration.
+
 <p>
 
 <p align="justify">
-For the XC60, manual cars seems to have a higher listing duration range than automatic cars, with a median of 125,5 days, compared to 82 days respectively.
+
+For the Volvo XC60, manual cars seems to have a higher listing duration range than automatic cars, with a median of 125,5 days, compared to 82 days respectively.
+
 <p>
 
 <p align="justify">
-These graphs show us that while preferences can be shown, the transmission type of the car is not the only variable influencing the duration of a listing.
+
+These graphs show us that while preferences can be shown, the transmission type of the car is not the only variable that explains the duration of a listing.
+
 <p>
 
 ### Body type vs average listing duration
 
 <p align="justify">
+
 For the following barplots we decided to only display the models which contain different body types, especially the Golf.
-For models such as the Yaris and the XC60, there is no point in trying to explain this type of relationship, as these two models only have one body type.
+For the Volvo XC60, there is no point in trying to explain this type of relationship, as they are all SUVs.
+
 <p>
 
 ::: panel-tabset
@@ -1047,28 +1071,44 @@ plot_skoda <- create_bar_plot(skoda2, "Body type vs Average listing duration : S
 p_4 <- ggplotly(plot_skoda)
 p_4
 ```
+
+## Toyota
+
+```{r}
+plot_toyota <- create_bar_plot(toyota[toyota$body.type != "Coupé",], "Body type vs Average listing duration : Toyota Yaris")
+p_4 <- ggplotly(plot_toyota)
+p_4
+```
 :::
 
-
-
 <p align="justify">
+
 The observed pattern in these barplots indicates a consistent trend across each make: the category with the highest number of observations tends to have the lowest or among the shortest average listing durations.
 This trend likely stems from higher demand, resulting in quicker turnovers as these models are more demanded.
 Conversely, less frequently observed categories show longer average listing durations, suggesting that buyers tend to favour the more common body types, leading to extended listing periods for other variants.
-It is important to note that categories with less than 5 observations are most likely errors occurred during scraping our data.
+It is important to note that categories with less than 5 observations are possibly errors in the listing.
+
 <p>
 
-## How do different vehicle features affect depreciation ?
+## Vehicle features affecting depreciation
+
 <p align="justify">
+
 In this part, we will look at graphs related to the depreciation of our vehicles and identify various trends, as well as correlation matrices to observe the correlations between depreciation and vehicle age and mileage, as well as other immovable factors such as power and fuel consumption.
+
 <p>
+
 ### Filtering data
+
 <p align="justify">
+
 Firstly, we need to filter our data to keep only the observations where the new price of the vehicle is available.
 When scraping our data, only a portion of the total listings had the vehicle's new age displayed, as it is an optional input for the seller.
 This reduces our sample sizes a large amount, especially for the Toyota Yaris data set.
 Below is a table displaying these reductions in sample sizes.
+
 <p>
+
 ```{r, message=FALSE, warning=FALSE}
 # Question 3: How do different vehicle features affect depreciation ?
 library(patchwork)
@@ -1149,9 +1189,13 @@ sample_sizes |>
 ```
 
 #### New prices vs listing prices
+
 <p align="justify">
+
 These plots show the new prices of cars compared with their actual prices, sorted by the new price.
+
 <p>
+
 ```{r, message=FALSE, warning=FALSE}
 a1 <- ggplot(golf[order(golf$new.price),]) +
   geom_smooth(span = 0.1, mapping = aes(x = seq(new.price), y = new.price), color = "royalblue") +
@@ -1280,8 +1324,10 @@ It seems the new and actual prices are strongly related.
 #### New prices vs depreciation
 
 <p align="justify">
+
 We now look at the new prices of vehicles compared to their relative depreciation.
 The relative depreciation is defined as (new price - actual price) / new price.
+
 <p>
 
 ```{r, message=FALSE, warning=FALSE}
@@ -1392,9 +1438,13 @@ b4
 b5
 ```
 :::
+
 <p align="justify">
+
 We can see that these are weakly negatively correlated, but it does not stand out in the graphs.
+
 <p>
+
 #### Current prices vs depreciation
 
 We will now compare current vehicle prices and their relative depreciation.
@@ -1506,13 +1556,19 @@ c4
 c5
 ```
 :::
+
 <p align="justify">
+
 Current vehicle prices are obviously negatively correlated with relative depreciation, which makes sense.
+
 <p>
+
 #### Vehicle age vs depreciation
 
 <p align="justify">
+
 Vehicle age is probably the biggest influencing factor that defines the definition of depreciation, so we can see in the graphs that it is strongly related to relative depreciation.
+
 <p>
 
 ```{r, message=FALSE, warning=FALSE}
@@ -1625,8 +1681,10 @@ d5
 #### Kilometers vs depreciation
 
 <p align="justify">
+
 Kilometers is most likely the second biggest determinant of depreciation.
 Here are some graphs that put this into perspective.
+
 <p>
 
 ```{r, message=FALSE, warning=FALSE}
