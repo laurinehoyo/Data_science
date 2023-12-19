@@ -1,7 +1,6 @@
--changer le titre
-reformuler objectifs
+- DATA CLEANING: we need to include the code in data.qmd... how should we do this? Just copypaste code from all cars cleaning ?
+-> paste between each paragraph then say we repeat for the other vehicles ?
 
-Victor
-- demo of project?
-- on devrait se focuser principalement sur une des questions?
-- on est obligé de faire la présentation avec R ?
+
+eda.qmd progress
+line 475
