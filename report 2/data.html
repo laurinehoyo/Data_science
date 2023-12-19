@@ -95,13 +95,16 @@ We obtained the five datasets corresponding to distinct car models from various 
 <section id="description" class="level3">
 <h3 class="anchored" data-anchor-id="description">Description</h3>
 <p align="justify">
-The datasets comprise five distinct car models originating from various brands. The models are the following : Audi A3, Skoda Octavia, Toyota Yaris, Volkswagen Golf, and Volvo XC60. While each table shares identical variables, the number of observations varies. Each observation represents a car sold on the website Autoscout24.ch.
+The datasets comprise five distinct car models originating from various brands. The models are the following : Audi A3, Skoda Octavia, Toyota Yaris, Volkswagen Golf, and Volvo XC60. While each table shares identical variables, the number of observations varies. Each observation represents a listing for sale on the website Autoscout24.ch.
 </p><p>
 </p><p>Below are the variables that we kept :</p>
 <div class="cell">
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: le package 'kableExtra' a été compilé avec la version R 4.3.2</code></pre>
-</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"tibble"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"kableExtra"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell">
 <details>
@@ -250,36 +253,1034 @@ The datasets comprise five distinct car models originating from various brands. 
 <p align="justify">
 The cleaning process of our data was quite tedious. We used the same process for each of the five datasets, as they come from the same website and contain the same variables. The necessary libraries to clean our data were the packages “tidyverse”, and “lubridate”, which helped us format our dates.
 </p><p>
-</p><p align="justify">
+</p><div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">### We load the necessary libraries to clean our data</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="do">### We set our working directory to the data folder and load our dataset golf2</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"~/GitHub/Data_science/data"</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"golf2.csv"</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>golf2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"golf2.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p align="justify">
 We started by only keeping the numbers in the columns price, kilometers, and listing.id by using the parse_number function. We do this because some observations may include characters such as “CHF”, “km/h”, and so on.
 </p><p>
-</p><p align="justify">
+</p><div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">### We will start by keeping only the numbers in the columns "price", "kilometers" and "listing.id"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>price <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>price, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>kilometers <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>kilometers, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>listing.id <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>listing.id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p align="justify">
 We then took care of the column consumption and got rid of “l/100km” so as to only keep the number, and we set every “-” to “NA”. When doing this, we saw that there were some outliers that should not have been in our dataset. Indeed, values jumped from 11.6 l/100km to 160 l/100km. This probably occurred when we scraped the data, there were probably some errors. Maybe the scraping software took another field’s value when the consumption field was blank. We then did the same process for the column power. We kept the unit of measurement horsepower instead of kW.
 </p><p>
-</p><p align="justify">
+</p><div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">### We keep only the first number in "consumption" and get rid of "l/100km" and set "-" to "NA"</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>consumption <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>consumption, <span class="st">"-"</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>consumption <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>consumption)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="do">### We see that there are some outliers that shouldn't be here. The values jump from 11.6 l/100km to 160 l/100km. These are probably errors when scraping the data, the scraping software has maybe taken another field's value when the consumption field was blank.</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(data<span class="sc">$</span>consumption[<span class="fu">order</span>(data<span class="sc">$</span>consumption)])</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>consumption[data<span class="sc">$</span>consumption <span class="sc">&gt;</span> <span class="dv">12</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># We can easily see all the unique values and the duplicate count with this code:</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#as.tibble(data$consumption) |&gt;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#  group_by_all() |&gt;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#  count() |&gt;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#  print(n = 77)</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="do">### Now let's do the same for column "power". We will keep the unit of measurement horsepower instead of kW.</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>power <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>power, <span class="st">"-"</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>power <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>power)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p align="justify">
 Now taking care of the column expertise, we changed the “oui/non” values to logical values TRUE/FALSE. We did the same for the accident and warranty columns.
 </p><p>
-</p><p align="justify">
+</p><div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise[data<span class="sc">$</span>expertise <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise[data<span class="sc">$</span>expertise <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>expertise)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="do">### Let's do the same for columns "accident" and "warranty".</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident[data<span class="sc">$</span>accident <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident[data<span class="sc">$</span>accident <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>accident)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty[data<span class="sc">$</span>warranty <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty[data<span class="sc">$</span>warranty <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>warranty)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p align="justify">
 We then fixed the column new.price by setting values “Oui/Non” to “NA”, because it was probably an error while scraping the data. We then parsed numbers from the remaining rows. While doing this, we saw in unique values some unrealistic new car prices, notably 1, 54, and 4309. We assumed these were errors and removed them.
 </p><p>
-</p><p align="justify">
+</p><div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">### We will now fix the column "new.price" by setting values "Oui"/"Non" (Errors when scraping) to NA, then we will parse numbers from the remaining columns.</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>new.price, <span class="st">"Oui"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>new.price, <span class="st">"Non"</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>new.price, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="do">### If we look at the unique values we can see some unrealistic new car prices, notably 1, 54 and 4309. We will assume these are errors and remove them.</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(data<span class="sc">$</span>new.price[<span class="fu">order</span>(data<span class="sc">$</span>new.price)])</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price[data<span class="sc">$</span>new.price <span class="sc">&lt;</span> <span class="dv">5000</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p align="justify">
 Afterwards, we dropped columns that contained meaningless information, and that are a result of scraping the data, such as webscraper.order, web.scraper.start.url, page and annonce.link.
 </p><p>
-</p><p align="justify">
+</p><div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Let's drop some columns that have meaningless information, and that are a result of scraping the data. We will drop columns "web.scraper.order", "web.scraper.start.url", "page" and "annonce.link".</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p align="justify">
 After this, we proceeded to use the package lubridate. We wanted to set the date column to class “Date” to simplify plotting. To do this we needed to format the values as YYYY.MM.DD, as they were originally at MM.YYYY. We looked at the data first and we removed the visible errors. We set the format to MM.YYYY, as the vector needs to be a character vector for the parse_date function to work, and we then parsed date. The final format is YYYY-MM-DD. We did the same for the expertise.date and created.date columns.
 </p><p>
-</p><p align="justify">
+</p><div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Now we want to set the "date" column to class "Date" to simplify plotting. To do this we need to format the values as yyyy.mm.dd, they are currently at mm.yyyy.</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's look at the data first</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(data<span class="sc">$</span>date[<span class="fu">order</span>(data<span class="sc">$</span>date)])</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># We remove one visible error</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>date[<span class="dv">2802</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we set the format to mm.yyyy (the vector needs to be a character vector for the parse_date function to work) then parse date. The final format is yyyy-mm-dd.</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>date <span class="ot">&lt;-</span> data<span class="sc">$</span>date <span class="sc">|&gt;</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format</span>(<span class="at">format =</span> <span class="st">"%m.%Y"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">parse_date</span>(<span class="at">format =</span> <span class="st">"%m.%Y"</span>)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="do">### We set expertise.date and created.date to date classes as well</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>created.date <span class="ot">&lt;-</span> <span class="fu">parse_date</span>(data<span class="sc">$</span>created.date)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise.date <span class="ot">&lt;-</span> data<span class="sc">$</span>expertise.date <span class="sc">|&gt;</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format</span>(<span class="at">format =</span> <span class="st">"%d.%m.%Y"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">parse_date</span>(<span class="at">format =</span> <span class="st">"%d.%m.%Y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p align="justify">
 We added a column to the datasets where values will be TRUE if the vehicle is potentially defective or in need of repairs, and FALSE if not. We removed these defective vehicles when creating our model because they could bias it, making it underestimate prices for functioning vehicles. We identified defective vehicles in two ways. The first way was using the accident column, which is TRUE if the seller has flagged the vehicle as having been in an accident in the past, and FALSE if not. The second way was to look for keywords in columns title, subtitle, and description.text which are common in listings with defective vehicles. We created a column where values are TRUE if one of the defective phrases is detected, and FALSE if not. If either of these two identifiers were TRUE, the vehicle would be deemed defective and not eligible to serve as data for creating our model.
 </p><p>
 </p><p align="justify">
 We first created a vector of characters which are the defective keywords. We then created a second list where the keywords were likely to have negation before them, so as to not falsely flag vehicles as defective. We then created an “ok” keywords vector that overpowered the second defective keywords vector. We did the same for other languages that listings could be in, such as French, Italian, or English. We then created vectors for the keywords and added the column defective. We set to TRUE if any keyword from the vector is in the subtitle or description.text column, using the “for” function. We set to FALSE all the TRUE values that contain a keyword in the vector ok_keywords. We set to defective to TRUE where the column accident is TRUE.
 </p><p>
-</p><p>We set to NA if values are “-” in the fuel.type, transmission and drivetrain columns.</p>
+</p><div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">### We will now add a column to the data where values will be TRUE where the vehicle is potentially defective or in need of repairs, and FALSE if not. </span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="do">### We will need to remove these defective vehicles when creating our model because they could bias it, making it underestimate prices for functioning vehicles.</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="do">### We plan to identify defective vehicles in two ways. The first way being the "accident" column, which is TRUE if the seller has flagged the vehicle as having been in an accident in the past, and FALSE if not.</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="do">### The second way will be to look for keywords in columns "title", "subtitle" and "description.text" which are common in listings with defective vehicles, such as "defekt", "motor startet nicht" etc.</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="do">### We will create a column where values will be TRUE if one of these keywords or key phrases is detected, and FALSE if not.</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="do">### If either of these two identifiers are TRUE, the vehicle will be deemed defective and not eligible to serve as data for creating our model.</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># First we create a vector of characters which are the defective keywords.</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>defective_keywords_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"defekt"</span>, <span class="st">"defect"</span>, <span class="st">"defeckt"</span>, <span class="st">"startet nicht"</span>, <span class="st">"starttet nicht"</span>, <span class="st">"gebrochen"</span>, <span class="st">"lampe leuchtet"</span>, <span class="st">"für export"</span>, <span class="st">"fur export"</span>, <span class="st">"gerausche"</span>, <span class="st">"geräusche"</span>, <span class="st">"gerräusche"</span>, <span class="st">"angebrochen"</span>, <span class="st">"angeschlagen"</span>, <span class="st">"beschädigt"</span>, <span class="st">"fehlerhaft"</span>, <span class="st">"lädiert"</span>, <span class="st">"nicht in Ordnung"</span>, <span class="st">"nicht mehr funktionierend"</span>, <span class="st">"nicht mehr gut"</span>, <span class="st">"schadhaft"</span>, <span class="st">"zerbrochen"</span>, <span class="st">"zerrissen"</span>, <span class="st">"kaputt"</span> )</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># We create a second list where the keywords are likely to have negation before them, so as to not falsely flag vehicles as defective. </span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># We will then create an "ok" keywords vector that overpower the second defective keywords vector.</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"schäden"</span>, <span class="st">"problem"</span>, <span class="st">"schade"</span>, <span class="st">"probleme"</span>, <span class="st">"schaden"</span>)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>ok_keywords_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"ohne"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"kein"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"keine"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">#We repeat these steps for other languages that listings could be in (French, Italian and English).</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>defective_keywords_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"témoin"</span>, <span class="st">"bruit"</span>, <span class="st">"défaut"</span>, <span class="st">"ne démarre pas"</span>, <span class="st">"cassé"</span>, <span class="st">"pour export"</span>, <span class="st">"pour l'export"</span>, <span class="st">"endommagé"</span>, <span class="st">"endommager"</span>, <span class="st">"endommage"</span>, <span class="st">"défectueux"</span>, <span class="st">"defectueux"</span>, <span class="st">"pas en bon état"</span>, <span class="st">"ne fonctionne plus"</span>, <span class="st">"cassé"</span>)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"dégâts"</span>, <span class="st">"dégats"</span>, <span class="st">"degâts"</span>, <span class="st">"degats"</span>, <span class="st">"problème"</span>, <span class="st">"probleme"</span>, <span class="st">"dommages"</span>)</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>ok_keywords_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"sans"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"pas de"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"aucun"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>defective_keywords_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"spia"</span>, <span class="st">"rumore"</span>, <span class="st">"difetto"</span>, <span class="st">"non parte"</span>, <span class="st">"non si avvia"</span>, <span class="st">"rotto"</span>, <span class="st">"per l'esportazione"</span>, <span class="st">"per export"</span>, <span class="st">"danneggiato"</span>, <span class="st">"danneggiare"</span>, <span class="st">"danneggia"</span>, <span class="st">"difettoso"</span>, <span class="st">"non in buone condizioni"</span>, <span class="st">"non funziona più"</span>)</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"danni"</span>, <span class="st">"problemi"</span>, <span class="st">"problema"</span>)</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>ok_keywords_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"nessun"</span>, defective_keywords_2_it, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"senza"</span>, defective_keywords_2_it, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>defective_keywords_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"defective"</span>, <span class="st">"does not start"</span>, <span class="st">"won't start"</span>, <span class="st">"broken"</span>, <span class="st">"light on"</span>, <span class="st">"for export"</span>, <span class="st">"noise"</span>, <span class="st">"faulty"</span>, <span class="st">"not working"</span>, <span class="st">"no longer working"</span>)</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"damage"</span>, <span class="st">"damaged"</span>, <span class="st">"problem"</span>, <span class="st">"problems"</span>)</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>ok_keywords_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"no"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"without"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"not"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co"># We create vectors for the keywords</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>defective_keywords <span class="ot">&lt;-</span> <span class="fu">c</span>(defective_keywords_de, defective_keywords_fr, defective_keywords_it, defective_keywords_en)</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>defective_keywords_2 <span class="ot">&lt;-</span> <span class="fu">c</span>(defective_keywords_2_de, defective_keywords_2_fr, defective_keywords_2_it, defective_keywords_2_en)</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>ok_keywords <span class="ot">&lt;-</span> <span class="fu">c</span>(ok_keywords_de, ok_keywords_fr, ok_keywords_it, ok_keywords_en)</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="co"># We add the column "defective".</span></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>defective <span class="ot">&lt;-</span> <span class="fu">logical</span>(<span class="fu">nrow</span>(data))</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to true if any keyword from defective_keywords_2 (susceptible to be a false positive) is in the subtitle column or description.text column.</span></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords_2) {</span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords_2) {</span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to FALSE all the TRUE values that contain a keyword in ok_keywords.</span></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> ok_keywords) {</span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> ok_keywords) {</span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to TRUE if any keyword from defective_keywords are in the subtitle or description.text columns.</span></span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords) {</span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords) {</span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to defective to TRUE where the column accident is TRUE.</span></span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>defective[data<span class="sc">$</span>accident] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We set to NA if values are “-” in the fuel.type, transmission and drivetrain columns.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="do">### We set to NA if values are "-" in columns fuel.type, transmission and drivetrain.</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fuel.type <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>fuel.type, <span class="st">"-"</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>transmission <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>transmission, <span class="st">"-"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>drivetrain <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>drivetrain, <span class="st">"-"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 We created the columns vehicle.age and listing.age to be able to model without using dates. The unit of measurement is days.
 <p align="justify">
 We defined scraping_date which is the date of the most recently created listing, we assumed this corresponds to the scraping date since there are many listings posted each day for our data sets.
 </p><p>
-</p></section>
+</p><div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="do">### We will create the columns vehicle.age and listing.age to be able to model without using dates. The unit of measurement will be days.</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># We define scraping_date which is the date of the most recently created listing (we assume this corresponds to the scraping date since there are many listings posted each day for our data sets).</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>scraping_date <span class="ot">&lt;-</span> data<span class="sc">$</span>created.date[<span class="fu">order</span>(data<span class="sc">$</span>created.date, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span>]]</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>vehicle.age <span class="ot">&lt;-</span> scraping_date <span class="sc">-</span> data<span class="sc">$</span>date</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>listing.age <span class="ot">&lt;-</span> scraping_date <span class="sc">-</span> data<span class="sc">$</span>created.date</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># One duplicate was found randomly when browsing the data (listing.id are different, the author might have created a second listing for the same vehicle), we remove it.</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data[<span class="sc">-</span><span class="dv">2703</span>,]</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co"># We remove the defective vehicles from our cleaned data</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data[data<span class="sc">$</span>defective <span class="sc">==</span> <span class="cn">FALSE</span>,]</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="do">### Finally we export the data to our cleaned-data folder</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(data, <span class="at">file =</span> <span class="st">"~/GitHub/Data_science/cleaned-data/golf2_cleaned.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p align="justify">
+We then repeated the process for each model, and fixed errors that were specific to those models.
+</p><p>
+</p><div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">### We load the necessary libraries to clean our data</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="do">### We set our working directory to the data folder and load our dataset golf2</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"~/GitHub/Data_science/data"</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"audi2.csv"</span>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>audi2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"audi2.csv"</span>)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="do">### We will start by keeping only the numbers in the columns "price", "kilometers" and "listing.id"</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>price <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>price, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>kilometers <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>kilometers, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>listing.id <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>listing.id)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="do">### We keep only the first number in "consumption" and get rid of "l/100km" and set "-" to "NA"</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>consumption <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>consumption, <span class="st">"-"</span>)</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>consumption <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>consumption)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="do">### We see that there are some outliers that shouldn't be here. The values jump from 11.6 l/100km to 160 l/100km. These are probably errors when scraping the data, the scraping software has maybe taken another field's value when the consumption field was blank.</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(data<span class="sc">$</span>consumption[<span class="fu">order</span>(data<span class="sc">$</span>consumption)])</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>consumption[data<span class="sc">$</span>consumption <span class="sc">&gt;</span> <span class="dv">12</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="co"># We can easily see all the unique values and the duplicate count with this code:</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="co">#as.tibble(data$consumption) |&gt;</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="co">#  group_by_all() |&gt;</span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="co">#  count() |&gt;</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a><span class="co">#  print(n = 77)</span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="do">### Now let's do the same for column "power". We will keep the unit of measurement horsepower instead of kW.</span></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>power <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>power, <span class="st">"-"</span>)</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>power <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>power)</span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a><span class="do">### We will now change the "Oui"/"Non" values in the column "expertise" to logical values TRUE/FALSE</span></span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise[data<span class="sc">$</span>expertise <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise[data<span class="sc">$</span>expertise <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>expertise)</span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a><span class="do">### Let's do the same for columns "accident" and "warranty".</span></span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident[data<span class="sc">$</span>accident <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident[data<span class="sc">$</span>accident <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>accident)</span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty[data<span class="sc">$</span>warranty <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty[data<span class="sc">$</span>warranty <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>warranty)</span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a><span class="do">### We will now fix the column "new.price" by setting values "Oui"/"Non" (Errors when scraping) to NA, then we will parse numbers from the remaining columns.</span></span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>new.price, <span class="st">"Oui"</span>)</span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>new.price, <span class="st">"Non"</span>)</span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>new.price, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a><span class="do">### If we look at the unique values we can see some unrealistic new car prices, notably 1, 54 and 4309. We will assume these are errors and remove them.</span></span>
+<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(data<span class="sc">$</span>new.price[<span class="fu">order</span>(data<span class="sc">$</span>new.price)])</span>
+<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price[data<span class="sc">$</span>new.price <span class="sc">&lt;</span> <span class="dv">5000</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a><span class="do">### Let's drop some columns that have meaningless information, and that are a result of scraping the data. We will drop columns "web.scraper.order", "web.scraper.start.url", "page" and "annonce.link".</span></span>
+<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>web.scraper.order, <span class="sc">-</span>web.scraper.start.url, <span class="sc">-</span>page, <span class="sc">-</span>annonce.link)</span>
+<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a><span class="do">### Now we want to set the "date" column to class "Date" to simplify plotting. To do this we need to format the values as yyyy.mm.dd, they are currently at mm.yyyy.</span></span>
+<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's look at the data first</span></span>
+<span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(data<span class="sc">$</span>date[<span class="fu">order</span>(data<span class="sc">$</span>date)])</span>
+<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a><span class="co"># We remove one visible error</span></span>
+<span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a><span class="co">#data$date[2802] &lt;- NA</span></span>
+<span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we set the format to mm.yyyy (the vector needs to be a character vector for the parse_date function to work) then parse date. The final format is yyyy-mm-dd.</span></span>
+<span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>date <span class="ot">&lt;-</span> data<span class="sc">$</span>date <span class="sc">|&gt;</span></span>
+<span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format</span>(<span class="at">format =</span> <span class="st">"%m.%Y"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-86"><a href="#cb13-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">parse_date</span>(<span class="at">format =</span> <span class="st">"%m.%Y"</span>)</span>
+<span id="cb13-87"><a href="#cb13-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-88"><a href="#cb13-88" aria-hidden="true" tabindex="-1"></a><span class="do">### We set expertise.date and created.date to date classes as well</span></span>
+<span id="cb13-89"><a href="#cb13-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-90"><a href="#cb13-90" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>created.date <span class="ot">&lt;-</span> <span class="fu">parse_date</span>(data<span class="sc">$</span>created.date)</span>
+<span id="cb13-91"><a href="#cb13-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-92"><a href="#cb13-92" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise.date <span class="ot">&lt;-</span> data<span class="sc">$</span>expertise.date <span class="sc">|&gt;</span></span>
+<span id="cb13-93"><a href="#cb13-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format</span>(<span class="at">format =</span> <span class="st">"%d.%m.%Y"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-94"><a href="#cb13-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">parse_date</span>(<span class="at">format =</span> <span class="st">"%d.%m.%Y"</span>)</span>
+<span id="cb13-95"><a href="#cb13-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-96"><a href="#cb13-96" aria-hidden="true" tabindex="-1"></a><span class="do">### We will now add a column to the data where values will be TRUE where the vehicle is potentially defective or in need of repairs, and FALSE if not. </span></span>
+<span id="cb13-97"><a href="#cb13-97" aria-hidden="true" tabindex="-1"></a><span class="do">### We will need to remove these defective vehicles when creating our model because they could bias it, making it underestimate prices for functioning vehicles.</span></span>
+<span id="cb13-98"><a href="#cb13-98" aria-hidden="true" tabindex="-1"></a><span class="do">### We plan to identify defective vehicles in two ways. The first way being the "accident" column, which is TRUE if the seller has flagged the vehicle as having been in an accident in the past, and FALSE if not.</span></span>
+<span id="cb13-99"><a href="#cb13-99" aria-hidden="true" tabindex="-1"></a><span class="do">### The second way will be to look for keywords in columns "title", "subtitle" and "description.text" which are common in listings with defective vehicles, such as "defekt", "motor startet nicht" etc.</span></span>
+<span id="cb13-100"><a href="#cb13-100" aria-hidden="true" tabindex="-1"></a><span class="do">### We will create a column where values will be TRUE if one of these keywords or key phrases is detected, and FALSE if not.</span></span>
+<span id="cb13-101"><a href="#cb13-101" aria-hidden="true" tabindex="-1"></a><span class="do">### If either of these two identifiers are TRUE, the vehicle will be deemed defective and not eligible to serve as data for creating our model.</span></span>
+<span id="cb13-102"><a href="#cb13-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-103"><a href="#cb13-103" aria-hidden="true" tabindex="-1"></a><span class="co"># First we create a vector of characters which are the defective keywords.</span></span>
+<span id="cb13-104"><a href="#cb13-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-105"><a href="#cb13-105" aria-hidden="true" tabindex="-1"></a>defective_keywords_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"defekt"</span>, <span class="st">"defect"</span>, <span class="st">"defeckt"</span>, <span class="st">"startet nicht"</span>, <span class="st">"starttet nicht"</span>, <span class="st">"gebrochen"</span>, <span class="st">"lampe leuchtet"</span>, <span class="st">"für export"</span>, <span class="st">"fur export"</span>, <span class="st">"gerausche"</span>, <span class="st">"geräusche"</span>, <span class="st">"gerräusche"</span>, <span class="st">"angebrochen"</span>, <span class="st">"angeschlagen"</span>, <span class="st">"beschädigt"</span>, <span class="st">"fehlerhaft"</span>, <span class="st">"lädiert"</span>, <span class="st">"nicht in Ordnung"</span>, <span class="st">"nicht mehr funktionierend"</span>, <span class="st">"nicht mehr gut"</span>, <span class="st">"schadhaft"</span>, <span class="st">"zerbrochen"</span>, <span class="st">"zerrissen"</span>, <span class="st">"kaputt"</span> )</span>
+<span id="cb13-106"><a href="#cb13-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-107"><a href="#cb13-107" aria-hidden="true" tabindex="-1"></a><span class="co"># We create a second list where the keywords are likely to have negation before them, so as to not falsely flag vehicles as defective. </span></span>
+<span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a><span class="co"># We will then create an "ok" keywords vector that overpower the second defective keywords vector.</span></span>
+<span id="cb13-109"><a href="#cb13-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"schäden"</span>, <span class="st">"problem"</span>, <span class="st">"schade"</span>, <span class="st">"probleme"</span>, <span class="st">"schaden"</span>)</span>
+<span id="cb13-111"><a href="#cb13-111" aria-hidden="true" tabindex="-1"></a>ok_keywords_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"ohne"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"kein"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"keine"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a><span class="co">#We repeat these steps for other languages that listings could be in (French, Italian and English).</span></span>
+<span id="cb13-114"><a href="#cb13-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-115"><a href="#cb13-115" aria-hidden="true" tabindex="-1"></a>defective_keywords_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"témoin"</span>, <span class="st">"bruit"</span>, <span class="st">"défaut"</span>, <span class="st">"ne démarre pas"</span>, <span class="st">"cassé"</span>, <span class="st">"pour export"</span>, <span class="st">"pour l'export"</span>, <span class="st">"endommagé"</span>, <span class="st">"endommager"</span>, <span class="st">"endommage"</span>, <span class="st">"défectueux"</span>, <span class="st">"defectueux"</span>, <span class="st">"pas en bon état"</span>, <span class="st">"ne fonctionne plus"</span>, <span class="st">"cassé"</span>)</span>
+<span id="cb13-116"><a href="#cb13-116" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"dégâts"</span>, <span class="st">"dégats"</span>, <span class="st">"degâts"</span>, <span class="st">"degats"</span>, <span class="st">"problème"</span>, <span class="st">"probleme"</span>, <span class="st">"dommages"</span>)</span>
+<span id="cb13-117"><a href="#cb13-117" aria-hidden="true" tabindex="-1"></a>ok_keywords_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"sans"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"pas de"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"aucun"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb13-118"><a href="#cb13-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-119"><a href="#cb13-119" aria-hidden="true" tabindex="-1"></a>defective_keywords_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"spia"</span>, <span class="st">"rumore"</span>, <span class="st">"difetto"</span>, <span class="st">"non parte"</span>, <span class="st">"non si avvia"</span>, <span class="st">"rotto"</span>, <span class="st">"per l'esportazione"</span>, <span class="st">"per export"</span>, <span class="st">"danneggiato"</span>, <span class="st">"danneggiare"</span>, <span class="st">"danneggia"</span>, <span class="st">"difettoso"</span>, <span class="st">"non in buone condizioni"</span>, <span class="st">"non funziona più"</span>)</span>
+<span id="cb13-120"><a href="#cb13-120" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"danni"</span>, <span class="st">"problemi"</span>, <span class="st">"problema"</span>)</span>
+<span id="cb13-121"><a href="#cb13-121" aria-hidden="true" tabindex="-1"></a>ok_keywords_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"nessun"</span>, defective_keywords_2_it, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"senza"</span>, defective_keywords_2_it, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb13-122"><a href="#cb13-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-123"><a href="#cb13-123" aria-hidden="true" tabindex="-1"></a>defective_keywords_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"defective"</span>, <span class="st">"does not start"</span>, <span class="st">"won't start"</span>, <span class="st">"broken"</span>, <span class="st">"light on"</span>, <span class="st">"for export"</span>, <span class="st">"noise"</span>, <span class="st">"faulty"</span>, <span class="st">"not working"</span>, <span class="st">"no longer working"</span>)</span>
+<span id="cb13-124"><a href="#cb13-124" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"damage"</span>, <span class="st">"damaged"</span>, <span class="st">"problem"</span>, <span class="st">"problems"</span>)</span>
+<span id="cb13-125"><a href="#cb13-125" aria-hidden="true" tabindex="-1"></a>ok_keywords_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"no"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"without"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"not"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb13-126"><a href="#cb13-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-127"><a href="#cb13-127" aria-hidden="true" tabindex="-1"></a><span class="co"># We create vectors for the keywords</span></span>
+<span id="cb13-128"><a href="#cb13-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-129"><a href="#cb13-129" aria-hidden="true" tabindex="-1"></a>defective_keywords <span class="ot">&lt;-</span> <span class="fu">c</span>(defective_keywords_de, defective_keywords_fr, defective_keywords_it, defective_keywords_en)</span>
+<span id="cb13-130"><a href="#cb13-130" aria-hidden="true" tabindex="-1"></a>defective_keywords_2 <span class="ot">&lt;-</span> <span class="fu">c</span>(defective_keywords_2_de, defective_keywords_2_fr, defective_keywords_2_it, defective_keywords_2_en)</span>
+<span id="cb13-131"><a href="#cb13-131" aria-hidden="true" tabindex="-1"></a>ok_keywords <span class="ot">&lt;-</span> <span class="fu">c</span>(ok_keywords_de, ok_keywords_fr, ok_keywords_it, ok_keywords_en)</span>
+<span id="cb13-132"><a href="#cb13-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-133"><a href="#cb13-133" aria-hidden="true" tabindex="-1"></a><span class="co"># We add the column "defective".</span></span>
+<span id="cb13-134"><a href="#cb13-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-135"><a href="#cb13-135" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>defective <span class="ot">&lt;-</span> <span class="fu">logical</span>(<span class="fu">nrow</span>(data))</span>
+<span id="cb13-136"><a href="#cb13-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-137"><a href="#cb13-137" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to true if any keyword from defective_keywords_2 (susceptible to be a false positive) is in the subtitle column or description.text column.</span></span>
+<span id="cb13-138"><a href="#cb13-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-139"><a href="#cb13-139" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords_2) {</span>
+<span id="cb13-140"><a href="#cb13-140" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-141"><a href="#cb13-141" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-142"><a href="#cb13-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-143"><a href="#cb13-143" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords_2) {</span>
+<span id="cb13-144"><a href="#cb13-144" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-145"><a href="#cb13-145" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-146"><a href="#cb13-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-147"><a href="#cb13-147" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to FALSE all the TRUE values that contain a keyword in ok_keywords.</span></span>
+<span id="cb13-148"><a href="#cb13-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-149"><a href="#cb13-149" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> ok_keywords) {</span>
+<span id="cb13-150"><a href="#cb13-150" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-151"><a href="#cb13-151" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-152"><a href="#cb13-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-153"><a href="#cb13-153" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> ok_keywords) {</span>
+<span id="cb13-154"><a href="#cb13-154" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-155"><a href="#cb13-155" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-156"><a href="#cb13-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-157"><a href="#cb13-157" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to TRUE if any keyword from defective_keywords are in the subtitle or description.text columns.</span></span>
+<span id="cb13-158"><a href="#cb13-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-159"><a href="#cb13-159" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords) {</span>
+<span id="cb13-160"><a href="#cb13-160" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-161"><a href="#cb13-161" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords) {</span>
+<span id="cb13-164"><a href="#cb13-164" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-165"><a href="#cb13-165" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-166"><a href="#cb13-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-167"><a href="#cb13-167" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to defective to TRUE where the column accident is TRUE.</span></span>
+<span id="cb13-168"><a href="#cb13-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-169"><a href="#cb13-169" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>defective[data<span class="sc">$</span>accident] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb13-170"><a href="#cb13-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-171"><a href="#cb13-171" aria-hidden="true" tabindex="-1"></a><span class="do">### We set to NA if values are "-" in columns fuel.type, transmission and drivetrain.</span></span>
+<span id="cb13-172"><a href="#cb13-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-173"><a href="#cb13-173" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fuel.type <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>fuel.type, <span class="st">"-"</span>)</span>
+<span id="cb13-174"><a href="#cb13-174" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>transmission <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>transmission, <span class="st">"-"</span>)</span>
+<span id="cb13-175"><a href="#cb13-175" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>drivetrain <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>drivetrain, <span class="st">"-"</span>)</span>
+<span id="cb13-176"><a href="#cb13-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-177"><a href="#cb13-177" aria-hidden="true" tabindex="-1"></a><span class="do">### We will create the columns vehicle.age and listing.age to be able to model without using dates. The unit of measurement will be days.</span></span>
+<span id="cb13-178"><a href="#cb13-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-179"><a href="#cb13-179" aria-hidden="true" tabindex="-1"></a><span class="co"># We define scraping_date which is the date of the most recently created listing (we assume this corresponds to the scraping date since there are many listings posted each day for our data sets).</span></span>
+<span id="cb13-180"><a href="#cb13-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-181"><a href="#cb13-181" aria-hidden="true" tabindex="-1"></a>scraping_date <span class="ot">&lt;-</span> data<span class="sc">$</span>created.date[<span class="fu">order</span>(data<span class="sc">$</span>created.date, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span>]]</span>
+<span id="cb13-182"><a href="#cb13-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-183"><a href="#cb13-183" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>vehicle.age <span class="ot">&lt;-</span> scraping_date <span class="sc">-</span> data<span class="sc">$</span>date</span>
+<span id="cb13-184"><a href="#cb13-184" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>listing.age <span class="ot">&lt;-</span> scraping_date <span class="sc">-</span> data<span class="sc">$</span>created.date</span>
+<span id="cb13-185"><a href="#cb13-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-186"><a href="#cb13-186" aria-hidden="true" tabindex="-1"></a><span class="co"># We remove the defective vehicles from our cleaned data</span></span>
+<span id="cb13-187"><a href="#cb13-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-188"><a href="#cb13-188" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data[data<span class="sc">$</span>defective <span class="sc">==</span> <span class="cn">FALSE</span>,]</span>
+<span id="cb13-189"><a href="#cb13-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-190"><a href="#cb13-190" aria-hidden="true" tabindex="-1"></a><span class="do">### Finally we export the data to our cleaned-data folder</span></span>
+<span id="cb13-191"><a href="#cb13-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-192"><a href="#cb13-192" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(data, <span class="at">file =</span> <span class="st">"~/GitHub/Data_science/cleaned-data/audi2_cleaned.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">### We load the necessary libraries to clean our data</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="do">### We set our working directory to the data folder and load our dataset golf2</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"~/GitHub/Data_science/data"</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"skoda2.csv"</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>skoda2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"skoda2.csv"</span>)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="do">### We will start by keeping only the numbers in the columns "price", "kilometers" and "listing.id"</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>price <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>price, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>kilometers <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>kilometers, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>listing.id <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>listing.id)</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="do">### We keep only the first number in "consumption" and get rid of "l/100km" and set "-" to "NA"</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>consumption <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>consumption, <span class="st">"-"</span>)</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>consumption <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>consumption)</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="do">### We see that there are some outliers that shouldn't be here. The values jump from 11.6 l/100km to 160 l/100km. These are probably errors when scraping the data, the scraping software has maybe taken another field's value when the consumption field was blank.</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(data<span class="sc">$</span>consumption[<span class="fu">order</span>(data<span class="sc">$</span>consumption)])</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>consumption[data<span class="sc">$</span>consumption <span class="sc">&gt;</span> <span class="dv">12</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="co"># We can easily see all the unique values and the duplicate count with this code:</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="co">#as.tibble(data$consumption) |&gt;</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="co">#  group_by_all() |&gt;</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="co">#  count() |&gt;</span></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="co">#  print(n = 77)</span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a><span class="do">### Now let's do the same for column "power". We will keep the unit of measurement horsepower instead of kW.</span></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>power <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>power, <span class="st">"-"</span>)</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>power <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>power)</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a><span class="do">### We will now change the "Oui"/"Non" values in the column "expertise" to logical values TRUE/FALSE</span></span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise[data<span class="sc">$</span>expertise <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise[data<span class="sc">$</span>expertise <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>expertise)</span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a><span class="do">### Let's do the same for columns "accident" and "warranty".</span></span>
+<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident[data<span class="sc">$</span>accident <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident[data<span class="sc">$</span>accident <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>accident)</span>
+<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty[data<span class="sc">$</span>warranty <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty[data<span class="sc">$</span>warranty <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>warranty)</span>
+<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a><span class="do">### We will now fix the column "new.price" by setting values "Oui"/"Non" (Errors when scraping) to NA, then we will parse numbers from the remaining columns.</span></span>
+<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>new.price, <span class="st">"Oui"</span>)</span>
+<span id="cb14-59"><a href="#cb14-59" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>new.price, <span class="st">"Non"</span>)</span>
+<span id="cb14-60"><a href="#cb14-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-61"><a href="#cb14-61" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>new.price, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb14-62"><a href="#cb14-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-63"><a href="#cb14-63" aria-hidden="true" tabindex="-1"></a><span class="do">### If we look at the unique values we can see some unrealistic new car prices, notably 1, 54 and 4309. We will assume these are errors and remove them.</span></span>
+<span id="cb14-64"><a href="#cb14-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-65"><a href="#cb14-65" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(data<span class="sc">$</span>new.price[<span class="fu">order</span>(data<span class="sc">$</span>new.price)])</span>
+<span id="cb14-66"><a href="#cb14-66" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price[data<span class="sc">$</span>new.price <span class="sc">&lt;</span> <span class="dv">5000</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb14-67"><a href="#cb14-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-68"><a href="#cb14-68" aria-hidden="true" tabindex="-1"></a><span class="do">### Let's drop some columns that have meaningless information, and that are a result of scraping the data. We will drop columns "web.scraper.order", "web.scraper.start.url", "page" and "annonce.link".</span></span>
+<span id="cb14-69"><a href="#cb14-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-70"><a href="#cb14-70" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>web.scraper.order, <span class="sc">-</span>web.scraper.start.url, <span class="sc">-</span>page, <span class="sc">-</span>annonce.link)</span>
+<span id="cb14-71"><a href="#cb14-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-72"><a href="#cb14-72" aria-hidden="true" tabindex="-1"></a><span class="do">### Now we want to set the "date" column to class "Date" to simplify plotting. To do this we need to format the values as yyyy.mm.dd, they are currently at mm.yyyy.</span></span>
+<span id="cb14-73"><a href="#cb14-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-74"><a href="#cb14-74" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's look at the data first</span></span>
+<span id="cb14-75"><a href="#cb14-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-76"><a href="#cb14-76" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(data<span class="sc">$</span>date[<span class="fu">order</span>(data<span class="sc">$</span>date)])</span>
+<span id="cb14-77"><a href="#cb14-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-78"><a href="#cb14-78" aria-hidden="true" tabindex="-1"></a><span class="co"># We remove one visible error</span></span>
+<span id="cb14-79"><a href="#cb14-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-80"><a href="#cb14-80" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>date[<span class="dv">1584</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb14-81"><a href="#cb14-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-82"><a href="#cb14-82" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we set the format to mm.yyyy (the vector needs to be a character vector for the parse_date function to work) then parse date. The final format is yyyy-mm-dd.</span></span>
+<span id="cb14-83"><a href="#cb14-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-84"><a href="#cb14-84" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>date <span class="ot">&lt;-</span> data<span class="sc">$</span>date <span class="sc">|&gt;</span></span>
+<span id="cb14-85"><a href="#cb14-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format</span>(<span class="at">format =</span> <span class="st">"%m.%Y"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-86"><a href="#cb14-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">parse_date</span>(<span class="at">format =</span> <span class="st">"%m.%Y"</span>)</span>
+<span id="cb14-87"><a href="#cb14-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-88"><a href="#cb14-88" aria-hidden="true" tabindex="-1"></a><span class="do">### We set expertise.date and created.date to date classes as well</span></span>
+<span id="cb14-89"><a href="#cb14-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-90"><a href="#cb14-90" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>created.date <span class="ot">&lt;-</span> <span class="fu">parse_date</span>(data<span class="sc">$</span>created.date)</span>
+<span id="cb14-91"><a href="#cb14-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-92"><a href="#cb14-92" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise.date <span class="ot">&lt;-</span> data<span class="sc">$</span>expertise.date <span class="sc">|&gt;</span></span>
+<span id="cb14-93"><a href="#cb14-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format</span>(<span class="at">format =</span> <span class="st">"%d.%m.%Y"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-94"><a href="#cb14-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">parse_date</span>(<span class="at">format =</span> <span class="st">"%d.%m.%Y"</span>)</span>
+<span id="cb14-95"><a href="#cb14-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-96"><a href="#cb14-96" aria-hidden="true" tabindex="-1"></a><span class="do">### We will now add a column to the data where values will be TRUE where the vehicle is potentially defective or in need of repairs, and FALSE if not. </span></span>
+<span id="cb14-97"><a href="#cb14-97" aria-hidden="true" tabindex="-1"></a><span class="do">### We will need to remove these defective vehicles when creating our model because they could bias it, making it underestimate prices for functioning vehicles.</span></span>
+<span id="cb14-98"><a href="#cb14-98" aria-hidden="true" tabindex="-1"></a><span class="do">### We plan to identify defective vehicles in two ways. The first way being the "accident" column, which is TRUE if the seller has flagged the vehicle as having been in an accident in the past, and FALSE if not.</span></span>
+<span id="cb14-99"><a href="#cb14-99" aria-hidden="true" tabindex="-1"></a><span class="do">### The second way will be to look for keywords in columns "title", "subtitle" and "description.text" which are common in listings with defective vehicles, such as "defekt", "motor startet nicht" etc.</span></span>
+<span id="cb14-100"><a href="#cb14-100" aria-hidden="true" tabindex="-1"></a><span class="do">### We will create a column where values will be TRUE if one of these keywords or key phrases is detected, and FALSE if not.</span></span>
+<span id="cb14-101"><a href="#cb14-101" aria-hidden="true" tabindex="-1"></a><span class="do">### If either of these two identifiers are TRUE, the vehicle will be deemed defective and not eligible to serve as data for creating our model.</span></span>
+<span id="cb14-102"><a href="#cb14-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-103"><a href="#cb14-103" aria-hidden="true" tabindex="-1"></a><span class="co"># First we create a vector of characters which are the defective keywords.</span></span>
+<span id="cb14-104"><a href="#cb14-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-105"><a href="#cb14-105" aria-hidden="true" tabindex="-1"></a>defective_keywords_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"defekt"</span>, <span class="st">"defect"</span>, <span class="st">"defeckt"</span>, <span class="st">"startet nicht"</span>, <span class="st">"starttet nicht"</span>, <span class="st">"gebrochen"</span>, <span class="st">"lampe leuchtet"</span>, <span class="st">"für export"</span>, <span class="st">"fur export"</span>, <span class="st">"gerausche"</span>, <span class="st">"geräusche"</span>, <span class="st">"gerräusche"</span>, <span class="st">"angebrochen"</span>, <span class="st">"angeschlagen"</span>, <span class="st">"beschädigt"</span>, <span class="st">"fehlerhaft"</span>, <span class="st">"lädiert"</span>, <span class="st">"nicht in Ordnung"</span>, <span class="st">"nicht mehr funktionierend"</span>, <span class="st">"nicht mehr gut"</span>, <span class="st">"schadhaft"</span>, <span class="st">"zerbrochen"</span>, <span class="st">"zerrissen"</span>, <span class="st">"kaputt"</span> )</span>
+<span id="cb14-106"><a href="#cb14-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-107"><a href="#cb14-107" aria-hidden="true" tabindex="-1"></a><span class="co"># We create a second list where the keywords are likely to have negation before them, so as to not falsely flag vehicles as defective. </span></span>
+<span id="cb14-108"><a href="#cb14-108" aria-hidden="true" tabindex="-1"></a><span class="co"># We will then create an "ok" keywords vector that overpower the second defective keywords vector.</span></span>
+<span id="cb14-109"><a href="#cb14-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-110"><a href="#cb14-110" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"schäden"</span>, <span class="st">"problem"</span>, <span class="st">"schade"</span>, <span class="st">"probleme"</span>, <span class="st">"schaden"</span>)</span>
+<span id="cb14-111"><a href="#cb14-111" aria-hidden="true" tabindex="-1"></a>ok_keywords_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"ohne"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"kein"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"keine"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb14-112"><a href="#cb14-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-113"><a href="#cb14-113" aria-hidden="true" tabindex="-1"></a><span class="co">#We repeat these steps for other languages that listings could be in (French, Italian and English).</span></span>
+<span id="cb14-114"><a href="#cb14-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-115"><a href="#cb14-115" aria-hidden="true" tabindex="-1"></a>defective_keywords_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"témoin"</span>, <span class="st">"bruit"</span>, <span class="st">"défaut"</span>, <span class="st">"ne démarre pas"</span>, <span class="st">"cassé"</span>, <span class="st">"pour export"</span>, <span class="st">"pour l'export"</span>, <span class="st">"endommagé"</span>, <span class="st">"endommager"</span>, <span class="st">"endommage"</span>, <span class="st">"défectueux"</span>, <span class="st">"defectueux"</span>, <span class="st">"pas en bon état"</span>, <span class="st">"ne fonctionne plus"</span>, <span class="st">"cassé"</span>)</span>
+<span id="cb14-116"><a href="#cb14-116" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"dégâts"</span>, <span class="st">"dégats"</span>, <span class="st">"degâts"</span>, <span class="st">"degats"</span>, <span class="st">"problème"</span>, <span class="st">"probleme"</span>, <span class="st">"dommages"</span>)</span>
+<span id="cb14-117"><a href="#cb14-117" aria-hidden="true" tabindex="-1"></a>ok_keywords_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"sans"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"pas de"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"aucun"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb14-118"><a href="#cb14-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-119"><a href="#cb14-119" aria-hidden="true" tabindex="-1"></a>defective_keywords_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"spia"</span>, <span class="st">"rumore"</span>, <span class="st">"difetto"</span>, <span class="st">"non parte"</span>, <span class="st">"non si avvia"</span>, <span class="st">"rotto"</span>, <span class="st">"per l'esportazione"</span>, <span class="st">"per export"</span>, <span class="st">"danneggiato"</span>, <span class="st">"danneggiare"</span>, <span class="st">"danneggia"</span>, <span class="st">"difettoso"</span>, <span class="st">"non in buone condizioni"</span>, <span class="st">"non funziona più"</span>)</span>
+<span id="cb14-120"><a href="#cb14-120" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"danni"</span>, <span class="st">"problemi"</span>, <span class="st">"problema"</span>)</span>
+<span id="cb14-121"><a href="#cb14-121" aria-hidden="true" tabindex="-1"></a>ok_keywords_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"nessun"</span>, defective_keywords_2_it, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"senza"</span>, defective_keywords_2_it, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb14-122"><a href="#cb14-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-123"><a href="#cb14-123" aria-hidden="true" tabindex="-1"></a>defective_keywords_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"defective"</span>, <span class="st">"does not start"</span>, <span class="st">"won't start"</span>, <span class="st">"broken"</span>, <span class="st">"light on"</span>, <span class="st">"for export"</span>, <span class="st">"noise"</span>, <span class="st">"faulty"</span>, <span class="st">"not working"</span>, <span class="st">"no longer working"</span>)</span>
+<span id="cb14-124"><a href="#cb14-124" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"damage"</span>, <span class="st">"damaged"</span>, <span class="st">"problem"</span>, <span class="st">"problems"</span>)</span>
+<span id="cb14-125"><a href="#cb14-125" aria-hidden="true" tabindex="-1"></a>ok_keywords_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"no"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"without"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"not"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb14-126"><a href="#cb14-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-127"><a href="#cb14-127" aria-hidden="true" tabindex="-1"></a><span class="co"># We create vectors for the keywords</span></span>
+<span id="cb14-128"><a href="#cb14-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-129"><a href="#cb14-129" aria-hidden="true" tabindex="-1"></a>defective_keywords <span class="ot">&lt;-</span> <span class="fu">c</span>(defective_keywords_de, defective_keywords_fr, defective_keywords_it, defective_keywords_en)</span>
+<span id="cb14-130"><a href="#cb14-130" aria-hidden="true" tabindex="-1"></a>defective_keywords_2 <span class="ot">&lt;-</span> <span class="fu">c</span>(defective_keywords_2_de, defective_keywords_2_fr, defective_keywords_2_it, defective_keywords_2_en)</span>
+<span id="cb14-131"><a href="#cb14-131" aria-hidden="true" tabindex="-1"></a>ok_keywords <span class="ot">&lt;-</span> <span class="fu">c</span>(ok_keywords_de, ok_keywords_fr, ok_keywords_it, ok_keywords_en)</span>
+<span id="cb14-132"><a href="#cb14-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-133"><a href="#cb14-133" aria-hidden="true" tabindex="-1"></a><span class="co"># We add the column "defective".</span></span>
+<span id="cb14-134"><a href="#cb14-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-135"><a href="#cb14-135" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>defective <span class="ot">&lt;-</span> <span class="fu">logical</span>(<span class="fu">nrow</span>(data))</span>
+<span id="cb14-136"><a href="#cb14-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-137"><a href="#cb14-137" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to true if any keyword from defective_keywords_2 (susceptible to be a false positive) is in the subtitle column or description.text column.</span></span>
+<span id="cb14-138"><a href="#cb14-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-139"><a href="#cb14-139" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords_2) {</span>
+<span id="cb14-140"><a href="#cb14-140" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-141"><a href="#cb14-141" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-142"><a href="#cb14-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-143"><a href="#cb14-143" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords_2) {</span>
+<span id="cb14-144"><a href="#cb14-144" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-145"><a href="#cb14-145" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-146"><a href="#cb14-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-147"><a href="#cb14-147" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to FALSE all the TRUE values that contain a keyword in ok_keywords.</span></span>
+<span id="cb14-148"><a href="#cb14-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-149"><a href="#cb14-149" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> ok_keywords) {</span>
+<span id="cb14-150"><a href="#cb14-150" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-151"><a href="#cb14-151" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-152"><a href="#cb14-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-153"><a href="#cb14-153" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> ok_keywords) {</span>
+<span id="cb14-154"><a href="#cb14-154" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-155"><a href="#cb14-155" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-156"><a href="#cb14-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-157"><a href="#cb14-157" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to TRUE if any keyword from defective_keywords are in the subtitle or description.text columns.</span></span>
+<span id="cb14-158"><a href="#cb14-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-159"><a href="#cb14-159" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords) {</span>
+<span id="cb14-160"><a href="#cb14-160" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-161"><a href="#cb14-161" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-162"><a href="#cb14-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-163"><a href="#cb14-163" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords) {</span>
+<span id="cb14-164"><a href="#cb14-164" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-165"><a href="#cb14-165" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-166"><a href="#cb14-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-167"><a href="#cb14-167" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to defective to TRUE where the column accident is TRUE.</span></span>
+<span id="cb14-168"><a href="#cb14-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-169"><a href="#cb14-169" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>defective[data<span class="sc">$</span>accident] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb14-170"><a href="#cb14-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-171"><a href="#cb14-171" aria-hidden="true" tabindex="-1"></a><span class="do">### We set to NA if values are "-" in columns fuel.type, transmission and drivetrain.</span></span>
+<span id="cb14-172"><a href="#cb14-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-173"><a href="#cb14-173" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fuel.type <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>fuel.type, <span class="st">"-"</span>)</span>
+<span id="cb14-174"><a href="#cb14-174" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>transmission <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>transmission, <span class="st">"-"</span>)</span>
+<span id="cb14-175"><a href="#cb14-175" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>drivetrain <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>drivetrain, <span class="st">"-"</span>)</span>
+<span id="cb14-176"><a href="#cb14-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-177"><a href="#cb14-177" aria-hidden="true" tabindex="-1"></a><span class="do">### We will create the columns vehicle.age and listing.age to be able to model without using dates. The unit of measurement will be days.</span></span>
+<span id="cb14-178"><a href="#cb14-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-179"><a href="#cb14-179" aria-hidden="true" tabindex="-1"></a><span class="co"># We define scraping_date which is the date of the most recently created listing (we assume this corresponds to the scraping date since there are many listings posted each day for our data sets).</span></span>
+<span id="cb14-180"><a href="#cb14-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-181"><a href="#cb14-181" aria-hidden="true" tabindex="-1"></a>scraping_date <span class="ot">&lt;-</span> data<span class="sc">$</span>created.date[<span class="fu">order</span>(data<span class="sc">$</span>created.date, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span>]]</span>
+<span id="cb14-182"><a href="#cb14-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-183"><a href="#cb14-183" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>vehicle.age <span class="ot">&lt;-</span> scraping_date <span class="sc">-</span> data<span class="sc">$</span>date</span>
+<span id="cb14-184"><a href="#cb14-184" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>listing.age <span class="ot">&lt;-</span> scraping_date <span class="sc">-</span> data<span class="sc">$</span>created.date</span>
+<span id="cb14-185"><a href="#cb14-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-186"><a href="#cb14-186" aria-hidden="true" tabindex="-1"></a><span class="co"># We remove the defective vehicles from our cleaned data</span></span>
+<span id="cb14-187"><a href="#cb14-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-188"><a href="#cb14-188" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data[data<span class="sc">$</span>defective <span class="sc">==</span> <span class="cn">FALSE</span>,]</span>
+<span id="cb14-189"><a href="#cb14-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-190"><a href="#cb14-190" aria-hidden="true" tabindex="-1"></a><span class="do">### Finally we export the data to our cleaned-data folder</span></span>
+<span id="cb14-191"><a href="#cb14-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-192"><a href="#cb14-192" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(data, <span class="at">file =</span> <span class="st">"~/GitHub/Data_science/cleaned-data/skoda2_cleaned.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="do">### We load the necessary libraries to clean our data</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"~/GitHub/Data_science/data"</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"volvo2.csv"</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>volvo2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"volvo2.csv"</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="do">### We will start by keeping only the numbers in the columns "price", "kilometers" and "listing.id"</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>price <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>price, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>kilometers <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>kilometers, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>listing.id <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>listing.id)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="do">### We only keep the first number in "consumption" and get rid of "l/100km" and set "-" to "NA"</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>consumption <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>consumption, <span class="st">"-"</span>)</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>consumption <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>consumption)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="do">### We see that there are some outliers that shouldn't be here. The values jump from 11.6 l/100km to 160 l/100km. These are probably errors when scraping the data, the scraping software has maybe taken another field's value when the consumption field was blank.</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(data<span class="sc">$</span>consumption[<span class="fu">order</span>(data<span class="sc">$</span>consumption)])</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>consumption[data<span class="sc">$</span>consumption <span class="sc">&gt;</span> <span class="dv">12</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a><span class="do">### Now let's do the same for column "power". We will keep the unit of measurement horsepower instead of kW.</span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>power <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>power, <span class="st">"-"</span>)</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>power <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>power)</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a><span class="do">### We will now change the "Oui"/"Non" values in the column "expertise" to logical values TRUE/FALSE</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise[data<span class="sc">$</span>expertise <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise[data<span class="sc">$</span>expertise <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>expertise)</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a><span class="do">### Let's do the same for columns "accident" and "warranty".</span></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident[data<span class="sc">$</span>accident <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident[data<span class="sc">$</span>accident <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>accident)</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty[data<span class="sc">$</span>warranty <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty[data<span class="sc">$</span>warranty <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>warranty)</span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a><span class="do">### We will now fix the column "new.price" by setting values "Oui"/"Non" (Errors when scraping) to NA, then we will parse numbers from the remaining columns.</span></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>new.price, <span class="st">"Oui"</span>)</span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>new.price, <span class="st">"Non"</span>)</span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>new.price, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a><span class="do">### If we look at the unique values we can see some unrealistic new car prices, notably 1, 54 and 4309. We will assume these are errors and remove them.</span></span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(data<span class="sc">$</span>new.price[<span class="fu">order</span>(data<span class="sc">$</span>new.price)])</span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price[data<span class="sc">$</span>new.price <span class="sc">&lt;</span> <span class="dv">5000</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a><span class="do">### Let's drop some columns that have meaningless information, and that are a result of scraping the data. We will drop columns "web.scraper.order", "web.scraper.start.url", "page" and "annonce.link".</span></span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)]</span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a><span class="do">### Now we want to set the "date" column to class "Date" to simplify plotting. To do this we need to format the values as yyyy.mm.dd, they are currently at mm.yyyy.</span></span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's look at the data first</span></span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(data<span class="sc">$</span>date[<span class="fu">order</span>(data<span class="sc">$</span>date)])</span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we set the format to mm.yyyy (the vector needs to be a character vector for the parse_date function to work) then parse date. The final format is yyyy-mm-dd.</span></span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>date <span class="ot">&lt;-</span> data<span class="sc">$</span>date <span class="sc">|&gt;</span></span>
+<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format</span>(<span class="at">format =</span> <span class="st">"%m.%Y"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">parse_date</span>(<span class="at">format =</span> <span class="st">"%m.%Y"</span>)</span>
+<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a><span class="do">### We set expertise.date and created.date to date classes as well</span></span>
+<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>created.date <span class="ot">&lt;-</span> <span class="fu">parse_date</span>(data<span class="sc">$</span>created.date)</span>
+<span id="cb15-77"><a href="#cb15-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-78"><a href="#cb15-78" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise.date <span class="ot">&lt;-</span> data<span class="sc">$</span>expertise.date <span class="sc">|&gt;</span></span>
+<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format</span>(<span class="at">format =</span> <span class="st">"%d.%m.%Y"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">parse_date</span>(<span class="at">format =</span> <span class="st">"%d.%m.%Y"</span>)</span>
+<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a><span class="do">### We will now add a column to the data where values will be TRUE where the vehicle is potentially defective or in need of repairs, and FALSE if not. </span></span>
+<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a><span class="do">### We will need to remove these defective vehicles when creating our model because they could bias it, making it underestimate prices for functioning vehicles.</span></span>
+<span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a><span class="do">### We plan to identify defective vehicles in two ways. The first way being the "accident" column, which is TRUE if the seller has flagged the vehicle as having been in an accident in the past, and FALSE if not.</span></span>
+<span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a><span class="do">### The second way will be to look for keywords in columns "title", "subtitle" and "description.text" which are common in listings with defective vehicles, such as "defekt", "motor startet nicht" etc.</span></span>
+<span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a><span class="do">### We will create a column where values will be TRUE if one of these keywords or key phrases is detected, and FALSE if not.</span></span>
+<span id="cb15-87"><a href="#cb15-87" aria-hidden="true" tabindex="-1"></a><span class="do">### If either of these two identifiers are TRUE, the vehicle will be deemed defective and not eligible to serve as data for creating our model.</span></span>
+<span id="cb15-88"><a href="#cb15-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a><span class="co"># First we create a vector of characters which are the defective keywords.</span></span>
+<span id="cb15-90"><a href="#cb15-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a>defective_keywords_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"defekt"</span>, <span class="st">"defect"</span>, <span class="st">"defeckt"</span>, <span class="st">"startet nicht"</span>, <span class="st">"starttet nicht"</span>, <span class="st">"gebrochen"</span>, <span class="st">"lampe leuchtet"</span>, <span class="st">"für export"</span>, <span class="st">"fur export"</span>, <span class="st">"gerausche"</span>, <span class="st">"geräusche"</span>, <span class="st">"gerräusche"</span>, <span class="st">"angebrochen"</span>, <span class="st">"angeschlagen"</span>, <span class="st">"beschädigt"</span>, <span class="st">"fehlerhaft"</span>, <span class="st">"lädiert"</span>, <span class="st">"nicht in Ordnung"</span>, <span class="st">"nicht mehr funktionierend"</span>, <span class="st">"nicht mehr gut"</span>, <span class="st">"schadhaft"</span>, <span class="st">"zerbrochen"</span>, <span class="st">"zerrissen"</span>, <span class="st">"kaputt"</span> )</span>
+<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a><span class="co"># We create a second list where the keywords are likely to have negation before them, so as to not falsely flag vehicles as defective. </span></span>
+<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a><span class="co"># We will then create an "ok" keywords vector that overpower the second defective keywords vector.</span></span>
+<span id="cb15-95"><a href="#cb15-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-96"><a href="#cb15-96" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"schäden"</span>, <span class="st">"problem"</span>, <span class="st">"schade"</span>, <span class="st">"probleme"</span>, <span class="st">"schaden"</span>)</span>
+<span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a>ok_keywords_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"ohne"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"kein"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"keine"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a><span class="co">#We repeat these steps for other languages that listings could be in (French, Italian and English).</span></span>
+<span id="cb15-100"><a href="#cb15-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-101"><a href="#cb15-101" aria-hidden="true" tabindex="-1"></a>defective_keywords_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"témoin"</span>, <span class="st">"bruit"</span>, <span class="st">"défaut"</span>, <span class="st">"ne démarre pas"</span>, <span class="st">"cassé"</span>, <span class="st">"pour export"</span>, <span class="st">"pour l'export"</span>, <span class="st">"endommagé"</span>, <span class="st">"endommager"</span>, <span class="st">"endommage"</span>, <span class="st">"défectueux"</span>, <span class="st">"defectueux"</span>, <span class="st">"pas en bon état"</span>, <span class="st">"ne fonctionne plus"</span>, <span class="st">"cassé"</span>)</span>
+<span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"dégâts"</span>, <span class="st">"dégats"</span>, <span class="st">"degâts"</span>, <span class="st">"degats"</span>, <span class="st">"problème"</span>, <span class="st">"probleme"</span>, <span class="st">"dommages"</span>)</span>
+<span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a>ok_keywords_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"sans"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"pas de"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"aucun"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb15-104"><a href="#cb15-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-105"><a href="#cb15-105" aria-hidden="true" tabindex="-1"></a>defective_keywords_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"spia"</span>, <span class="st">"rumore"</span>, <span class="st">"difetto"</span>, <span class="st">"non parte"</span>, <span class="st">"non si avvia"</span>, <span class="st">"rotto"</span>, <span class="st">"per l'esportazione"</span>, <span class="st">"per export"</span>, <span class="st">"danneggiato"</span>, <span class="st">"danneggiare"</span>, <span class="st">"danneggia"</span>, <span class="st">"difettoso"</span>, <span class="st">"non in buone condizioni"</span>, <span class="st">"non funziona più"</span>)</span>
+<span id="cb15-106"><a href="#cb15-106" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"danni"</span>, <span class="st">"problemi"</span>, <span class="st">"problema"</span>)</span>
+<span id="cb15-107"><a href="#cb15-107" aria-hidden="true" tabindex="-1"></a>ok_keywords_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"nessun"</span>, defective_keywords_2_it, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"senza"</span>, defective_keywords_2_it, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb15-108"><a href="#cb15-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-109"><a href="#cb15-109" aria-hidden="true" tabindex="-1"></a>defective_keywords_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"defective"</span>, <span class="st">"does not start"</span>, <span class="st">"won't start"</span>, <span class="st">"broken"</span>, <span class="st">"light on"</span>, <span class="st">"for export"</span>, <span class="st">"noise"</span>, <span class="st">"faulty"</span>, <span class="st">"not working"</span>, <span class="st">"no longer working"</span>)</span>
+<span id="cb15-110"><a href="#cb15-110" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"damage"</span>, <span class="st">"damaged"</span>, <span class="st">"problem"</span>, <span class="st">"problems"</span>)</span>
+<span id="cb15-111"><a href="#cb15-111" aria-hidden="true" tabindex="-1"></a>ok_keywords_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"no"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"without"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"not"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb15-112"><a href="#cb15-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-113"><a href="#cb15-113" aria-hidden="true" tabindex="-1"></a><span class="co"># We create vectors for the keywords</span></span>
+<span id="cb15-114"><a href="#cb15-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-115"><a href="#cb15-115" aria-hidden="true" tabindex="-1"></a>defective_keywords <span class="ot">&lt;-</span> <span class="fu">c</span>(defective_keywords_de, defective_keywords_fr, defective_keywords_it, defective_keywords_en)</span>
+<span id="cb15-116"><a href="#cb15-116" aria-hidden="true" tabindex="-1"></a>defective_keywords_2 <span class="ot">&lt;-</span> <span class="fu">c</span>(defective_keywords_2_de, defective_keywords_2_fr, defective_keywords_2_it, defective_keywords_2_en)</span>
+<span id="cb15-117"><a href="#cb15-117" aria-hidden="true" tabindex="-1"></a>ok_keywords <span class="ot">&lt;-</span> <span class="fu">c</span>(ok_keywords_de, ok_keywords_fr, ok_keywords_it, ok_keywords_en)</span>
+<span id="cb15-118"><a href="#cb15-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-119"><a href="#cb15-119" aria-hidden="true" tabindex="-1"></a><span class="co"># We add the column "defective".</span></span>
+<span id="cb15-120"><a href="#cb15-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-121"><a href="#cb15-121" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>defective <span class="ot">&lt;-</span> <span class="fu">logical</span>(<span class="fu">nrow</span>(data))</span>
+<span id="cb15-122"><a href="#cb15-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-123"><a href="#cb15-123" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to true if any keyword from defective_keywords_2 (susceptible to be a false positive) is in the subtitle column or description.text column.</span></span>
+<span id="cb15-124"><a href="#cb15-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-125"><a href="#cb15-125" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords_2) {</span>
+<span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb15-127"><a href="#cb15-127" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-128"><a href="#cb15-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-129"><a href="#cb15-129" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords_2) {</span>
+<span id="cb15-130"><a href="#cb15-130" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb15-131"><a href="#cb15-131" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-132"><a href="#cb15-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-133"><a href="#cb15-133" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to FALSE all the TRUE values that contain a keyword in ok_keywords.</span></span>
+<span id="cb15-134"><a href="#cb15-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-135"><a href="#cb15-135" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> ok_keywords) {</span>
+<span id="cb15-136"><a href="#cb15-136" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb15-137"><a href="#cb15-137" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-138"><a href="#cb15-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-139"><a href="#cb15-139" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> ok_keywords) {</span>
+<span id="cb15-140"><a href="#cb15-140" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb15-141"><a href="#cb15-141" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-142"><a href="#cb15-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-143"><a href="#cb15-143" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to TRUE if any keyword from defective_keywords are in the subtitle or description.text columns.</span></span>
+<span id="cb15-144"><a href="#cb15-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-145"><a href="#cb15-145" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords) {</span>
+<span id="cb15-146"><a href="#cb15-146" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb15-147"><a href="#cb15-147" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-148"><a href="#cb15-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-149"><a href="#cb15-149" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords) {</span>
+<span id="cb15-150"><a href="#cb15-150" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb15-151"><a href="#cb15-151" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-152"><a href="#cb15-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-153"><a href="#cb15-153" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to defective to TRUE where the column accident is TRUE.</span></span>
+<span id="cb15-154"><a href="#cb15-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-155"><a href="#cb15-155" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>defective[data<span class="sc">$</span>accident] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb15-156"><a href="#cb15-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-157"><a href="#cb15-157" aria-hidden="true" tabindex="-1"></a><span class="do">### We set to NA if values are "-" in columns fuel.type, transmission and drivetrain.</span></span>
+<span id="cb15-158"><a href="#cb15-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-159"><a href="#cb15-159" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fuel.type <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>fuel.type, <span class="st">"-"</span>)</span>
+<span id="cb15-160"><a href="#cb15-160" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>transmission <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>transmission, <span class="st">"-"</span>)</span>
+<span id="cb15-161"><a href="#cb15-161" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>drivetrain <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>drivetrain, <span class="st">"-"</span>)</span>
+<span id="cb15-162"><a href="#cb15-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-163"><a href="#cb15-163" aria-hidden="true" tabindex="-1"></a><span class="do">### We will create the columns vehicle.age and listing.age to be able to model without using dates. The unit of measurement will be days.</span></span>
+<span id="cb15-164"><a href="#cb15-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-165"><a href="#cb15-165" aria-hidden="true" tabindex="-1"></a><span class="co"># We define scraping_date which is the date of the most recently created listing (we assume this corresponds to the scraping date since there are many listings posted each day for our data sets).</span></span>
+<span id="cb15-166"><a href="#cb15-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-167"><a href="#cb15-167" aria-hidden="true" tabindex="-1"></a>scraping_date <span class="ot">&lt;-</span> data<span class="sc">$</span>created.date[<span class="fu">order</span>(data<span class="sc">$</span>created.date, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span>]]</span>
+<span id="cb15-168"><a href="#cb15-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-169"><a href="#cb15-169" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>vehicle.age <span class="ot">&lt;-</span> scraping_date <span class="sc">-</span> data<span class="sc">$</span>date</span>
+<span id="cb15-170"><a href="#cb15-170" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>listing.age <span class="ot">&lt;-</span> scraping_date <span class="sc">-</span> data<span class="sc">$</span>created.date</span>
+<span id="cb15-171"><a href="#cb15-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-172"><a href="#cb15-172" aria-hidden="true" tabindex="-1"></a><span class="co"># We remove the defective vehicles from our cleaned data</span></span>
+<span id="cb15-173"><a href="#cb15-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-174"><a href="#cb15-174" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data[data<span class="sc">$</span>defective <span class="sc">==</span> <span class="cn">FALSE</span>,]</span>
+<span id="cb15-175"><a href="#cb15-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-176"><a href="#cb15-176" aria-hidden="true" tabindex="-1"></a><span class="do">### Finally we export the data to our cleaned-data folder</span></span>
+<span id="cb15-177"><a href="#cb15-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-178"><a href="#cb15-178" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(data, <span class="at">file =</span> <span class="st">"~/GitHub/Data_science/cleaned-data/volvo2_cleaned.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="do">### We load the necessary libraries to clean our data</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="do">### We set our working directory to the data folder and load our dataset toyota</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"~/GitHub/Data_science/data"</span>)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"toyota.csv"</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>toyota <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"toyota.csv"</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="do">### We will start by keeping only the numbers in the columns "price", "kilometers" and "listing.id"</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>price <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>price, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>kilometers <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>kilometers, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>listing.id <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>listing.id)</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="do">### We keep only the first number in "consumption" and get rid of "l/100km" and set "-" to "NA"</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>consumption <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>consumption, <span class="st">"-"</span>)</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>consumption <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>consumption)</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="do">### Now let's do the same for column "power". We will keep the unit of measurement horsepower instead of kW.</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>power <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>power, <span class="st">"-"</span>)</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>power <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>power)</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="do">### We will now change the "Oui"/"Non" values in the column "expertise" to logical values TRUE/FALSE</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise[data<span class="sc">$</span>expertise <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise[data<span class="sc">$</span>expertise <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>expertise)</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a><span class="do">### Let's do the same for columns "accident" and "warranty".</span></span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident[data<span class="sc">$</span>accident <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident[data<span class="sc">$</span>accident <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>accident <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>accident)</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty[data<span class="sc">$</span>warranty <span class="sc">==</span> <span class="st">"Non"</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty[data<span class="sc">$</span>warranty <span class="sc">==</span> <span class="st">"Oui"</span>] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>warranty <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(data<span class="sc">$</span>warranty)</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="do">### We will now fix the column "new.price" by setting values "Oui"/"Non" (Errors when scraping) to NA, then we will parse numbers from the remaining columns.</span></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>new.price, <span class="st">"Oui"</span>)</span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>new.price, <span class="st">"Non"</span>)</span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price <span class="ot">&lt;-</span> <span class="fu">parse_number</span>(data<span class="sc">$</span>new.price, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">grouping_mark =</span> <span class="st">"'"</span>))</span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a><span class="do">### If we look at the unique values we can see some unrealistic new car prices, notably 1, 54 and 4309. We will assume these are errors and remove them.</span></span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(data<span class="sc">$</span>new.price[<span class="fu">order</span>(data<span class="sc">$</span>new.price)])</span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>new.price[data<span class="sc">$</span>new.price <span class="sc">&lt;</span> <span class="dv">5000</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a><span class="do">### Let's drop some columns that have meaningless information, and that are a result of scraping the data. We will drop columns "web.scraper.order", "web.scraper.start.url", "page" and "annonce.link".</span></span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)]</span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a><span class="do">### Now we want to set the "date" column to class "Date" to simplify plotting. To do this we need to format the values as yyyy.mm.dd, they are currently at mm.yyyy.</span></span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's look at the data first</span></span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(data<span class="sc">$</span>date[<span class="fu">order</span>(data<span class="sc">$</span>date)])</span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a><span class="co"># We remove one visible error</span></span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a><span class="co">#data$date[2802] &lt;- NA</span></span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we set the format to mm.yyyy (the vector needs to be a character vector for the parse_date function to work) then parse date. The final format is yyyy-mm-dd.</span></span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>date <span class="ot">&lt;-</span> data<span class="sc">$</span>date <span class="sc">|&gt;</span></span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format</span>(<span class="at">format =</span> <span class="st">"%m.%Y"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">parse_date</span>(<span class="at">format =</span> <span class="st">"%m.%Y"</span>)</span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a><span class="do">### We set expertise.date and created.date to date classes as well</span></span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>created.date <span class="ot">&lt;-</span> <span class="fu">parse_date</span>(data<span class="sc">$</span>created.date)</span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>expertise.date <span class="ot">&lt;-</span> data<span class="sc">$</span>expertise.date <span class="sc">|&gt;</span></span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format</span>(<span class="at">format =</span> <span class="st">"%d.%m.%Y"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">parse_date</span>(<span class="at">format =</span> <span class="st">"%d.%m.%Y"</span>)</span>
+<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a><span class="do">### We will now add a column to the data where values will be TRUE where the vehicle is potentially defective or in need of repairs, and FALSE if not. </span></span>
+<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a><span class="do">### We will need to remove these defective vehicles when creating our model because they could bias it, making it underestimate prices for functioning vehicles.</span></span>
+<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a><span class="do">### We plan to identify defective vehicles in two ways. The first way being the "accident" column, which is TRUE if the seller has flagged the vehicle as having been in an accident in the past, and FALSE if not.</span></span>
+<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a><span class="do">### The second way will be to look for keywords in columns "title", "subtitle" and "description.text" which are common in listings with defective vehicles, such as "defekt", "motor startet nicht" etc.</span></span>
+<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a><span class="do">### We will create a column where values will be TRUE if one of these keywords or key phrases is detected, and FALSE if not.</span></span>
+<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a><span class="do">### If either of these two identifiers are TRUE, the vehicle will be deemed defective and not eligible to serve as data for creating our model.</span></span>
+<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a><span class="co"># First we create a vector of characters which are the defective keywords.</span></span>
+<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a>defective_keywords_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"defekt"</span>, <span class="st">"defect"</span>, <span class="st">"defeckt"</span>, <span class="st">"startet nicht"</span>, <span class="st">"starttet nicht"</span>, <span class="st">"gebrochen"</span>, <span class="st">"lampe leuchtet"</span>, <span class="st">"für export"</span>, <span class="st">"fur export"</span>, <span class="st">"gerausche"</span>, <span class="st">"geräusche"</span>, <span class="st">"gerräusche"</span>, <span class="st">"angebrochen"</span>, <span class="st">"angeschlagen"</span>, <span class="st">"beschädigt"</span>, <span class="st">"fehlerhaft"</span>, <span class="st">"lädiert"</span>, <span class="st">"nicht in Ordnung"</span>, <span class="st">"nicht mehr funktionierend"</span>, <span class="st">"nicht mehr gut"</span>, <span class="st">"schadhaft"</span>, <span class="st">"zerbrochen"</span>, <span class="st">"zerrissen"</span>, <span class="st">"kaputt"</span> )</span>
+<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a><span class="co"># We create a second list where the keywords are likely to have negation before them, so as to not falsely flag vehicles as defective. </span></span>
+<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a><span class="co"># We will then create an "ok" keywords vector that overpower the second defective keywords vector.</span></span>
+<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"schäden"</span>, <span class="st">"problem"</span>, <span class="st">"schade"</span>, <span class="st">"probleme"</span>, <span class="st">"schaden"</span>)</span>
+<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a>ok_keywords_de <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"ohne"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"kein"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"keine"</span>, defective_keywords_2_de, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a><span class="co">#We repeat these steps for other languages that listings could be in (French, Italian and English).</span></span>
+<span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a>defective_keywords_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"témoin"</span>, <span class="st">"bruit"</span>, <span class="st">"défaut"</span>, <span class="st">"ne démarre pas"</span>, <span class="st">"cassé"</span>, <span class="st">"pour export"</span>, <span class="st">"pour l'export"</span>, <span class="st">"endommagé"</span>, <span class="st">"endommager"</span>, <span class="st">"endommage"</span>, <span class="st">"défectueux"</span>, <span class="st">"defectueux"</span>, <span class="st">"pas en bon état"</span>, <span class="st">"ne fonctionne plus"</span>, <span class="st">"cassé"</span>)</span>
+<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"dégâts"</span>, <span class="st">"dégats"</span>, <span class="st">"degâts"</span>, <span class="st">"degats"</span>, <span class="st">"problème"</span>, <span class="st">"probleme"</span>, <span class="st">"dommages"</span>)</span>
+<span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a>ok_keywords_fr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"sans"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"pas de"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"aucun"</span>, defective_keywords_2_fr, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a>defective_keywords_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"spia"</span>, <span class="st">"rumore"</span>, <span class="st">"difetto"</span>, <span class="st">"non parte"</span>, <span class="st">"non si avvia"</span>, <span class="st">"rotto"</span>, <span class="st">"per l'esportazione"</span>, <span class="st">"per export"</span>, <span class="st">"danneggiato"</span>, <span class="st">"danneggiare"</span>, <span class="st">"danneggia"</span>, <span class="st">"difettoso"</span>, <span class="st">"non in buone condizioni"</span>, <span class="st">"non funziona più"</span>)</span>
+<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"danni"</span>, <span class="st">"problemi"</span>, <span class="st">"problema"</span>)</span>
+<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a>ok_keywords_it <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"nessun"</span>, defective_keywords_2_it, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"senza"</span>, defective_keywords_2_it, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a>defective_keywords_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"defective"</span>, <span class="st">"does not start"</span>, <span class="st">"won't start"</span>, <span class="st">"broken"</span>, <span class="st">"light on"</span>, <span class="st">"for export"</span>, <span class="st">"noise"</span>, <span class="st">"faulty"</span>, <span class="st">"not working"</span>, <span class="st">"no longer working"</span>)</span>
+<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a>defective_keywords_2_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"damage"</span>, <span class="st">"damaged"</span>, <span class="st">"problem"</span>, <span class="st">"problems"</span>)</span>
+<span id="cb16-112"><a href="#cb16-112" aria-hidden="true" tabindex="-1"></a>ok_keywords_en <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"no"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"without"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>), <span class="fu">paste</span>(<span class="st">"not"</span>, defective_keywords_2_en, <span class="at">sep =</span> <span class="st">" "</span>))</span>
+<span id="cb16-113"><a href="#cb16-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a><span class="co"># We create vectors for the keywords</span></span>
+<span id="cb16-115"><a href="#cb16-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-116"><a href="#cb16-116" aria-hidden="true" tabindex="-1"></a>defective_keywords <span class="ot">&lt;-</span> <span class="fu">c</span>(defective_keywords_de, defective_keywords_fr, defective_keywords_it, defective_keywords_en)</span>
+<span id="cb16-117"><a href="#cb16-117" aria-hidden="true" tabindex="-1"></a>defective_keywords_2 <span class="ot">&lt;-</span> <span class="fu">c</span>(defective_keywords_2_de, defective_keywords_2_fr, defective_keywords_2_it, defective_keywords_2_en)</span>
+<span id="cb16-118"><a href="#cb16-118" aria-hidden="true" tabindex="-1"></a>ok_keywords <span class="ot">&lt;-</span> <span class="fu">c</span>(ok_keywords_de, ok_keywords_fr, ok_keywords_it, ok_keywords_en)</span>
+<span id="cb16-119"><a href="#cb16-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-120"><a href="#cb16-120" aria-hidden="true" tabindex="-1"></a><span class="co"># We add the column "defective".</span></span>
+<span id="cb16-121"><a href="#cb16-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-122"><a href="#cb16-122" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>defective <span class="ot">&lt;-</span> <span class="fu">logical</span>(<span class="fu">nrow</span>(data))</span>
+<span id="cb16-123"><a href="#cb16-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-124"><a href="#cb16-124" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to true if any keyword from defective_keywords_2 (susceptible to be a false positive) is in the subtitle column or description.text column.</span></span>
+<span id="cb16-125"><a href="#cb16-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-126"><a href="#cb16-126" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords_2) {</span>
+<span id="cb16-127"><a href="#cb16-127" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-128"><a href="#cb16-128" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-129"><a href="#cb16-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-130"><a href="#cb16-130" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords_2) {</span>
+<span id="cb16-131"><a href="#cb16-131" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-132"><a href="#cb16-132" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-133"><a href="#cb16-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-134"><a href="#cb16-134" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to FALSE all the TRUE values that contain a keyword in ok_keywords.</span></span>
+<span id="cb16-135"><a href="#cb16-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-136"><a href="#cb16-136" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> ok_keywords) {</span>
+<span id="cb16-137"><a href="#cb16-137" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-138"><a href="#cb16-138" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-139"><a href="#cb16-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-140"><a href="#cb16-140" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> ok_keywords) {</span>
+<span id="cb16-141"><a href="#cb16-141" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-142"><a href="#cb16-142" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-143"><a href="#cb16-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-144"><a href="#cb16-144" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to TRUE if any keyword from defective_keywords are in the subtitle or description.text columns.</span></span>
+<span id="cb16-145"><a href="#cb16-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-146"><a href="#cb16-146" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords) {</span>
+<span id="cb16-147"><a href="#cb16-147" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>description.text, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-148"><a href="#cb16-148" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-149"><a href="#cb16-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-150"><a href="#cb16-150" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (keyword <span class="cf">in</span> defective_keywords) {</span>
+<span id="cb16-151"><a href="#cb16-151" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>defective <span class="ot">&lt;-</span> data<span class="sc">$</span>defective <span class="sc">|</span> <span class="fu">grepl</span>(keyword, data<span class="sc">$</span>subtitle, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-152"><a href="#cb16-152" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-153"><a href="#cb16-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-154"><a href="#cb16-154" aria-hidden="true" tabindex="-1"></a><span class="co"># We set to defective to TRUE where the column accident is TRUE.</span></span>
+<span id="cb16-155"><a href="#cb16-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-156"><a href="#cb16-156" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>defective[data<span class="sc">$</span>accident] <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb16-157"><a href="#cb16-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-158"><a href="#cb16-158" aria-hidden="true" tabindex="-1"></a><span class="do">### We set to NA if values are "-" in columns fuel.type, transmission and drivetrain.</span></span>
+<span id="cb16-159"><a href="#cb16-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-160"><a href="#cb16-160" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>fuel.type <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>fuel.type, <span class="st">"-"</span>)</span>
+<span id="cb16-161"><a href="#cb16-161" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>transmission <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>transmission, <span class="st">"-"</span>)</span>
+<span id="cb16-162"><a href="#cb16-162" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>drivetrain <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>drivetrain, <span class="st">"-"</span>)</span>
+<span id="cb16-163"><a href="#cb16-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-164"><a href="#cb16-164" aria-hidden="true" tabindex="-1"></a><span class="do">### We will create the columns vehicle.age and listing.age to be able to model without using dates. The unit of measurement will be days.</span></span>
+<span id="cb16-165"><a href="#cb16-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-166"><a href="#cb16-166" aria-hidden="true" tabindex="-1"></a><span class="co"># We define scraping_date which is the date of the most recently created listing (we assume this corresponds to the scraping date since there are many listings posted each day for our data sets).</span></span>
+<span id="cb16-167"><a href="#cb16-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-168"><a href="#cb16-168" aria-hidden="true" tabindex="-1"></a>scraping_date <span class="ot">&lt;-</span> data<span class="sc">$</span>created.date[<span class="fu">order</span>(data<span class="sc">$</span>created.date, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span>]]</span>
+<span id="cb16-169"><a href="#cb16-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-170"><a href="#cb16-170" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>vehicle.age <span class="ot">&lt;-</span> scraping_date <span class="sc">-</span> data<span class="sc">$</span>date</span>
+<span id="cb16-171"><a href="#cb16-171" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>listing.age <span class="ot">&lt;-</span> scraping_date <span class="sc">-</span> data<span class="sc">$</span>created.date</span>
+<span id="cb16-172"><a href="#cb16-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-173"><a href="#cb16-173" aria-hidden="true" tabindex="-1"></a><span class="co"># We remove the defective vehicles from our cleaned data</span></span>
+<span id="cb16-174"><a href="#cb16-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-175"><a href="#cb16-175" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data[data<span class="sc">$</span>defective <span class="sc">==</span> <span class="cn">FALSE</span>,]</span>
+<span id="cb16-176"><a href="#cb16-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-177"><a href="#cb16-177" aria-hidden="true" tabindex="-1"></a><span class="do">### Finally we export the data to our cleaned-data folder</span></span>
+<span id="cb16-178"><a href="#cb16-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-179"><a href="#cb16-179" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(data, <span class="at">file =</span> <span class="st">"~/GitHub/Data_science/cleaned-data/toyota_cleaned.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
 </section>
 </section>
 
