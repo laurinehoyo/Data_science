@@ -69,7 +69,7 @@ library(lubridate)
 
 ### We set our working directory to the data folder and load our dataset golf2
 
-setwd("~/GitHub/Data_science/data")
+setwd("./data")
 data <- read.csv("golf2.csv")
 golf2 <- read.csv("golf2.csv")
 ```
@@ -310,7 +310,7 @@ library(lubridate)
 
 ### We set our working directory to the data folder and load our dataset golf2
 
-setwd("~/GitHub/Data_science/data")
+setwd("./data")
 data <- read.csv("audi2.csv")
 audi2 <- read.csv("audi2.csv")
 
@@ -506,7 +506,7 @@ library(lubridate)
 
 ### We set our working directory to the data folder and load our dataset golf2
 
-setwd("~/GitHub/Data_science/data")
+setwd("./data")
 data <- read.csv("skoda2.csv")
 skoda2 <- read.csv("skoda2.csv")
 
@@ -700,7 +700,7 @@ write.csv(data, file = "~/GitHub/Data_science/cleaned-data/skoda2_cleaned.csv", 
 library(tidyverse)
 library(lubridate)
 
-setwd("~/GitHub/Data_science/data")
+setwd("./data")
 data <- read.csv("volvo2.csv")
 volvo2 <- read.csv("volvo2.csv")
 
@@ -884,7 +884,7 @@ library(lubridate)
 
 ### We set our working directory to the data folder and load our dataset toyota
 
-setwd("~/GitHub/Data_science/data")
+setwd("./data")
 data <- read.csv("toyota.csv")
 toyota <- read.csv("toyota.csv")
 
