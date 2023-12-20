@@ -1,18 +1,14 @@
 ---
-title: "Predictive modeling of used car prices, depreciation and listing duration on marketplace/second-hand market."
+title: "Predictive modeling of second-hand car prices, depreciation and listing duration in an online marketplace."
 author: "Hogan Victor, Yusuf Annisa, Hoyo Laurine"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+date: 2023-12-20
 toc: true
 number-sections: true
 highlight-style: pygments
 format:
   html:
-    title-block:
-      style: |
-        font-size: 24px; /* Adjust the size as needed */
     theme: Lux
     code-fold: true
-    code-tools: true
     self-contained: true
     html-math-method: katex
 geometry:
@@ -23,8 +19,15 @@ execute:
   warning: false
   docx: default
 output: html_document
-
 ---
+
+```{css, echo=FALSE}
+.title {
+  font-size: 36px;
+  text-align: justify;
+}
+```
+
 ```{r, echo = FALSE, message = FALSE}
 library(blastula)
 block_social_links(
@@ -34,7 +37,10 @@ block_social_links(
                         variant = "color"))
 ```
 
+![](voitures IA.png)\
+\
+\
+\
+
 ```{r child = c('intro.qmd', 'data.qmd', 'eda.qmd', 'analysis.qmd', 'concl.qmd')}
 ```
-
-

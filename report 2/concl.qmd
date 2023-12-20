@@ -1,26 +1,35 @@
 ---
-title: "concl"
-format: html
-editor: visual
+code-fold: true
 ---
 
-## Quarto
+# Conclusion
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+## Take home message
 
-## Running Code
+The goal of our project was to look at the used car market and explore different variables affecting other dependent variables such as the price of a used car, the duration of its listing, and the car\'s depreciation. The variables we have chosen for our datasets come from the used car marketplace Autoscout24.ch. Using these variables and our 5 scraped datasets, we ran regressions to capture the effect of each factor, and measure how significant those effects are.
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+For our first research question, which was to determine the physical factors influencing the price of a used car, we explored different variables and made graphs and regressions accordingly. Our linear regressions helped us determine our significant variables, and we saw that most of them were significant, notably kilometres, vehicle age and engine power which are consistently significant across all car models. By looking at their respective graphs, we first notice a negative correlation between a car\'s mileage and its price, in all car models. As for the vehicle age, we see that the newer the model, the higher the price, which was our intuition. Finally, by looking at the relationship between price and engine power, we observe a positive correlation between them.
 
-```{r}
-1 + 1
-```
+For our second research question, with the help of visualisation, we wanted to explore trends in variables such as the fuel type, the body type and the transmission type of the cars. The graphs we have used - box plots and bar plots - indicated limited explanatory power regarding the duration of a listing, which was then confirmed by our linear regressions. Unfortunately, contrary to our intuition, most of our variables were insignificant to our second research question\'s model. Either our datasets did not contain the variables that could potentially explain the duration of a listing (such as if the seller has paid Autoscout24 to promote their listing), or either the listing age is random and completely uncorrelated to any factor.
 
-You can add options to executable code like this
+Finally, with the help of our graphs, we determined the variables that influence the depreciation of a car the most, which are the age of the vehicle and its mileage, similarly to our first research question.
 
-```{r}
-#| echo: false
-2 * 2
-```
+## Limitations
 
-The `echo: false` option disables the printing of code (only output is displayed).
+Throughout our project, we\'ve encountered a number of limitations.
+
+First, we overlooked assessing the market demand for different car models, an oversight that could have clarified the unusually high prices in certain listings. We\'ve come to understand that a listing\'s price isn\'t only shaped by the car\'s features; it is also influenced by macroeconomic factors like inflation and market demand. Collecting data on a wider range of models would also have given us greater insights, unfortunately there are just a handful of car models for sale with sufficient listings (number of observations) for an analysis such as this one.
+
+Surprisingly, our investigation into the variables impacting listing durations did not yield any significant findings. The few variables highlighted by the regression model have a low R squared, indicating they explain only a small portion of our dependent variable\'s variance. We have managed to account for just 1% to 3% of the total variation in listing durations, which is clearly insufficient.
+
+Upon looking at the \'listing.age\' variable, we noticed a concentration of observations dated on the 14th of November 2022. It appears that all listings before this date might have been recorded as this single date, inaccurately representing reality. Consequently, we had to exclude these listings, reducing our dataset.
+
+Only a fraction of the vehicles scraped contained a value for their new price as this is an optional field for the seller. This further reduced our amount of data for our third research question regarding depreciation.
+
+Our scraped data covers offers within a 2-week timeframe, limiting our ability to observe price variations over longer periods. Gathering data across a 3-month span or more would have been insightful to analyse price fluctuations across several months.
+
+## Future work
+
+As we continue to develop our project, we are looking at a number of areas for improvement. Firstly, we could extend our models to other types of vehicles and makes, ideally not within the VW Group but with more diversification in brands, to gain a more comprehensive view of the used car market. Secondly, the implementation of a system for automatically scraping and updating data in the event of changes to online advertisements would enable us to keep our models constantly up to date.
+
+Finally, it would be interesting to develop an interactive map listing all dealerships in Switzerland, both in major cities and in rural areas. We could possibly observe differences in prices for the same vehicles between urban and rural areas. This would give consumers access to the best offers for used cars available online, if they are willing to travel to an area where vehicles are cheaper.

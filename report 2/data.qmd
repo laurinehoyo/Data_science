@@ -24,25 +24,25 @@ library("dplyr")
 
 
 ```{r, message=FALSE, warning=FALSE}
-# Création de la tibble
+# Creation of the tibble
 car_data <- tibble(
   Variables = c("title", "subtitle", "price", "date", "body.type", "kilometers",
                 "fuel.type", "transmission", "power", "drivetrain", "consumption",
-                "expertise", "xpertise.date", "accident", "warranty", "warranty.details",
+                "expertise", "expertise.date", "accident", "warranty", "warranty.details",
                 "location", "listing.id", "created.date", "new.price", "description.text",
                 "defective", "vehicle.age", "listing.age"),
-  Meaning = c("title of the listing", "subtitle of the listing", "price of the car",
-              "date of the car", "body type of the car", "kilometers traveled",
-              "type of fuel used by the car", "transmission of the car", "power of the car, in horsepower",
-              "drivetrain of the car", "consumption of the car", "whether the car has been expertised or not",
+  Meaning = c("title of the listing", "subtitle of the listing", "price of the car in CHF",
+              "date of the car", "body type of the car (e.g. wagon)", "kilometers traveled",
+              "type of fuel used by the car (e.g. diesel)", "transmission of the car (automatic or manual)", "power of the car, in horsepower",
+              "drivetrain of the car (FWD, RWD or AWD)", "consumption of the car in L/100 km", "whether the car has been expertised or not",
               "date of expertise if the car has been expertised", "whether the car had an accident or not",
               "whether the car has a warranty or not", "details of the warranty, if there is one",
-              "location of the car", "listing ID", "publication date of the listing", "new price of the car",
+              "location of the car", "listing ID", "publication date of the listing", "new price of the car in CHF",
               "description of the car", "whether the car is defective or not", "age of the car, in days",
               "age of the listing, in days")
 )
 
-# Utilisation de kable et kableExtra pour formater le tableau
+# Using kable and kableExtra to format the table
 kable_styling <- car_data %>%
   kable("html", align = 'l') %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
@@ -263,7 +263,10 @@ for (keyword in defective_keywords) {
 
 data$defective[data$accident] <- TRUE
 ```
+
 We set to NA if values are "-" in the fuel.type, transmission and drivetrain columns.
+
+
 ```{r, message=FALSE, warning=FALSE, results='hide'}
 ### We set to NA if values are "-" in columns fuel.type, transmission and drivetrain.
 
@@ -271,10 +274,13 @@ data$fuel.type <- na_if(data$fuel.type, "-")
 data$transmission <- na_if(data$transmission, "-")
 data$drivetrain <- na_if(data$drivetrain, "-")
 ```
+
 We created the columns vehicle.age and listing.age to be able to model without using dates. The unit of measurement is days.
+
 <p align="justify">
 We defined scraping_date which is the date of the most recently created listing, we assumed this corresponds to the scraping date since there are many listings posted each day for our data sets.
 <p>
+
 ```{r, message=FALSE, warning=FALSE, results='hide'}
 ### We will create the columns vehicle.age and listing.age to be able to model without using dates. The unit of measurement will be days.
 

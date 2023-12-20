@@ -19,6 +19,8 @@ library(htmltools)
 library(shiny)
 library(tidyverse)
 library(patchwork)
+
+options(scipen = 999)
 ```
 
 ## Impact of physical factors on car prices
@@ -269,9 +271,9 @@ p1
 
 -   Limousine: Sedans show a diversity of prices, similar to wagons.
 
--   Small car: Toyota's small cars have lower median prices, in keeping with their image as brands offering economical vehicles.
+-   Petite voiture: Toyota's small cars have lower median prices, in keeping with their image as brands offering economical vehicles.
 
--   SUV / Off-road: SUVs and off-road vehicles present a wide price range and a high maximum, consistent with Volvo having their status as a luxury brand.
+-   SUV / Tout-terrain: SUVs and off-road vehicles present a wide price range and a high maximum, consistent with Volvo having their status as a luxury brand.
 
     <p>
 
@@ -859,6 +861,8 @@ plot_audi <- create_bar_plot(audi2, "Fuel type vs Average listing duration : Aud
 p1 <- ggplotly(plot_audi)
 p1
 ```
+While the category with the most observations is composed of petrol cars, the category with the highest average listing duration is "Diesel".
+Petrol cars have an average listing duration of 91 days.
 
 ## VW
 
@@ -867,6 +871,9 @@ plot_golf <- create_bar_plot(golf2, "Fuel type vs Average listing duration : VW 
 p2 <- ggplotly(plot_golf)
 p2
 ```
+This model has the largest panel of categories.
+Hybrid cars tend to stay on the website longer, with an average of 166 days.
+The category with the most observations, petrol, has an average listing duration of 110 days, which remains higher than that of Audi, but remains lower than other categories.
 
 ## Toyota
 
@@ -875,6 +882,9 @@ plot_toyota <- create_bar_plot(toyota2, "Fuel type vs Average listing duration :
 p3 <- ggplotly(plot_toyota)
 p3
 ```
+For this model, the highest average listing duration goes to the category with the most observations, i.e. petrol cars.
+The average listing duration does not vary much between categories, as there is a 23-day gap between the highest and lowest average listing duration.
+
 
 ## Skoda
 
@@ -884,6 +894,10 @@ p4 <- ggplotly(plot_skoda)
 p4
 ```
 
+Like Toyota, there is not much variation in average listing duration, with a 20-day gap between the highest and lowest average listing duration, except for natural gas vehicles, which have a very high listing age.
+This could mean that this fuel type is undesirable to customers.
+This could also be due to chance, because the sample size is so small, the variance is high.
+
 ## Volvo
 
 ```{r}
@@ -891,27 +905,10 @@ plot_volvo <- create_bar_plot(volvo2, "Fuel type vs Average listing duration : V
 p5 <- ggplotly(plot_volvo)
 p5
 ```
+
+Like Skoda and Toyota, there is not much variation in average listing duration, with a 16-day gap between the highest and lowest average listing duration.
+
 :::
-
-<p align="justify">
-
-Audi : While the category with the most observations is composed of petrol cars, the category with the highest average listing duration is "Diesel".
-Petrol cars have an average listing duration of 91 days.
-
-Volkswagen : This model has the largest panel of categories.
-Hybrid cars tend to stay on the website longer, with an average of 166 days.
-The category with the most observations, petrol, has an average listing duration of 110 days, which remains higher than that of Audi, but remains lower than other categories.
-
-Toyota : For this model, the highest average listing duration goes to the category with the most observations, i.e. petrol cars.
-The average listing duration does not vary much between categories, as there is a 23-day gap between the highest and lowest average listing duration.
-
-Skoda : Like Toyota, there is not much variation in average listing duration, with a 20-day gap between the highest and lowest average listing duration, except for natural gas vehicles, which have a very high listing age.
-This could mean that this fuel type is undesirable to customers.
-This could also be due to chance, because the sample size is so small, the variance is high.
-
-Volvo : Like Skoda and Toyota, there is not much variation in average listing duration, with a 16-day gap between the highest and lowest average listing duration.
-
-<p>
 
 <p align="justify">
 
@@ -1188,7 +1185,7 @@ sample_sizes |>
 
 ```
 
-#### New prices vs listing prices
+### New prices vs listing prices
 
 <p align="justify">
 
@@ -1321,7 +1318,7 @@ a5
 
 It seems the new and actual prices are strongly related.
 
-#### New prices vs depreciation
+### New prices vs depreciation
 
 <p align="justify">
 
@@ -1445,7 +1442,7 @@ We can see that these are weakly negatively correlated, but it does not stand ou
 
 <p>
 
-#### Current prices vs depreciation
+### Current prices vs depreciation
 
 We will now compare current vehicle prices and their relative depreciation.
 
@@ -1563,7 +1560,7 @@ Current vehicle prices are obviously negatively correlated with relative depreci
 
 <p>
 
-#### Vehicle age vs depreciation
+### Vehicle age vs depreciation
 
 <p align="justify">
 
@@ -1678,7 +1675,7 @@ d5
 ```
 :::
 
-#### Kilometers vs depreciation
+### Kilometers vs depreciation
 
 <p align="justify">
 
@@ -1827,7 +1824,7 @@ cor_matrix_toyota <- cor(select(toyota, c("depreciation", "rel_dep", "new.price"
 
 ```
 
-#### Correlation matrices
+### Correlation matrices
 
 Here are the correlation matrices related to vehicle depreciation.
 We will analyse these further in the next section.

@@ -4,7 +4,6 @@ code-fold: true
 
 # Introduction
 
-![](voitures IA.png)
 
 ## Overview and Motivation 
 
@@ -30,8 +29,8 @@ The main objective of our project is to identify and understand the physical fac
 
 To achieve these objectives, our study is structured around three pivotal questions:
 
-Which physical factors have the biggest impact on used car prices?
+⦁ Which physical factors have the biggest impact on used car prices?
 
-What are the factors that influence the duration of a listing for a used car?
+⦁ What are the factors that influence the duration of a listing for a used car?
 
-How do different car features affect value depreciation over time?
+⦁ How do different car features affect depreciation?

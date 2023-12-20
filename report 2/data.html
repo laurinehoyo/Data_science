@@ -109,25 +109,25 @@ The datasets comprise five distinct car models originating from various brands. 
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Création de la tibble</span></span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creation of the tibble</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Variables =</span> <span class="fu">c</span>(<span class="st">"title"</span>, <span class="st">"subtitle"</span>, <span class="st">"price"</span>, <span class="st">"date"</span>, <span class="st">"body.type"</span>, <span class="st">"kilometers"</span>,</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                <span class="st">"fuel.type"</span>, <span class="st">"transmission"</span>, <span class="st">"power"</span>, <span class="st">"drivetrain"</span>, <span class="st">"consumption"</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">"expertise"</span>, <span class="st">"xpertise.date"</span>, <span class="st">"accident"</span>, <span class="st">"warranty"</span>, <span class="st">"warranty.details"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">"expertise"</span>, <span class="st">"expertise.date"</span>, <span class="st">"accident"</span>, <span class="st">"warranty"</span>, <span class="st">"warranty.details"</span>,</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">"location"</span>, <span class="st">"listing.id"</span>, <span class="st">"created.date"</span>, <span class="st">"new.price"</span>, <span class="st">"description.text"</span>,</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                <span class="st">"defective"</span>, <span class="st">"vehicle.age"</span>, <span class="st">"listing.age"</span>),</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Meaning =</span> <span class="fu">c</span>(<span class="st">"title of the listing"</span>, <span class="st">"subtitle of the listing"</span>, <span class="st">"price of the car"</span>,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>              <span class="st">"date of the car"</span>, <span class="st">"body type of the car"</span>, <span class="st">"kilometers traveled"</span>,</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>              <span class="st">"type of fuel used by the car"</span>, <span class="st">"transmission of the car"</span>, <span class="st">"power of the car, in horsepower"</span>,</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>              <span class="st">"drivetrain of the car"</span>, <span class="st">"consumption of the car"</span>, <span class="st">"whether the car has been expertised or not"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Meaning =</span> <span class="fu">c</span>(<span class="st">"title of the listing"</span>, <span class="st">"subtitle of the listing"</span>, <span class="st">"price of the car in CHF"</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>              <span class="st">"date of the car"</span>, <span class="st">"body type of the car (e.g. wagon)"</span>, <span class="st">"kilometers traveled"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>              <span class="st">"type of fuel used by the car (e.g. diesel)"</span>, <span class="st">"transmission of the car (automatic or manual)"</span>, <span class="st">"power of the car, in horsepower"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>              <span class="st">"drivetrain of the car (FWD, RWD or AWD)"</span>, <span class="st">"consumption of the car in L/100 km"</span>, <span class="st">"whether the car has been expertised or not"</span>,</span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>              <span class="st">"date of expertise if the car has been expertised"</span>, <span class="st">"whether the car had an accident or not"</span>,</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>              <span class="st">"whether the car has a warranty or not"</span>, <span class="st">"details of the warranty, if there is one"</span>,</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>              <span class="st">"location of the car"</span>, <span class="st">"listing ID"</span>, <span class="st">"publication date of the listing"</span>, <span class="st">"new price of the car"</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>              <span class="st">"location of the car"</span>, <span class="st">"listing ID"</span>, <span class="st">"publication date of the listing"</span>, <span class="st">"new price of the car in CHF"</span>,</span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>              <span class="st">"description of the car"</span>, <span class="st">"whether the car is defective or not"</span>, <span class="st">"age of the car, in days"</span>,</span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>              <span class="st">"age of the listing, in days"</span>)</span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilisation de kable et kableExtra pour formater le tableau</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Using kable and kableExtra to format the table</span></span>
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>kable_styling <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span></span>
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="st">"html"</span>, <span class="at">align =</span> <span class="st">'l'</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>), <span class="at">full_width =</span> F) <span class="sc">%&gt;%</span></span>
@@ -155,7 +155,7 @@ The datasets comprise five distinct car models originating from various brands. 
 </tr>
 <tr class="odd">
 <td style="text-align: left; font-weight: bold; color: steelblue !important;">price</td>
-<td style="text-align: left; font-style: italic;">price of the car</td>
+<td style="text-align: left; font-style: italic;">price of the car in CHF</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; font-weight: bold; color: steelblue !important;">date</td>
@@ -163,7 +163,7 @@ The datasets comprise five distinct car models originating from various brands. 
 </tr>
 <tr class="odd">
 <td style="text-align: left; font-weight: bold; color: steelblue !important;">body.type</td>
-<td style="text-align: left; font-style: italic;">body type of the car</td>
+<td style="text-align: left; font-style: italic;">body type of the car (e.g. wagon)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; font-weight: bold; color: steelblue !important;">kilometers</td>
@@ -171,11 +171,11 @@ The datasets comprise five distinct car models originating from various brands. 
 </tr>
 <tr class="odd">
 <td style="text-align: left; font-weight: bold; color: steelblue !important;">fuel.type</td>
-<td style="text-align: left; font-style: italic;">type of fuel used by the car</td>
+<td style="text-align: left; font-style: italic;">type of fuel used by the car (e.g. diesel)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; font-weight: bold; color: steelblue !important;">transmission</td>
-<td style="text-align: left; font-style: italic;">transmission of the car</td>
+<td style="text-align: left; font-style: italic;">transmission of the car (automatic or manual)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; font-weight: bold; color: steelblue !important;">power</td>
@@ -183,18 +183,18 @@ The datasets comprise five distinct car models originating from various brands. 
 </tr>
 <tr class="even">
 <td style="text-align: left; font-weight: bold; color: steelblue !important;">drivetrain</td>
-<td style="text-align: left; font-style: italic;">drivetrain of the car</td>
+<td style="text-align: left; font-style: italic;">drivetrain of the car (FWD, RWD or AWD)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; font-weight: bold; color: steelblue !important;">consumption</td>
-<td style="text-align: left; font-style: italic;">consumption of the car</td>
+<td style="text-align: left; font-style: italic;">consumption of the car in L/100 km</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; font-weight: bold; color: steelblue !important;">expertise</td>
 <td style="text-align: left; font-style: italic;">whether the car has been expertised or not</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; font-weight: bold; color: steelblue !important;">xpertise.date</td>
+<td style="text-align: left; font-weight: bold; color: steelblue !important;">expertise.date</td>
 <td style="text-align: left; font-style: italic;">date of expertise if the car has been expertised</td>
 </tr>
 <tr class="even">
@@ -223,7 +223,7 @@ The datasets comprise five distinct car models originating from various brands. 
 </tr>
 <tr class="even">
 <td style="text-align: left; font-weight: bold; color: steelblue !important;">new.price</td>
-<td style="text-align: left; font-style: italic;">new price of the car</td>
+<td style="text-align: left; font-style: italic;">new price of the car in CHF</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; font-weight: bold; color: steelblue !important;">description.text</td>
@@ -487,7 +487,7 @@ We first created a vector of characters which are the defective keywords. We the
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>drivetrain <span class="ot">&lt;-</span> <span class="fu">na_if</span>(data<span class="sc">$</span>drivetrain, <span class="st">"-"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-We created the columns vehicle.age and listing.age to be able to model without using dates. The unit of measurement is days.
+<p>We created the columns vehicle.age and listing.age to be able to model without using dates. The unit of measurement is days.</p>
 <p align="justify">
 We defined scraping_date which is the date of the most recently created listing, we assumed this corresponds to the scraping date since there are many listings posted each day for our data sets.
 </p><p>

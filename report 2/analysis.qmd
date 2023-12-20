@@ -708,7 +708,7 @@ volvo <- read.csv("volvo_models_data.csv")
 toyota <- read.csv("toyota_models_data.csv")
 ```
 <p align="justify">
-I<p align="justify">f we first look at the data, we will see an enormous amount of listings on 2022-11-14, which is unrealistic, and most likely an error. We can see this clearly by visualising the frequency of listings by date.
+If we first look at the data, we will see an enormous amount of listings on 2022-11-14, which is unrealistic, and most likely an error. We can see this clearly by visualising the frequency of listings by date.
 <p>
 ::: panel-tabset
 ### VW Golf

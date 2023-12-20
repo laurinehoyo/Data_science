@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>intro</title>
+<title>concl</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,16 +23,16 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="intro_files/libs/clipboard/clipboard.min.js"></script>
-<script src="intro_files/libs/quarto-html/quarto.js"></script>
-<script src="intro_files/libs/quarto-html/popper.min.js"></script>
-<script src="intro_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="intro_files/libs/quarto-html/anchor.min.js"></script>
-<link href="intro_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="intro_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="intro_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="intro_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="intro_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="concl_files/libs/clipboard/clipboard.min.js"></script>
+<script src="concl_files/libs/quarto-html/quarto.js"></script>
+<script src="concl_files/libs/quarto-html/popper.min.js"></script>
+<script src="concl_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="concl_files/libs/quarto-html/anchor.min.js"></script>
+<link href="concl_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="concl_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="concl_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="concl_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="concl_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -45,26 +45,29 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="introduction" class="level1">
-<h1>Introduction</h1>
-<section id="overview-and-motivation" class="level2">
-<h2 class="anchored" data-anchor-id="overview-and-motivation">Overview and Motivation</h2>
-<p align="justify">
-</p><p>The origin of this project stems from the desire to purchase a second-hand moped by a member of our group. The idea was to use linear regression to easily find the best possible available offer for a used moped of a specific make and model, given its mileage and age. A model was then built to find the most undervalued moped for sale online. We thought the same approach could be applied for valuing second-hand cars, and there would also be a lot more data available since they are more prevalent than motorcycles. We could also consider other relevant variables for a more in-depth comparison of prices and characteristics of the vehicles. Autoscout24.ch was found to be the perfect candidate for this because it is the largest online market for used cars in Switzerland, and the listings include a lot of additional information about the car that other websites do not, such as horsepower, fuel consumption, etc.</p>
-<p>
-</p><p align="justify">
-</p><p>The objective of this project is to make an easy to use tool that helps buyers find the best offers on the market for a specific make and model, given its characteristics. Autoscout24 does not display the estimated value of vehicles on the listings, and places paid listings at the top of the search results. Our model could potentially help buyers find the best deals on this marketplace more easily. We also aim to predict vehicle depreciation over time, and help buyers choose a car that retains more of its value by identifying the observable characteristics of these cars. Another possible use for our models would be to help a dealership or car buying service such as webuyanycar.com set prices at which they can buy customers’ cars and stay profitable. We will also try to find a relationship between the car’s characteristics and the listing duration time, in order to determine which cars will sell the fastest.</p>
-<p>
-</p></section>
-<section id="research-question" class="level2">
-<h2 class="anchored" data-anchor-id="research-question">Research question</h2>
-<p align="justify">
-</p><p>The main objective of our project is to identify and understand the physical factors that most influence used car prices. Specifically, we aim to determine how characteristics such as vehicle age, mileage, engine power and fuel consumption, as well as categorical characteristics such as fuel type, transmission and traction, affect the market value of used cars. By understanding these relationships, we aim to provide valuable insights for used car buyers, enabling them to more accurately assess the fair value of vehicles on the market. Ultimately, the aim is to achieve a clearer, more quantitative understanding of what drives used car prices, which can help make the used car market more transparent and efficient for all concerned.</p>
-<p>
-</p><p>To achieve these objectives, our study is structured around three pivotal questions:</p>
-<p>⦁ Which physical factors have the biggest impact on used car prices?</p>
-<p>⦁ What are the factors that influence the duration of a listing for a used car?</p>
-<p>⦁ How do different car features affect depreciation?</p>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<section id="take-home-message" class="level2">
+<h2 class="anchored" data-anchor-id="take-home-message">Take home message</h2>
+<p>The goal of our project was to take a look at the used car market and explore different variables affecting other dependent variables such as the price of a used car and the duration of its listing, as well as determine the car’s depreciation. The variables we have chosen for our datasets come from the used car website Autoscout24.ch. Using these variables and our 5 datasets, we ran regressions to capture the effect of each factor, and how significant that effect is.</p>
+<p>For our first research question, which was to determine the physical factors influencing the price of a used car, we explored different variables and made graphs and regressions accordingly. When observing the frequency of the price using a histogram, we discovered that the price range varied a lot between brands, suggesting each brand’s prices are affected differently.</p>
+<p>Our linear regressions helped us determine our significant variables, and we saw that most of them were significant, notably kilometres, vehicle age and engine power which are consistently significant across all car models. By looking at their respective graphs, we first notice a negative correlation between a car’s mileage and its price, in all car models. As for the vehicle age, we see that the newer the model, the higher the price, which was our intuition. Finally, by looking at the relationship between price and engine power, we observe a positive correlation between them.</p>
+<p>For our second research question, with the help of visualisation, we wanted to explore trends in variables such as the fuel type, the body type and the transmission of the cars. The graphs we have used - box plots and barplots - indicated limited explanatory power regarding the duration of a listing, which was then confirmed by our linear regressions. Unfortunately, contrary to our intuition, most of our variables were insignificant to our second research question’s model. Our datasets either did not contain enough variables to explain the duration of a listing, or either the type of regression we used was not the proper one.</p>
+<p>Finally, with the help of our graphs, we determined the variables that influence the depreciation of a car the most, which are the age of the vehicle and its mileage, similarly to our first research question.</p>
+</section>
+<section id="limitations" class="level2">
+<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
+<p>Throughout our project, we’ve encountered a number of limitations.</p>
+<p>First, we overlooked assessing the market demand for different car models, an oversight that could have clarified the unusually high prices in certain listings. We’ve come to understand that a listing’s price isn’t only shaped by the car’s features; it is also influenced by macroeconomic factors like inflation and market demand. Collecting data on a wider range of models would also have given us greater insights, unfortunately there are just a handful of car models for sale with sufficient listings (number of observations) for an analysis such as this one.</p>
+<p>Surprisingly, our investigation into the variables impacting listing durations did not yield any significant findings. The few variables highlighted by the regression model have a low R squared, indicating they explain only a small portion of our dependent variable’s variance. We have managed to account for just 1% to 3% of the total variation in listing durations, which is clearly insufficient.</p>
+<p>Upon looking at the ‘listing.age’ variable, we noticed a concentration of observations dated on the 14th of November 2022. It appears that all listings before this date were recorded as this single date, inaccurately representing reality. Consequently, we had to exclude these listings, reducing our dataset.</p>
+<p>Only a fraction of the vehicles scraped contained a value for their new price as this is an optional field for the seller. This further reduced our amount of data for our third research question regarding depreciation.</p>
+<p>Our scraped data covers offers within a 2-week timeframe, limiting our ability to observe price variations over longer periods. Gathering data across a 2-month span or more would have been insightful to analyse price fluctuations across several months.</p>
+</section>
+<section id="future-work" class="level2">
+<h2 class="anchored" data-anchor-id="future-work">Future work</h2>
+<p>As we continue to develop our project, we are looking at a number of areas for improvement. Firstly, we could extend our models to other types of vehicles and makes, to gain a more comprehensive view of the used car market. Secondly, the implementation of a system for automatically scraping and updating data in the event of changes to online advertisements would enable us to keep our models constantly up to date.</p>
+<p>Finally, it would be interesting to develop an interactive map listing all dealerships in Switzerland, both in major cities and in rural areas, and to compare their prices with those offered on websites such as Autoscout24. This would give consumers the opportunity to compare the best offers and visualise the price differences between used cars available online and those sold directly by dealers.</p>
 </section>
 </section>
 
